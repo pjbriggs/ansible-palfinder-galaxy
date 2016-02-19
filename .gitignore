@@ -1,0 +1,7 @@
+\#*\#
+.\#*
+*~
+*.pyc
+*.bak
+auto_process_settings_local.py
+settings.ini
