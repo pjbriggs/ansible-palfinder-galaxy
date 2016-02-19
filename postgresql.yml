@@ -12,12 +12,16 @@
     - python-psycopg2
     register: postgresql_installed
 
+  - name: Check if PostgreSQL is initialised
+    stat: path=/var/lib/pgsql/data/postgresql.conf
+    register: postgresql_conf
+
   - name: Initialise PostgreSQL cluster
     service:
       name=postgresql
       args=initdb
       state=stopped
-    when: postgresql_installed | success
+    when: postgresql_conf.stat.exists == False
     register: postgresql_initialised
 
   - name: Start PostgreSQL service and enable on boot
