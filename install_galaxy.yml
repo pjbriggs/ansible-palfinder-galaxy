@@ -1,0 +1,54 @@
+# Install and configure Galaxy distribution
+
+---
+- hosts: '{{ hosts }}'
+  tasks:
+  - name: Fetch Galaxy installation dependencies
+    yum: name=git state=present
+    register: installed_dependencies
+
+- hosts: '{{ hosts }}'
+  become_user: galaxy
+  vars:
+    - galaxy_repo: https://github.com/galaxyproject/galaxy.git
+    - galaxy_version: 'v15.10'
+    - galaxy_dir: /home/galaxy/galaxies/palfinder
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+  tasks:
+  - name: Create galaxies directory
+    file:
+      path='{{ galaxy_dir }}'
+      state=directory
+
+  - name: Clone Galaxy source
+    git:
+      repo='{{ galaxy_repo }}'
+      version='{{ galaxy_version }}'
+      dest={{ galaxy_root }}
+    when: installed_dependencies | success
+    register: cloned_source
+
+  - name: Make virtualenv in Galaxy root
+    command:
+      chdir={{ galaxy_root }}
+      /usr/local/bin/virtualenv .venv -p /usr/local/bin/python
+      creates='{{ galaxy_root }}/.venv'
+    when: cloned_source | success
+    register: created_virtualenv
+
+  - name: Create Galaxy configuration file
+    command:
+      chdir='{{ galaxy_root }}/config'
+      cp galaxy.ini.sample galaxy.ini
+      creates='{{ galaxy_root }}/config/galaxy.ini'
+    when: cloned_source | success
+    register: created_config_file
+
+  - name: Configure Galaxy database connection
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main'
+      option='database_connection'
+      value='postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder'
+    when: created_config_file | success
+    register: set_db_connection

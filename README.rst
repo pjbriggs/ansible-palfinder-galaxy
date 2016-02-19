@@ -16,6 +16,8 @@ The following playbooks exist:
 
  - ``postgresql.yml``: install and configure the PostgreSQL database
    server and create up the database user and database for Galaxy
+
+ - ``install_galaxy.yml``: clone and configure the Galaxy code
    
 Running the playbooks
 ---------------------
