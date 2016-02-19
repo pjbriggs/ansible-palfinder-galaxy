@@ -36,3 +36,5 @@ Notes on the deployment
  - The playbook specifies Python 2.7.10 as there is a problem with
    2.7.11 when used with Galaxy 15.10.
 
+ - The galaxy database user password is the same as the user name.
+

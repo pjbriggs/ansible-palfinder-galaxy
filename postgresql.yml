@@ -2,6 +2,7 @@
 # database user and database for the Galaxy instance
 
 ---
+# Set up the PostgreSQL server
 - hosts: '{{ hosts }}'
   tasks:
   - name: Install PostgreSQL server
@@ -32,6 +33,28 @@
     when: postgresql_initialised | success
     register: postgresql_started
 
+  - name: Update PostgreSQL authentication for postgres user
+    lineinfile:
+      dest=/var/lib/pgsql/data/pg_hba.conf
+      line='local	all	    postgres			      ident'
+      insertafter='^# "local" is for Unix domain socket connections only'
+      backup=yes
+    notify:
+      Restart PostgreSQL
+
+  - name: Update PostgreSQL authentication for all other usersq
+    replace:
+      dest=/var/lib/pgsql/data/pg_hba.conf
+      regexp='^([^\s]+\s+all\s+all\s+.*)ident$'
+      replace='\1md5'
+    notify:
+      Restart PostgreSQL
+
+  handlers:
+  - name: Restart PostgreSQL
+    service: name=postgresql state=restarted
+
+# Set up the Galaxy user and database
 - hosts: '{{ hosts }}'
   become_user: postgres
   vars:
@@ -41,6 +64,7 @@
   - name: Create PostgreSQL Galaxy user
     postgresql_user:
       name='{{ galaxy_user }}'
+      password='{{ galaxy_user }}'
       role_attr_flags=NOSUPERUSER
       state=present
     when: postgresql_started | success
