@@ -1,5 +1,5 @@
 # Build and install Python 2.7 on the remote host
-# Also installs pip, virtualenv and psycopg2 packages
+# Also installs pip and virtualenv packages
 
 ---
 - hosts: '{{ hosts }}'
@@ -74,16 +74,3 @@
       executable=/usr/local/bin/pip
     when: installed_pip | success
     register: installed_virtualenv
-
-  - name: Install Psycopg2 dependencies
-    yum: name=postgresql-devel state=present 
-    when: installed_pip | success
-    register: installed_psycopg2_dependencies
-
-  - name: Install Psycopg2
-    pip:
-      name=psycopg2
-      state=present
-      executable=/usr/local/bin/pip
-    when: installed_psycopg2_dependencies | success
-    register: installed_psycopg2
