@@ -1,0 +1,86 @@
+---
+- hosts: '{{ hosts }}'
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Install Python build dependencies
+    yum: state=present name={{item}}
+    with_items:
+    - autoconf
+    - make
+    - automake
+    - gcc
+    - bzip2
+    - ncurses
+    - openssl
+    - readline
+    - sqlite
+    - zlib
+    - bzip2-devel
+    - ncurses-devel
+    - openssl-devel
+    - readline-devel
+    - sqlite-devel
+    - zlib-devel
+    - tkinter
+    register: installed_python_dependencies
+
+  - name: Download Python 2.7
+    get_url:
+      url=https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
+      dest=/root
+    when: installed_python_dependencies | success
+    register: downloaded_python_27
+
+  - name: Unpack Python 2.7
+    unarchive:
+      src=/root/Python-2.7.11.tgz
+      dest=/root
+      copy=no
+      owner=root
+      group=root
+      creates=/root/Python-2.7.11
+    when: downloaded_python_27 | success
+    register: unpacked_python_27
+
+  - name: Install Python 2.7
+    command:
+      chdir=/root/Python-2.7.11
+      {{item}}
+      creates=/usr/local/bin/python2.7
+    with_items:
+    - ./configure --prefix=/usr/local
+    - make install
+    when: unpacked_python_27 | success
+    register: installed_python_27
+
+  - name: Install Pip
+    command:
+      creates=/usr/local/bin/pip
+      "{{item}}"
+    with_items:
+    - /usr/local/bin/python2.7 -m ensurepip
+    - /usr/local/bin/pip install --upgrade pip
+    when: installed_python_27 | success
+    register: installed_pip
+
+  - name: Install Virtualenv
+    pip:
+      name=virtualenv
+      state=present
+      executable=/usr/local/bin/pip
+    when: installed_pip | success
+    register: installed_virtualenv
+
+  - name: Install Psycopg2 dependencies
+    yum: name=postgresql-devel state=present 
+    when: installed_pip | success
+    register: installed_psycopg2_dependencies
+
+  - name: Install Psycopg2
+    pip:
+      name=psycopg2
+      state=present
+      executable=/usr/local/bin/pip
+    when: installed_psycopg2_dependencies | success
+    register: installed_psycopg2
