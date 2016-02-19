@@ -13,6 +13,9 @@ The following playbooks exist:
    ``/usr/local`` on the remote host
 
  - ``galaxy_user.yml``: create the Galaxy user and group
+
+ - ``postgresql.yml``: install and configure the PostgreSQL database
+   server and create up the database user and database for Galaxy
    
 Running the playbooks
 ---------------------

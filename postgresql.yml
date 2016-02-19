@@ -1,0 +1,51 @@
+# Install and configure PostgreSQL on remote server and set up
+# database user and database for the Galaxy instance
+
+---
+- hosts: '{{ hosts }}'
+  tasks:
+  - name: Install PostgreSQL server
+    yum: name={{item}} state=present
+    with_items:
+    - postgresql
+    - postgresql-server
+    - python-psycopg2
+    register: postgresql_installed
+
+  - name: Initialise PostgreSQL cluster
+    service:
+      name=postgresql
+      args=initdb
+      state=stopped
+    when: postgresql_installed | success
+    register: postgresql_initialised
+
+  - name: Start PostgreSQL service and enable on boot
+    service:
+      name=postgresql
+      state=started
+      enabled=yes
+    when: postgresql_initialised | success
+    register: postgresql_started
+
+- hosts: '{{ hosts }}'
+  become_user: postgres
+  vars:
+    - galaxy_user: galaxy
+    - galaxy_db: galaxy_palfinder
+  tasks:
+  - name: Create PostgreSQL Galaxy user
+    postgresql_user:
+      name='{{ galaxy_user }}'
+      role_attr_flags=NOSUPERUSER
+      state=present
+    when: postgresql_started | success
+    register: postgresql_galaxy_user_created
+
+  - name: Create PostgreSQL database
+    postgresql_db:
+      name='{{ galaxy_db }}'
+      owner='{{ galaxy_user }}'
+      state=present
+    when: postgresql_galaxy_user_created | success
+    register: postgresql_galaxy_db_created
