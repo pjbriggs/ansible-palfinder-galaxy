@@ -3,6 +3,8 @@
 
 ---
 - hosts: '{{ hosts }}'
+  vars:
+    python_version: '2.7.10'
   become: yes
   become_method: sudo
   tasks:
@@ -30,25 +32,25 @@
 
   - name: Download Python 2.7
     get_url:
-      url=https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
+      url='https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
       dest=/root
     when: installed_python_dependencies | success
     register: downloaded_python_27
 
   - name: Unpack Python 2.7
     unarchive:
-      src=/root/Python-2.7.11.tgz
+      src='/root/Python-{{ python_version }}.tgz'
       dest=/root
       copy=no
       owner=root
       group=root
-      creates=/root/Python-2.7.11
+      creates='/root/Python-{{ python_version }}'
     when: downloaded_python_27 | success
     register: unpacked_python_27
 
   - name: Install Python 2.7
     command:
-      chdir=/root/Python-2.7.11
+      chdir='/root/Python-{{ python_version }}'
       {{item}}
       creates=/usr/local/bin/python2.7
     with_items:
