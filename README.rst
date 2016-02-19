@@ -25,3 +25,14 @@ the ``ansible-playbook`` command line, for example::
 
     ansible-playbook python27.yml --extra-vars "hosts=palfinder"
 
+Variables
+---------
+
+ - Python version is set by the ``python_version`` variable
+
+Notes on the deployment
+-----------------------
+
+ - The playbook specifies Python 2.7.10 as there is a problem with
+   2.7.11 when used with Galaxy 15.10.
+
