@@ -1,3 +1,6 @@
+# Build and install Python 2.7 on the remote host
+# Also installs pip, virtualenv and psycopg2 packages
+
 ---
 - hosts: '{{ hosts }}'
   become: yes

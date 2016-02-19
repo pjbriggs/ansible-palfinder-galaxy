@@ -1,3 +1,5 @@
+# Create the 'galaxy' user and group (both with UID/GID of 400)
+
 ---
 - hosts: '{{ hosts }}'
   tasks:
