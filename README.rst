@@ -40,3 +40,14 @@ Notes on the deployment
 
  - The galaxy database user password is the same as the user name.
 
+ - To remove the Galaxy database and user from PostgreSQL, become the
+   ``postgres`` user, start the ``psql`` console application and do::
+
+       DROP ROLE galaxy;
+       DROP DATABASE galaxy_palfinder;
+
+Known Issues
+------------
+
+ - ``python27.yml``: fails on the ``pip`` installation step.
+
