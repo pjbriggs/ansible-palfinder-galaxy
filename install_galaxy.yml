@@ -3,8 +3,11 @@
 ---
 - hosts: '{{ hosts }}'
   tasks:
-  - name: Fetch Galaxy installation dependencies
-    yum: name=git state=present
+  - name: Fetch Galaxy dependencies
+    yum: name={{ item }} state=present
+    with_items:
+    - git
+    - supervisor
     register: installed_dependencies
 
 - hosts: '{{ hosts }}'
@@ -44,11 +47,35 @@
     when: cloned_source | success
     register: created_config_file
 
-  - name: Configure Galaxy database connection
+  - name: Configure Galaxy
     ini_file:
       dest='{{ galaxy_root }}/config/galaxy.ini'
-      section='app:main'
-      option='database_connection'
-      value='postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder'
+      section={{ item.section }}
+      option={{ item.section }}
+      value={{ item.value }}
+    with_items:
+    - { section: 'app:main',
+        option: 'database_connection',
+        value: 'postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder' }
+    - { section: 'app:main',
+        option: 'brand',
+        value: 'Microsat' }
+    - { section: 'app:main',
+        option: 'allow_user_dataset_purge',
+        value: 'True' }
     when: created_config_file | success
-    register: set_db_connection
+    register: configured_galaxy
+
+  - name: Initialise eggs and sample files (common_startup.sh)
+    command:
+      chdir='{{ galaxy_root }}'
+      scripts/common_startup.sh
+    when: configured_galaxy | success
+    register: done_common_startup
+
+  - name: Initialise the database (create_db.py)
+    command:
+      chdir='{{ galaxy_root }}'
+      .venv/bin/python scripts/create_db.py
+    when: done_common_startup | success
+    register: initialised_database
