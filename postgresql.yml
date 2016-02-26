@@ -17,11 +17,11 @@
     stat: path=/var/lib/pgsql/data/postgresql.conf
     register: postgresql_conf
 
+  # ansible wants us to use the 'service' module for
+  # this but it doesn't work for 'initdb'
   - name: Initialise PostgreSQL cluster
-    service:
-      name=postgresql
-      args=initdb
-      state=stopped
+    command:
+      service postgresql initdb
     when: postgresql_conf.stat.exists == False
     register: postgresql_initialised
 
