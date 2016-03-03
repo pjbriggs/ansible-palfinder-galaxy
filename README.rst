@@ -14,10 +14,15 @@ The following playbooks exist:
 
  - ``galaxy_user.yml``: create the Galaxy user and group
 
- - ``postgresql.yml``: install and configure the PostgreSQL database
-   server and create up the database user and database for Galaxy
+ - ``postgresql.yml``: install and configure the PostgreSQL server
 
- - ``install_galaxy.yml``: clone and configure the Galaxy code
+ - ``nginx.yml``: install and start the Nginx web server
+
+ - ``proftpd.yml``: install ProFTPd FTP server
+
+ - ``install_galaxy.yml``: clone and configure the Galaxy code, create
+    the database user and database for Galaxy, and configure Nginx to
+    act as web proxy
    
 Running the playbooks
 ---------------------
