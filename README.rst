@@ -48,12 +48,14 @@ Notes on the deployment
  - To remove the Galaxy database and user from PostgreSQL, become the
    ``postgres`` user, start the ``psql`` console application and do::
 
+       DROP ROLE galaxy_ftp;
        DROP ROLE galaxy;
        DROP DATABASE galaxy_palfinder;
 
  - If deploying to a virtual machine and using port forwarding to
    connect to the Nginx/Galaxy server, it may be necessary to open
-   port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``.
+   port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``
+   (similarly port 443 for SSL access and port 21 for FTP upload).
 
 Known Issues
 ------------
