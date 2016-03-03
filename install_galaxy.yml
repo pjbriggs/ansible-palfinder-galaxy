@@ -51,6 +51,11 @@
       path='{{ galaxy_dir }}'
       state=directory
 
+  - name: Create tool dependencies directory
+    file:
+      path='{{ galaxy_dir }}/tool_dependencies'
+      state=directory
+
   - name: Clone Galaxy source
     git:
       repo='{{ galaxy_repo }}'
@@ -108,6 +113,7 @@
     - { option: 'require_login', value: 'True' }
     - { option: 'allow_user_impersonation', value: 'True' }
     - { option: 'enable_quotas', value: 'True' }
+    - { option: 'tool_dependency_dir', value: '../tool_dependency_dir' }
     when: created_config_file | success
     register: configured_general_settings
 
