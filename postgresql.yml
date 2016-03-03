@@ -1,5 +1,4 @@
-# Install and configure PostgreSQL on remote server and set up
-# database user and database for the Galaxy instance
+# Install, configure and start PostgreSQL on remote server
 
 ---
 # Set up the PostgreSQL server
@@ -10,7 +9,6 @@
     with_items:
     - postgresql
     - postgresql-server
-    - python-psycopg2
     register: postgresql_installed
 
   - name: Check if PostgreSQL is initialised
@@ -53,27 +51,3 @@
   handlers:
   - name: Restart PostgreSQL
     service: name=postgresql state=restarted
-
-# Set up the Galaxy user and database
-- hosts: '{{ hosts }}'
-  become_user: postgres
-  vars:
-    - galaxy_user: galaxy
-    - galaxy_db: galaxy_palfinder
-  tasks:
-  - name: Create PostgreSQL Galaxy user
-    postgresql_user:
-      name='{{ galaxy_user }}'
-      password='{{ galaxy_user }}'
-      role_attr_flags=NOSUPERUSER
-      state=present
-    when: postgresql_started | success
-    register: postgresql_galaxy_user_created
-
-  - name: Create PostgreSQL database
-    postgresql_db:
-      name='{{ galaxy_db }}'
-      owner='{{ galaxy_user }}'
-      state=present
-    when: postgresql_galaxy_user_created | success
-    register: postgresql_galaxy_db_created
