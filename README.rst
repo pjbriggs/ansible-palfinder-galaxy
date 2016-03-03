@@ -25,7 +25,7 @@ Running the playbooks
 You must pass in the hosts that the playbooks will be run on via
 the ``ansible-playbook`` command line, for example::
 
-    ansible-playbook python27.yml --extra-vars "hosts=palfinder"
+    ansible-playbook python27.yml [ -b ] --extra-vars "hosts=palfinder"
 
 Variables
 ---------
@@ -45,6 +45,10 @@ Notes on the deployment
 
        DROP ROLE galaxy;
        DROP DATABASE galaxy_palfinder;
+
+ - If deploying to a virtual machine and using port forwarding to
+   connect to the Nginx/Galaxy server, it may be necessary to open
+   port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``.
 
 Known Issues
 ------------
