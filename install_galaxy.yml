@@ -18,6 +18,7 @@
   vars:
     - galaxy_user: galaxy
     - galaxy_db: galaxy_palfinder
+    - galaxy_ftp_user: galaxy_ftp
   tasks:
   - name: Create PostgreSQL Galaxy user
     postgresql_user:
@@ -36,6 +37,25 @@
     when: postgresql_galaxy_user_created | success
     register: postgresql_galaxy_db_created
 
+  - name: Create PostgreSQL Galaxy FTP user
+    postgresql_user:
+      name='{{ galaxy_ftp_user }}'
+      password='{{ galaxy_ftp_user }}'
+      role_attr_flags=NOSUPERUSER
+      state=present
+    when: postgresql_galaxy_user_created | success
+    register: postgresql_galaxy_ftp_user_created
+
+  - name: Assign privileges for Galaxy FTP user
+    postgresql_privs:
+      database='{{ galaxy_db }}'
+      roles='{{ galaxy_ftp_user }}'
+      priv='SELECT'
+      type='table'
+      objs='galaxy_user'
+      state=present
+    when: postgresql_galaxy_ftp_user_created | success
+
 # Install and configure Galaxy
 - hosts: '{{ hosts }}'
   become_user: galaxy
@@ -44,6 +64,8 @@
     - galaxy_version: 'v15.10'
     - galaxy_dir: /home/galaxy/galaxies/palfinder
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
+    - galaxy_ftp_upload_site: ftp://localhost:2121
     - admin_users: 'admin@galaxy.org'
   tasks:
   - name: Create galaxies directory
@@ -54,6 +76,11 @@
   - name: Create tool dependencies directory
     file:
       path='{{ galaxy_dir }}/tool_dependencies'
+      state=directory
+
+  - name: Create FTP upload directory
+    file:
+      path='{{ galaxy_ftp_upload_dir }}'
       state=directory
 
   - name: Clone Galaxy source
@@ -91,7 +118,7 @@
     when: created_config_file | success
     register: disabled_developer_settings
 
-    # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
+  # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
   - name: Configure Galaxy database connection
     ini_file:
       dest='{{ galaxy_root }}/config/galaxy.ini'
@@ -100,6 +127,16 @@
       value='postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder'
     when: created_config_file | success
     register: configured_database_connection
+
+  - name: Configure Galaxy FTP upload settings
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main' option={{ item.option }} value={{ item.value }}
+    with_items:
+    - { option: 'ftp_upload_dir', value: '{{ galaxy_ftp_upload_dir }}' }
+    - { option: 'ftp_upload_site', value: '{{ galaxy_ftp_upload_site }}' }
+    when: created_config_file | success
+    register: configured_ftp_settings
 
   # Set other configuration options
   - name: General Galaxy configuration
@@ -165,3 +202,42 @@
   handlers:
   - name: Restart Nginx
     service: name=nginx state=reloaded
+
+# Configure ProFTPd for FTP upload
+- hosts: '{{ hosts }}'
+  vars:
+    - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
+    - galaxy_db: galaxy_palfinder
+    - galaxy_ftp_user: galaxy_ftp
+    - galaxy_ftp_password: galaxy_ftp
+  tasks:
+  - name: Check if default ProFTPd configuration is present
+    stat: path=/usr/local/etc/proftpd.conf
+    register: proftpd_default_conf
+
+  - name: Move default ProFTPd configuration
+    command: mv /usr/local/etc/proftpd.conf /usr/local/etc/proftpd.conf.bak
+    when: proftpd_default_conf.stat.exists
+
+  # Create proftpd-galaxy.conf file
+  - name: Configure ProFTPd for Galaxy
+    template:
+      dest=/usr/local/etc/proftpd-galaxy.conf
+      src=proftpd-galaxy.conf.j2
+    register: created_proftpd_conf
+
+  # Set up as a service
+  - name: Create init.d script for ProFTPd
+    copy:
+      dest=/etc/init.d/proftpd
+      src=proftpd.init.sh
+      mode='ugo+x'
+    when: created_proftpd_conf | success
+    register: created_proftpd_init
+
+  - name: Start ProFTPd service
+    service:
+      name=proftpd
+      enabled=on
+      state=started
+    when: created_proftpd_init | success
