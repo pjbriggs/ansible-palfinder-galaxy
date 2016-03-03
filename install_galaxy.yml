@@ -44,6 +44,7 @@
     - galaxy_version: 'v15.10'
     - galaxy_dir: /home/galaxy/galaxies/palfinder
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - admin_users: 'admin@galaxy.org'
   tasks:
   - name: Create galaxies directory
     file:
@@ -74,33 +75,50 @@
     when: cloned_source | success
     register: created_config_file
 
-  - name: Configure Galaxy
+  # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
+  - name: Disable Galaxy configuration developer settings
     ini_file:
       dest='{{ galaxy_root }}/config/galaxy.ini'
-      section={{ item.section }}
-      option={{ item.section }}
-      value={{ item.value }}
+      section='app:main' option={{ item.option }} value={{ item.value }}
     with_items:
-    - { section: 'app:main',
-        option: 'database_connection',
-        value: 'postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder' }
-    - { section: 'app:main',
-        option: 'brand',
-        value: 'Microsat' }
-    - { section: 'app:main',
-        option: 'allow_user_dataset_purge',
-        value: 'True' }
+    - { option: 'debug', value: 'False' }
+    - { option: 'use_interactive', value: 'False' }
     when: created_config_file | success
-    register: configured_galaxy
+    register: disabled_developer_settings
 
-  - name: Initialise eggs and sample files (common_startup.sh)
+    # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
+  - name: Configure Galaxy database connection
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main'
+      option='database_connection'
+      value='postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder'
+    when: created_config_file | success
+    register: configured_database_connection
+
+  # Set other configuration options
+  - name: General Galaxy configuration
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main' option={{ item.option }} value={{ item.value }}
+    with_items:
+    - { option: 'brand', value: 'Microsat' }
+    - { option: 'admin_users', value: '{{ admin_users }}' }
+    - { option: 'allow_user_dataset_purge', value: 'True' }
+    - { option: 'require_login', value: 'True' }
+    - { option: 'allow_user_impersonation', value: 'True' }
+    - { option: 'enable_quotas', value: 'True' }
+    when: created_config_file | success
+    register: configured_general_settings
+
+  - name: Run common_startup.sh to initialise sample files and eggs/wheels
     command:
       chdir='{{ galaxy_root }}'
       scripts/common_startup.sh
-    when: configured_galaxy | success
+    when: configured_general_settings | success
     register: done_common_startup
 
-  - name: Initialise the database (create_db.py)
+  - name: Run create_db.py to initialise the database
     command:
       chdir='{{ galaxy_root }}'
       .venv/bin/python scripts/create_db.py
