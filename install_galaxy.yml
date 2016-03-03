@@ -10,6 +10,9 @@
     - git
     - supervisor
     - python-psycopg2
+    - libtool
+    - libtool-ltdl
+    - libtool-ltdl-devel
     register: installed_dependencies
 
 # Set up the Postgres Galaxy user and database
