@@ -124,3 +124,38 @@
       .venv/bin/python scripts/create_db.py
     when: done_common_startup | success
     register: initialised_database
+
+# Configure Nginx proxying
+# See https://wiki.galaxyproject.org/Admin/Config/nginxProxy
+- hosts: '{{ hosts }}'
+  vars:
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+  tasks:
+  - name: Check if default Nginx configuration is present
+    stat: path=/etc/nginx/conf.d/default.conf
+    register: nginx_default_conf
+
+  - name: Move default Nginx configuration
+    command: mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+    when: nginx_default_conf.stat.exists
+
+  # Create galaxy.conf file and put into Nginx conf.d/
+  - name: Configure Nginx proxy
+    template:
+      dest=/etc/nginx/conf.d/galaxy.conf
+      src=nginx-galaxy.conf.j2
+    notify:
+    - Restart Nginx
+
+  # Required to allow Nginx to read static content
+  # from Galaxy's home directory
+  - name: Add Nginx user to galaxy group
+    user:
+      name=nginx
+      groups='nginx,galaxy'
+    notify:
+    - Restart Nginx
+
+  handlers:
+  - name: Restart Nginx
+    service: name=nginx state=reloaded

@@ -17,3 +17,15 @@
       state=present
     when: group_created | success
     register: user_created
+
+# Need write permission on home so that static content
+# can be read by Nginx proxy
+- hosts: '{{ hosts }}'
+  become_user: galaxy
+  tasks:
+  - name: Allow group read on Galaxy user home
+    file:
+      path=/home/galaxy
+      mode='g+rx'
+    when: user_created
+    register: set_group_read_on_galaxy_home

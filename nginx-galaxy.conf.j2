@@ -1,0 +1,42 @@
+# Nginx configuration for Galaxy
+# See https://wiki.galaxyproject.org/Admin/Config/nginxProxy
+#
+# TODO
+# - add SSL
+# - add compression/caching
+upstream galaxy_app {
+    server localhost:8080;
+}
+# if using more than one upstream, disable nginx's round-robin
+# scheme to prevent it from submitting POST requests more than
+# once (this is unsafe)
+proxy_next_upstream off;
+server {
+    listen 80 default;
+    client_max_body_size 10G;
+    location / {
+        proxy_pass   http://galaxy_app;
+        proxy_set_header   X-Forwarded-Host $host;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    }
+    # serve static content for visualization plugins
+    location ~ ^/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+        alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
+    }
+    # Serve static content
+    location /static {
+        alias {{ galaxy_root }}/static;
+    }
+    location /static/style {
+        alias {{ galaxy_root }}/static/style/blue;
+    }
+    location /static/scripts {
+        alias {{ galaxy_root }}/static/scripts/packed;
+    }
+    location /favicon.ico {
+        alias {{ galaxy_root }}/static/favicon.ico;
+    }
+    location /robots.txt {
+        alias {{ galaxy_root }}/static/robots.txt;
+    }
+}
