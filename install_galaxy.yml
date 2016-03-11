@@ -8,7 +8,6 @@
     yum: name={{ item }} state=present
     with_items:
     - git
-    - supervisor
     - python-psycopg2
     - libtool
     - libtool-ltdl
@@ -71,20 +70,15 @@
     - galaxy_ftp_upload_site: ftp://localhost:2121
     - admin_users: 'admin@galaxy.org'
   tasks:
-  - name: Create galaxies directory
+  - name: Create Galaxy directories
     file:
-      path='{{ galaxy_dir }}'
+      path='{{ item }}'
       state=directory
-
-  - name: Create tool dependencies directory
-    file:
-      path='{{ galaxy_dir }}/tool_dependencies'
-      state=directory
-
-  - name: Create FTP upload directory
-    file:
-      path='{{ galaxy_ftp_upload_dir }}'
-      state=directory
+    with_items:
+    - '{{ galaxy_dir }}'
+    - '{{ galaxy_dir }}/tool_dependencies'
+    - '{{ galaxy_ftp_upload_dir }}'
+    - '{{ galaxy_dir }}/logs'
 
   - name: Clone Galaxy source
     git:
@@ -282,3 +276,81 @@
       enabled=on
       state=started
     when: created_proftpd_init | success
+
+# Set up uWSGI
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#uWSGI
+- hosts: '{{ hosts }}'
+  vars:
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+  tasks:
+  - name: Install uWSGI, PasteDeploy and Supervisor
+    pip:
+      name={{ item }}
+      executable='{{ galaxy_root }}/.venv/bin/pip'
+      state=present
+    with_items:
+    - uwsgi
+    - uwsgitop
+    - PasteDeploy
+    - supervisor
+    register: uwsgi_installed
+
+- hosts: '{{ hosts }}'
+  become_user: galaxy
+  vars:
+    - galaxy_repo: https://github.com/galaxyproject/galaxy.git
+    - galaxy_version: 'v15.10'
+    - galaxy_dir: /home/galaxy/galaxies/palfinder
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
+    - galaxy_ftp_upload_site: ftp://localhost:2121
+    - admin_users: 'admin@galaxy.org'
+  tasks:
+  - name: Configure Galaxy uWSGI settings
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='uwsgi' option={{ item.option }} value={{ item.value }}
+    with_items:
+    - { option: 'processes', value: '8' }
+    - { option: 'stats', value: '127.0.0.1:9191' }
+    - { option: 'socket', value: '127.0.0.1:4001' }
+    - { option: 'pythonpath', value: 'lib' }
+    - { option: 'threads', value: '4' }
+    - { option: 'logto', value: '{{ galaxy_dir }}/logs/uwsgi.log' }
+    - { option: 'master', value: 'True' }
+    when: uwsgi_installed | success
+    register: configured_uwsgi_settings
+
+  - name: Configure Galaxy uWSGI settings in app-main
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main' option={{ item.option }} value={{ item.value }}
+    with_items:
+    - { option: 'static_enabled', value: 'False' }
+    - { option: 'track_jobs_in_database', value: 'True' }
+    when: configured_uwsgi_settings | success
+    register: configured_uwsgi_app_main_settings
+
+  - name: Configure Galaxy handler processes
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='server:handler0' option={{ item.option }} value={{ item.value }}
+    with_items:
+    - { option: 'use', value: 'egg:Paste#http' }
+    - { option: 'port', value: '8090' }
+    - { option: 'host', value: '127.0.0.1' }
+    - { option: 'use_threadpool', value: 'true' }
+    - { option: 'threadpool_workers', value: '5' }
+    when: configured_uwsgi_app_main_settings | success
+    register: configured_galaxy_handlers
+
+  # See https://wiki.galaxyproject.org/Admin/Config/Jobs
+  - name: Set up Galaxy job_conf file
+    template:
+      dest='{{ galaxy_root }}/config/job_conf.xml'
+      src=job_conf.xml.j2
+
+  - name: Set up Galaxy supervisord conf file
+    template:
+      dest='{{ galaxy_root }}/config/supervisord.conf'
+      src=supervisord.conf.j2

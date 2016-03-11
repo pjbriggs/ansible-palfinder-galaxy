@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<job_conf>
+    <plugins workers="4">
+        <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
+	<!--
+        <plugin id="drmaa" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner"/>
+	-->
+    </plugins>
+    <handlers default="handlers">
+	<handler id="handler0" tags="handlers"/>
+    </handlers>
+    <destinations default="local">
+        <!-- Destinations define details about remote resources and how jobs
+             should be executed on those remote resources.
+         -->
+        <destination id="local" runner="local"/>
+    </destinations>
+    <tools>
+    </tools>
+    <limits>
+        <limit type="registered_user_concurrent_jobs">2</limit>
+        <limit type="unregistered_user_concurrent_jobs">0</limit>
+        <limit type="job_walltime">24:00:00</limit>
+        <limit type="concurrent_jobs" id="local">2</limit>
+    </limits>
+</job_conf>
+
+    
