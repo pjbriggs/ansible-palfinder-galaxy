@@ -283,7 +283,7 @@
   vars:
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
   tasks:
-  - name: Install uWSGI, PasteDeploy and Supervisor
+  - name: Install uWSGI and PasteDeploy
     pip:
       name={{ item }}
       executable='{{ galaxy_root }}/.venv/bin/pip'
@@ -292,7 +292,6 @@
     - uwsgi
     - uwsgitop
     - PasteDeploy
-    - supervisor
     register: uwsgi_installed
 
 - hosts: '{{ hosts }}'
@@ -350,7 +349,13 @@
       dest='{{ galaxy_root }}/config/job_conf.xml'
       src=job_conf.xml.j2
 
+# Set up Supervisor config for Galaxy
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#Starting_and_Stopping
+- hosts: '{{ hosts }}'
+  vars:
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+  tasks:
   - name: Set up Galaxy supervisord conf file
     template:
-      dest='{{ galaxy_root }}/config/supervisord.conf'
-      src=supervisord.conf.j2
+      dest='/usr/local/etc/supervisord.d/galaxy.ini'
+      src=supervisord-galaxy.ini.j2

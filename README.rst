@@ -18,11 +18,13 @@ The following playbooks exist:
 
  - ``nginx.yml``: install and start the Nginx web server
 
+ - ``supervisord.yml``: install and start the Supervisord service
+
  - ``proftpd.yml``: install ProFTPd FTP server
 
  - ``install_galaxy.yml``: clone and configure the Galaxy code, create
     the database user and database for Galaxy, and configure Nginx to
-    act as web proxy
+    act as web proxy with uWSGI and Supervisord.
    
 Running the playbooks
 ---------------------
@@ -56,6 +58,10 @@ Notes on the deployment
    connect to the Nginx/Galaxy server, it may be necessary to open
    port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``
    (similarly port 443 for SSL access and port 21 for FTP upload).
+
+ - We need to install Supervisord as the default version available
+   via ``yum`` on Scientific Linux is too old for the syntax used
+   by the Galaxy config.
 
 Known Issues
 ------------

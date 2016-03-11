@@ -1,0 +1,29 @@
+# Supervisord configuration for Galaxy
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#Starting_and_Stopping
+
+[program:galaxy_uwsgi]
+command         = {{ galaxy_root }}/.venv/bin/uwsgi --plugin python --ini-paste {{ galaxy_root }}/config/galaxy.ini
+directory       = {{ galaxy_root }}
+umask           = 022
+autostart       = true
+autorestart     = true
+startsecs       = 10
+user            = galaxy
+environment     = PATH={{ galaxy_root }}/.venv:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galaxy_root }}/.python-eggs,PYTHONPATH={{ galaxy_root }}/eggs/PasteDeploy-1.5.0-py2.7.egg
+numprocs        = 1
+stopsignal      = INT
+
+[program:handler]
+command         = {{ galaxy_root }}/.venv/bin/python ./scripts/paster.py serve config/galaxy.ini --server-name=handler%(process_num)s --pid-file={{ galaxy_root }}/handler%(process_num)s.pid --log-file={{ galaxy_root }}/handler%(process_num)s.log
+directory       = {{ galaxy_root }}
+process_name    = handler%(process_num)s
+numprocs        = 1
+umask           = 022
+autostart       = true
+autorestart     = true
+startsecs       = 15
+user            = galaxy
+environment     = PYTHON_EGG_CACHE={{ galaxy_root }}/.python-eggs,SGE_ROOT=/var/lib/gridengine
+
+[group:galaxy]
+programs = handler, galaxy_uwsgi
