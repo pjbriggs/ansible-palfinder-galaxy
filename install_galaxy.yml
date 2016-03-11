@@ -175,6 +175,7 @@
 # https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
 - hosts: '{{ hosts }}'
   vars:
+    - galaxy_dir: /home/galaxy/galaxies/palfinder
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
     - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
   tasks:
@@ -199,6 +200,14 @@
       job="find {{ galaxy_ftp_upload_dir }} -mindepth 2  -mtime +5 -exec rm -rf {} \;"
       hour=00 minute=00
       state=present
+
+# Set up log rotation of Galaxy logs
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Rotate_log_files
+  # Create galaxy.conf file and put into Nginx conf.d/
+  - name: Rotate Galaxy log files
+    template:
+      dest=/etc/logrotate.d/galaxy
+      src=logrotate-galaxy.j2
 
 # Configure Nginx proxying
 # See https://wiki.galaxyproject.org/Admin/Config/nginxProxy

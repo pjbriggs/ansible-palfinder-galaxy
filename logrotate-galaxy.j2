@@ -1,0 +1,12 @@
+# logrotate file for Galaxy
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Rotate_log_files
+#
+{{ galaxy_root }}/*.log {
+  weekly
+  rotate 8
+  copytruncate
+  compress
+  missingok
+  notifempty
+  olddir {{ galaxy_dir }}/logs
+}
