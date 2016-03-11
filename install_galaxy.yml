@@ -176,6 +176,7 @@
 - hosts: '{{ hosts }}'
   vars:
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
   tasks:
   - name: Set up cron jobs to purge deleted data
     cron:
@@ -190,6 +191,14 @@
     - { name: 'Purge libraries', script: 'purge_libraries.sh' }
     - { name: 'Purge folders', script: 'purge_folders.sh' }
     - { name: 'Purge datasets', script: 'purge_datasets.sh' }
+
+  - name: Set up cron jobs to clean up FTP area
+    cron:
+      user=galaxy
+      name="Delete old FTP files"
+      job="find {{ galaxy_ftp_upload_dir }} -mindepth 2  -mtime +5 -exec rm -rf {} \;"
+      hour=00 minute=00
+      state=present
 
 # Configure Nginx proxying
 # See https://wiki.galaxyproject.org/Admin/Config/nginxProxy
