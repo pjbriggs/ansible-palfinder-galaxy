@@ -36,7 +36,7 @@
     command:
       chdir='/root/proftpd-{{ proftpd_version }}'
       {{item}}
-      creates=/usr/local/bin/proftpd
+      creates=/usr/local/sbin/proftpd
     with_items:
     - ./configure --prefix=/usr/local --disable-auth-file --disable-ncurses --disable-ident --disable-shadow --enable-openssl --with-modules=mod_sql:mod_sql_postgres:mod_sql_passwd
     - make
