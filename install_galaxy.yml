@@ -277,23 +277,8 @@
       state=started
     when: created_proftpd_init | success
 
-# Set up uWSGI
+# Install and configure uWSGI and set up handlers
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#uWSGI
-- hosts: '{{ hosts }}'
-  vars:
-    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
-  tasks:
-  - name: Install uWSGI and PasteDeploy
-    pip:
-      name={{ item }}
-      executable='{{ galaxy_root }}/.venv/bin/pip'
-      state=present
-    with_items:
-    - uwsgi
-    - uwsgitop
-    - PasteDeploy
-    register: uwsgi_installed
-
 - hosts: '{{ hosts }}'
   become_user: galaxy
   vars:
@@ -305,6 +290,18 @@
     - galaxy_ftp_upload_site: ftp://localhost:2121
     - admin_users: 'admin@galaxy.org'
   tasks:
+  - name: Install uWSGI and PasteDeploy
+    pip:
+      name={{ item }}
+      executable='{{ galaxy_root }}/.venv/bin/pip'
+      extra_args='--no-binary :all:'
+      state=present
+    with_items:
+    - uwsgi
+    - uwsgitop
+    - PasteDeploy
+    register: uwsgi_installed
+
   - name: Configure Galaxy uWSGI settings
     ini_file:
       dest='{{ galaxy_root }}/config/galaxy.ini'
@@ -359,3 +356,9 @@
     template:
       dest='/usr/local/etc/supervisord.d/galaxy.ini'
       src=supervisord-galaxy.ini.j2
+    notify:
+    - Restart Supervisord
+
+  handlers:
+  - name: Restart Supervisord
+    service: name=supervisord state=reloaded
