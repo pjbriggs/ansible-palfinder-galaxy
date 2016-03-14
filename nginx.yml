@@ -1,7 +1,7 @@
 # Install, configure and start Nginx on remote server
 
 ---
-# Set up the Nginx
+# Set up Nginx
 - hosts: '{{ hosts }}'
   tasks:
   - name: Install Nginx
@@ -30,7 +30,7 @@
     register: httpd_set_sebooleans
     notify:
     - Start Nginx
-    
+
   handlers:
    - name: Start Nginx
      service: name=nginx state=started
