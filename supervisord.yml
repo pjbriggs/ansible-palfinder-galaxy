@@ -9,10 +9,17 @@
   vars:
     supervisor_version: '3.2.2'
   tasks:
+  - name: Uninstall yum version of Supervisor
+    yum:
+      name=supervisor
+      state=absent
+    register: uninstalled_supervisor
+
   - name: Download Supervisor source
     get_url:
       url=https://pypi.python.org/packages/source/s/supervisor/supervisor-{{supervisor_version}}.tar.gz
       dest=/root
+    when: uninstalled_supervisor | success
     register: downloaded_supervisor_src
 
   - name: Unpack Supervisor source
@@ -49,12 +56,16 @@
     when: installed_supervisor | success
     register: created_supervisord_conf_dir
 
-  - name: Add include to Supervisord conf file
+  - name: Update Supervisord conf file
     ini_file:
       dest='/usr/local/etc/supervisord.conf'
-      section='include'
-      option='files'
-      value='/usr/local/etc/supervisord.d/*.ini'
+      section={{ item.section }}
+      option={{ item.option }}
+      value={{ item.value }}
+    with_items:
+    - { section: 'supervisord', option: 'logfile', value: '/var/log/supervisor/supervisord.log' }
+    - { section: 'supervisord', option: 'pidfile', value: '/var/run/supervisord.pid' }
+    - { section: 'include', option: 'files', value: '/usr/local/etc/supervisord.d/*.ini' }
     when: created_supervisord_conf | success
     notify: Restart Supervisord
 
