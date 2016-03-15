@@ -46,7 +46,7 @@ case $1 in
 	;;
 
     status)
-	if [ -n "$pid"]; then
+	if [ -n "$pid" ]; then
 	    echo "proftpd [PID $pid] running"
 	else
             echo "proftpd stopped"
