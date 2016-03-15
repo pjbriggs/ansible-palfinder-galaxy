@@ -63,6 +63,9 @@ Notes on the deployment
    via ``yum`` on Scientific Linux is too old for the syntax used
    by the Galaxy config.
 
+ - Check that port 21 is open if you want to make the FTP upload
+   available.
+
 Known Issues
 ------------
 
