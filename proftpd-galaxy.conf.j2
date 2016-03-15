@@ -4,7 +4,8 @@
 ServerName			"Galaxy FTP File Upload"
 ServerType			standalone
 DefaultServer			on
-PidFile                         /var/run/proftpd/proftpd-galaxy.pid
+PidFile                         /var/run/proftpd.pid
+SystemLog                       /var/log/proftp.log
 
 # Port 21 is the standard FTP port.
 Port				21
@@ -52,7 +53,9 @@ AllowStoreRestart               on
 </Limit>
 
 # Do not authenticate against real (system) users
-AuthPAM                         off
+<IfModule mod_auth_pam.c>
+  AuthPAM                         off
+</IfModule>
 
 # Set up mod_sql_password - Galaxy passwords are stored as hex-encoded SHA1
 SQLPasswordEngine               on
