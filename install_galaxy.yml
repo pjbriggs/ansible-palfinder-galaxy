@@ -4,7 +4,7 @@
 # Install dependencies
 - hosts: '{{ hosts }}'
   tasks:
-  - name: Fetch Galaxy dependencies
+  - name: Install Galaxy dependencies
     yum: name={{ item }} state=present
     with_items:
     - git
@@ -12,6 +12,8 @@
     - libtool
     - libtool-ltdl
     - libtool-ltdl-devel
+    - java-1.8.0-openjdk
+    - samtools
     register: installed_dependencies
 
 # Set up the Postgres Galaxy user and database
