@@ -12,6 +12,7 @@
     with_items:
     - postgresql-devel
     - openssl-devel
+    - pam-devel
     register: installed_proftpd_dependencies
 
   - name: Download ProFTPd source
