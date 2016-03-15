@@ -1,0 +1,91 @@
+# Create an admin user account
+
+---
+# Add master API key
+- hosts: '{{ hosts }}'
+  become_user: galaxy
+  vars:
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+  tasks:
+  - name: Install Nebulizer
+    pip:
+      name='https://github.com/pjbriggs/nebulizer/archive/v0.1.0.tar.gz'
+      executable='{{ galaxy_root }}/.venv/bin/pip'
+      extra_args='--no-binary :all:'
+      state=present
+    register: nebulizer_installed
+
+  - name: Copy user and tool utility scripts
+    copy:
+      src={{ item }}
+      dest='{{ galaxy_root }}/{{ item }}'
+      mode='ugo+rx'
+    with_items:
+    - create_user.sh
+    - install_tool.sh
+    when: nebulizer_installed | success
+
+  - name: Add master API key
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main' option='master_api_key' value={{ master_api_key }}
+    when: nebulizer_installed | success
+    register: added_master_api_key
+
+# Restart Galaxy
+- hosts: '{{ hosts }}'
+  tasks:
+  - name: Restart Galaxy with master API key
+    supervisorctl:
+      name='galaxy:'
+      state=restarted
+      supervisorctl_path=/usr/local/bin/supervisorctl
+      config=/usr/local/etc/supervisord.conf
+    when: added_master_api_key | success
+    register: restart_with_master_api_key
+
+# Create admin user
+- hosts: '{{ hosts }}'
+  become_user: galaxy
+  vars:
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+  tasks:
+  - name: Create Galaxy admin user account
+    command:
+      chdir={{ galaxy_root }}
+      {{ galaxy_root }}/create_user.sh admin@galaxy.org admin {{ master_api_key }}
+    when: restart_with_master_api_key
+    register: created_admin_user
+
+# Install tools
+  - name: Install Galaxy tools
+    command:
+      chdir={{ galaxy_root }}
+      {{ galaxy_root }}/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }}
+    with_items:
+    - { owner: 'devteam', tool: 'fastqc' }
+    - { owner: 'pjbriggs', tool: 'trimmomatic' }
+    - { owner: 'pjbriggs', tool: 'pal_finder' }
+    when: created_admin_user | success
+    register: installed_tools
+
+# Remove master API key
+  - name: Remove master API key
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main' option='master_api_key'
+      state='absent'
+    when: installed_tools | success
+    register: removed_master_api_key
+
+# Restart Galaxy
+- hosts: '{{ hosts }}'
+  tasks:
+  - name: Restart Galaxy without master API key
+    supervisorctl:
+      name='galaxy:'
+      state=restarted
+      supervisorctl_path=/usr/local/bin/supervisorctl
+      config=/usr/local/etc/supervisord.conf
+    when: removed_master_api_key | success
+
