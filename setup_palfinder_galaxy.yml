@@ -32,6 +32,14 @@
     when: nebulizer_installed | success
     register: added_master_api_key
 
+# Update the tool_conf.xml to remove unwanted tools
+  - name: Update tool_conf.xml
+    copy:
+      src=palfinder-tool_conf.xml
+      dest='{{ galaxy_root}}/config/tool_conf.xml'
+    when: added_master_api_key | success
+    register: updated_tool_conf
+
 # Restart Galaxy
 - hosts: '{{ hosts }}'
   tasks:
@@ -41,7 +49,7 @@
       state=restarted
       supervisorctl_path=/usr/local/bin/supervisorctl
       config=/usr/local/etc/supervisord.conf
-    when: added_master_api_key | success
+    when: updated_tool_conf | success
     register: restart_with_master_api_key
 
 # Create admin user
@@ -49,11 +57,13 @@
   become_user: galaxy
   vars:
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - galaxy_admin_user: admin@galaxy.org
+    - galaxy_admin_passwd: galaxyadmin
   tasks:
   - name: Create Galaxy admin user account
     command:
       chdir={{ galaxy_root }}
-      {{ galaxy_root }}/create_user.sh palfinder.admin@galaxy.org galaxyadmin {{ master_api_key }}
+      {{ galaxy_root }}/create_user.sh {{ galaxy_admin_user }} {{ galaxy_admin_passwd }} {{ master_api_key }}
     when: restart_with_master_api_key
     register: created_admin_user
 
