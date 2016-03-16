@@ -22,7 +22,6 @@
   vars:
     - galaxy_user: galaxy
     - galaxy_db: galaxy_palfinder
-    - galaxy_ftp_user: galaxy_ftp
   tasks:
   - name: Create PostgreSQL Galaxy user
     postgresql_user:
@@ -40,25 +39,6 @@
       state=present
     when: postgresql_galaxy_user_created | success
     register: postgresql_galaxy_db_created
-
-  - name: Create PostgreSQL Galaxy FTP user
-    postgresql_user:
-      name='{{ galaxy_ftp_user }}'
-      password='{{ galaxy_ftp_user }}'
-      role_attr_flags=NOSUPERUSER
-      state=present
-    when: postgresql_galaxy_user_created | success
-    register: postgresql_galaxy_ftp_user_created
-
-  - name: Assign privileges for Galaxy FTP user
-    postgresql_privs:
-      database='{{ galaxy_db }}'
-      roles='{{ galaxy_ftp_user }}'
-      priv='SELECT'
-      type='table'
-      objs='galaxy_user'
-      state=present
-    when: postgresql_galaxy_ftp_user_created | success
 
 # Install and configure Galaxy
 - hosts: '{{ hosts }}'
@@ -239,6 +219,33 @@
   handlers:
   - name: Restart Nginx
     service: name=nginx state=reloaded
+
+# Set up Postgresql Galaxy FTP user
+# NB do this after populating the database
+- hosts: '{{ hosts }}'
+  become_user: postgres
+  vars:
+    - galaxy_db: galaxy_palfinder
+    - galaxy_ftp_user: galaxy_ftp
+  tasks:
+  - name: Create PostgreSQL Galaxy FTP user
+    postgresql_user:
+      name='{{ galaxy_ftp_user }}'
+      password='{{ galaxy_ftp_user }}'
+      role_attr_flags=NOSUPERUSER
+      state=present
+    when: initialised_database | success
+    register: postgresql_galaxy_ftp_user_created
+
+  - name: Assign privileges for Galaxy FTP user
+    postgresql_privs:
+      database='{{ galaxy_db }}'
+      roles='{{ galaxy_ftp_user }}'
+      priv='SELECT'
+      type='table'
+      objs='galaxy_user'
+      state=present
+    when: postgresql_galaxy_ftp_user_created | success
 
 # Configure ProFTPd for FTP upload
 - hosts: '{{ hosts }}'
