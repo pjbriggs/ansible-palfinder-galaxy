@@ -53,7 +53,7 @@
   - name: Create Galaxy admin user account
     command:
       chdir={{ galaxy_root }}
-      {{ galaxy_root }}/create_user.sh admin@galaxy.org admin {{ master_api_key }}
+      {{ galaxy_root }}/create_user.sh palfinder.admin@galaxy.org galaxyadmin {{ master_api_key }}
     when: restart_with_master_api_key
     register: created_admin_user
 
