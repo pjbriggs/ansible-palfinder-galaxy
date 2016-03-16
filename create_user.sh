@@ -37,5 +37,5 @@ while [ $ntries -lt 10 ] ; do
     ntries=$((ntries+1))
     sleep 5
 done
-echo Failed to create user $USER 2>&1
+echo Failed to create user $USER >&2
 exit 1

@@ -32,7 +32,7 @@ fi
 # Install the tool
 $MANAGE_TOOLS install $URL -k $APIKEY $SHED $OWNER $TOOL
 if [ $? -ne 0 ] ; then
-    echo Failed to install tool $TOOL 2>&1
+    echo Failed to install tool $TOOL >&2
     exit 1
 fi
 
@@ -46,5 +46,5 @@ while [ $ntries -lt 10 ] ; do
     ntries=$((ntries+1))
     sleep 5
 done
-echo Failed to install tool $TOOL 2>&1
+echo Failed to install tool $TOOL >&2
 exit 1
