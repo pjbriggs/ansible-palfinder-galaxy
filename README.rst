@@ -54,9 +54,9 @@ Notes on the deployment
  - To remove the Galaxy database and user from PostgreSQL, become the
    ``postgres`` user, start the ``psql`` console application and do::
 
-       DROP ROLE galaxy_ftp;
-       DROP ROLE galaxy;
        DROP DATABASE galaxy_palfinder;
+       DROP ROLE galaxy;
+       DROP ROLE galaxy_ftp;
 
  - If deploying to a virtual machine and using port forwarding to
    connect to the Nginx/Galaxy server, it may be necessary to open
