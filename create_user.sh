@@ -19,18 +19,28 @@ function user_exists() {
 }
 
 # Check for user
-if [ -n $(user_exists) ] ; then
+if [ -n "$(user_exists)" ] ; then
     echo $USER: already present
     exit
 fi
 
+# Check password length
+if [ $(wc -c $PASSWD) -lt 6 ] ; then
+    echo Password too short >&2
+    exit 1
+fi
+
 # Create the user
 $MANAGE_USERS create $URL -k $APIKEY -p $PASSWD $USER
+if [ $? -ne 0 ] ; then
+    echo Failed to create user $USER >&2
+    exit 1
+fi
 
 # Check that user exists
 ntries=0
 while [ $ntries -lt 10 ] ; do
-    if [ -n $(user_exists) ] ; then
+    if [ -n "$(user_exists)" ] ; then
 	echo $USER: created
 	exit
     fi
