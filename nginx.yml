@@ -20,17 +20,12 @@
     with_items:
     - httpd_can_network_connect
     - httpd_enable_homedirs
+    when: nginx_installed | success
     register: httpd_set_sebooleans
-    notify:
-    - Start Nginx
 
-  - name: Allow httpd to network connect
-    seboolean:
-      name=httpd_can_network_connect state=yes persistent=yes
-    register: httpd_set_sebooleans
-    notify:
-    - Start Nginx
-
-  handlers:
-   - name: Start Nginx
-     service: name=nginx state=started
+  - name: Start Nginx
+    service:
+      name=nginx
+      state=started
+      enabled=on
+    when: httpd_set_sebooleans | success
