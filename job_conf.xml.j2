@@ -13,7 +13,12 @@
         <!-- Destinations define details about remote resources and how jobs
              should be executed on those remote resources.
          -->
-        <destination id="local" runner="local"/>
+        <destination id="local" runner="local">
+	  <!-- Needed for 16.01
+	       See https://docs.galaxyproject.org/en/master/admin/framework_dependencies.html#galaxy-job-handlers
+	  -->
+          <env file="{{ galaxy_root }}/.venv/bin/activate" />
+	</destination>
     </destinations>
     <tools>
     </tools>
@@ -24,5 +29,3 @@
         <limit type="concurrent_jobs" id="local">2</limit>
     </limits>
 </job_conf>
-
-    

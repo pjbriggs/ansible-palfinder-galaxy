@@ -45,7 +45,7 @@
   become_user: galaxy
   vars:
     - galaxy_repo: https://github.com/galaxyproject/galaxy.git
-    - galaxy_version: 'v15.10'
+    - galaxy_version: 'v16.01'
     - galaxy_dir: /home/galaxy/galaxies/palfinder
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
     - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
