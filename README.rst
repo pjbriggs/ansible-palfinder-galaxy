@@ -25,6 +25,10 @@ The following playbooks exist:
  - ``install_galaxy.yml``: clone and configure the Galaxy code, create
     the database user and database for Galaxy, and configure Nginx to
     act as web proxy with uWSGI and Supervisord.
+
+ - ``setup_palfinder_galaxy.yml``: create admin user and install
+   tools needed for palfinder workflow. (NB you need to set the
+   ``master_api_key`` variable when running this playbook.)
    
 Running the playbooks
 ---------------------
