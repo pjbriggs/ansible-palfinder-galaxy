@@ -1,4 +1,4 @@
-# Create an admin user account
+# Set up Palfinder-specific Galaxy server
 
 ---
 # Add master API key
@@ -6,6 +6,7 @@
   become_user: galaxy
   vars:
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - galaxy_admin_user: admin@galaxy.org
   tasks:
   - name: Install Nebulizer
     pip:
@@ -31,6 +32,32 @@
       section='app:main' option='master_api_key' value={{ master_api_key }}
     when: nebulizer_installed | success
     register: added_master_api_key
+
+  # Upload static pages (welcome, t&cs etc)
+  - name: Upload static pages
+    copy:
+      src={{ item.src }}
+      dest='{{ galaxy_root }}/static/{{ item.dest }}'
+    with_items:
+    - { src: 'palfinder-welcome.html', dest: 'welcome.html' }
+    - { src: 'palfinder-terms.html', dest: 'terms.html' }
+    when: added_master_api_key | success
+    register: uploaded_static_content
+
+  # Set configuration options specific to palfinder service
+  - name: General Galaxy configuration
+    ini_file:
+      dest='{{ galaxy_root }}/config/galaxy.ini'
+      section='app:main' option={{ item.option }} value={{ item.value }}
+    with_items:
+    - { option: 'brand', value: 'Microsat' }
+    - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
+    - { option: 'require_login', value: 'True' }
+    - { option: 'enable_quotas', value: 'True' }
+    - { option: 'welcome_url', value: '/static/welcome.html' }
+    - { option: 'terms_url', value: '/static/terms.html' }
+    when: uploaded_static_content | success
+    register: configured_general_settings
 
 # Update the tool_conf.xml to remove unwanted tools
   - name: Update tool_conf.xml

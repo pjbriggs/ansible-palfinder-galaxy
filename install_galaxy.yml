@@ -50,7 +50,6 @@
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
     - galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
     - galaxy_ftp_upload_site: ftp://localhost:2121
-    - admin_users: 'admin@galaxy.org'
   tasks:
   - name: Create Galaxy directories
     file:
@@ -123,12 +122,8 @@
       dest='{{ galaxy_root }}/config/galaxy.ini'
       section='app:main' option={{ item.option }} value={{ item.value }}
     with_items:
-    - { option: 'brand', value: 'Microsat' }
-    - { option: 'admin_users', value: '{{ admin_users }}' }
     - { option: 'allow_user_dataset_purge', value: 'True' }
-    - { option: 'require_login', value: 'True' }
     - { option: 'allow_user_impersonation', value: 'True' }
-    - { option: 'enable_quotas', value: 'True' }
     - { option: 'tool_dependency_dir', value: '../tool_dependency_dir' }
     when: created_config_file | success
     register: configured_general_settings
