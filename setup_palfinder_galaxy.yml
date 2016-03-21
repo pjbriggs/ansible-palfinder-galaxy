@@ -7,6 +7,8 @@
   vars:
     - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
     - galaxy_admin_user: admin@galaxy.org
+    - galaxy_user: galaxy
+    - galaxy_db: galaxy_palfinder
   tasks:
   - name: Install Nebulizer
     pip:
@@ -16,7 +18,7 @@
       state=present
     register: nebulizer_installed
 
-  - name: Copy user and tool utility scripts
+  - name: Copy utility scripts
     copy:
       src={{ item }}
       dest='{{ galaxy_root }}/{{ item }}'
@@ -25,6 +27,7 @@
     - create_user.sh
     - install_tool.sh
     - delete_old_datasets.sh
+    - set_default_quota.sh
     when: nebulizer_installed | success
 
   - name: Add master API key
@@ -68,6 +71,14 @@
     when: added_master_api_key | success
     register: updated_tool_conf
 
+# Set the default quota
+  - name: Set default quota
+    command:
+      chdir={{ galaxy_root }}
+      {{ galaxy_root }}/set_default_quota.sh {{ galaxy_db }} {{ galaxy_user }} {{ galaxy_user }} 20
+    when: updated_tool_conf | success
+    register: set_default_quota
+
 # Restart Galaxy
 - hosts: '{{ hosts }}'
   tasks:
@@ -77,7 +88,7 @@
       state=restarted
       supervisorctl_path=/usr/local/bin/supervisorctl
       config=/usr/local/etc/supervisord.conf
-    when: updated_tool_conf | success
+    when: set_default_quota | success
     register: restart_with_master_api_key
 
 # Create admin user
