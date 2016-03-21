@@ -24,6 +24,7 @@
     with_items:
     - create_user.sh
     - install_tool.sh
+    - delete_old_datasets.sh
     when: nebulizer_installed | success
 
   - name: Add master API key
@@ -125,4 +126,19 @@
       supervisorctl_path=/usr/local/bin/supervisorctl
       config=/usr/local/etc/supervisord.conf
     when: removed_master_api_key | success
+
+# Cron job to delete 'old' datasets
+- hosts: '{{ hosts }}'
+  vars:
+    - galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+    - galaxy_user: galaxy
+    - galaxy_db: galaxy_palfinder
+  tasks:
+  - name: Set up cron jobs to delete old datasets
+    cron:
+      user=galaxy
+      name="Delete old datasets"
+      job="{{ galaxy_root }}/delete_old_datasets.sh {{ galaxy_db }} {{ galaxy_user }} {{ galaxy_user }} '30 days'"
+      hour=23 minute=00
+      state=present
 
