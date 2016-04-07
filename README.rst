@@ -22,6 +22,8 @@ The following playbooks exist:
 
  - ``proftpd.yml``: install ProFTPd FTP server
 
+ - ``nfslock.yml``: install and start the nfslock/statd service
+
  - ``install_galaxy.yml``: clone and configure the Galaxy code, create
     the database user and database for Galaxy, and configure Nginx to
     act as web proxy with uWSGI and Supervisord.
