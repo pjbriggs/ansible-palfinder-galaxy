@@ -1,0 +1,12 @@
+---
+- include: python27.yml
+
+- include: nginx.yml
+
+- include: postgresql.yml
+
+- include: proftpd.yml
+
+- include: nfslock.yml
+
+- include: supervisord.yml

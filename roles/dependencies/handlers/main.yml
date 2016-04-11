@@ -1,0 +1,6 @@
+---
+- name: Restart PostgreSQL
+  service: name=postgresql state=restarted
+
+- name: Restart Supervisord
+  service: name=supervisord state=reloaded

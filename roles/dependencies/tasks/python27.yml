@@ -1,0 +1,72 @@
+# Build and install Python 2.7 on the remote host
+# Also installs pip and virtualenv packages
+
+---
+- name: Install Python build dependencies
+  yum: state=present name={{item}}
+  with_items:
+  - autoconf
+  - make
+  - automake
+  - gcc
+  - bzip2
+  - ncurses
+  - openssl
+  - readline
+  - sqlite
+  - zlib
+  - bzip2-devel
+  - ncurses-devel
+  - openssl-devel
+  - readline-devel
+  - sqlite-devel
+  - zlib-devel
+  - tkinter
+  register: installed_python_dependencies
+
+- name: Download Python 2.7
+  get_url:
+    url='https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
+    dest=/root
+  when: installed_python_dependencies | success
+  register: downloaded_python_27
+
+- name: Unpack Python 2.7
+  unarchive:
+    src='/root/Python-{{ python_version }}.tgz'
+    dest=/root
+    copy=no
+    owner=root
+    group=root
+    creates='/root/Python-{{ python_version }}'
+  when: downloaded_python_27 | success
+  register: unpacked_python_27
+
+- name: Install Python 2.7
+  command:
+    chdir='/root/Python-{{ python_version }}'
+    {{item}}
+    creates=/usr/local/bin/python2.7
+  with_items:
+  - ./configure --prefix={{ python_install_dir }}
+  - make install
+  when: unpacked_python_27 | success
+  register: installed_python_27
+
+- name: Install Pip
+  command:
+    creates={{ python_install_dir }}/bin/pip
+    "{{item}}"
+  with_items:
+  - "{{ python_install_dir }}/bin/python2.7 -m ensurepip"
+  - "{{ python_install_dir }}/pip install --upgrade pip"
+  when: installed_python_27 | success
+  register: installed_pip
+
+- name: Install Virtualenv
+  pip:
+    name=virtualenv
+    state=present
+    executable={{ python_install_dir }}/bin/pip
+  when: installed_pip | success
+  register: installed_virtualenv
