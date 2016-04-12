@@ -1,0 +1,11 @@
+---
+- hosts: '{{ hosts }}'
+  vars:
+  - galaxy_name: "palfinder"
+  - galaxy_user: "galaxy"
+  - galaxy_dir: "/home/galaxy/galaxies/palfinder"
+  - galaxy_version: "v16.01"
+  roles:
+  - dependencies
+  - galaxybase
+  - palfinder
