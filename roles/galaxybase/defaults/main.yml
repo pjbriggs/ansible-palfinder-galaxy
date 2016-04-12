@@ -1,9 +1,15 @@
 ---
+# Name for Galaxy instance
+galaxy_name: "palfinder"
+
 # User running Galaxy service
 galaxy_user: galaxy
 
 # Postgresql database
 galaxy_db: galaxy_palfinder
+
+# Galaxy web server name
+galaxy_server_name: palfinder.ls.manchester.ac.uk
 
 # Galaxy source code
 galaxy_repo: https://github.com/galaxyproject/galaxy.git
@@ -15,6 +21,6 @@ galaxy_root: "{{ galaxy_dir }}/galaxy"
 
 # FTP uploads
 galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
-galaxy_ftp_upload_site: ftp://localhost:2121
+galaxy_ftp_upload_site: "ftp://{{ galaxy_server_name }}"
 galaxy_ftp_user: galaxy_ftp
 galaxy_ftp_password: galaxy_ftp

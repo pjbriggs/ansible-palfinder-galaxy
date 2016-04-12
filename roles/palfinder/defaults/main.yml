@@ -1,7 +1,4 @@
 ---
-# Name for Galaxy instance
-galaxy_name: "palfinder"
-
 # User running Galaxy service
 galaxy_user: galaxy
 

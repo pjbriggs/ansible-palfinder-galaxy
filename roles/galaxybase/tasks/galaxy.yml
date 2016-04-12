@@ -74,6 +74,8 @@
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='app:main' option={{ item.option }} value={{ item.value }}
   with_items:
+  - { option: 'brand', value: '{{ galaxy_name }}' }
+  - { option: 'logo_url', value: 'http://{{ galaxy_server_name }}' }
   - { option: 'allow_user_dataset_purge', value: 'True' }
   - { option: 'allow_user_impersonation', value: 'True' }
   - { option: 'tool_dependency_dir', value: '../tool_dependency_dir' }

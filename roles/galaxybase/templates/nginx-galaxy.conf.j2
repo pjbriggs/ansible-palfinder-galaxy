@@ -10,6 +10,7 @@
 # once (this is unsafe)
 proxy_next_upstream off;
 server {
+    server_name {{ galaxy_server_name }};
     listen 80 default;
     client_max_body_size 10G;
     uwsgi_read_timeout 180;
