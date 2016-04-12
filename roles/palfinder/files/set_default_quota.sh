@@ -23,6 +23,9 @@ WHERE
    NOT EXISTS (
       SELECT id FROM quota WHERE id = 1
    );
+UPDATE quota
+   SET update_time = NOW(), bytes = $quota_bytes
+WHERE id = 1;
 INSERT INTO default_quota_association
    (id,create_time,update_time,type,quota_id)
    SELECT 1,NOW(),NOW(),'registered',1
