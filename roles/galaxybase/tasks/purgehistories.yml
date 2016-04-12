@@ -1,0 +1,22 @@
+---
+- name: Set up cron jobs to purge deleted data
+  cron:
+    user=galaxy
+    name={{ item.name }}
+    job="sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
+    weekday=00 hour=03 minute=00
+    state=present
+  with_items:
+  - { name: 'Delete userless histories', script: 'delete_userless_histories.sh' }
+  - { name: 'Purge histories', script: 'purge_histories.sh' }
+  - { name: 'Purge libraries', script: 'purge_libraries.sh' }
+  - { name: 'Purge folders', script: 'purge_folders.sh' }
+  - { name: 'Purge datasets', script: 'purge_datasets.sh' }
+
+- name: Set up cron jobs to clean up FTP area
+  cron:
+    user=galaxy
+    name="Delete old FTP files"
+    job="find {{ galaxy_ftp_upload_dir }} -mindepth 2 -mtime +5 -exec rm -rf {} \;"
+    hour=00 minute=00
+    state=present

@@ -1,0 +1,13 @@
+# Install dependencies
+---
+- name: Install Galaxy dependencies
+  yum: name={{ item }} state=present
+  with_items:
+  - git
+  - python-psycopg2
+  - libtool
+  - libtool-ltdl
+  - libtool-ltdl-devel
+  - java-1.8.0-openjdk
+  - samtools
+  register: installed_dependencies

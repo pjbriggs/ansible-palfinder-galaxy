@@ -1,0 +1,58 @@
+# Install and configure uWSGI and set up handlers
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#uWSGI
+---
+- name: Install uWSGI and PasteDeploy
+  pip:
+    name={{ item }}
+    executable='{{ galaxy_root }}/.venv/bin/pip'
+    extra_args='--no-binary :all:'
+    state=present
+  with_items:
+  - uwsgi
+  - uwsgitop
+  - PasteDeploy
+  register: uwsgi_installed
+
+- name: Configure Galaxy uWSGI settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='uwsgi' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'processes', value: '8' }
+  - { option: 'stats', value: '127.0.0.1:9191' }
+  - { option: 'socket', value: '127.0.0.1:4001' }
+  - { option: 'pythonpath', value: 'lib' }
+  - { option: 'threads', value: '4' }
+  - { option: 'logto', value: '{{ galaxy_dir }}/logs/uwsgi.log' }
+  - { option: 'master', value: 'True' }
+  when: uwsgi_installed | success
+  register: configured_uwsgi_settings
+
+- name: Configure Galaxy uWSGI settings in app-main
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'static_enabled', value: 'False' }
+  - { option: 'track_jobs_in_database', value: 'True' }
+  when: configured_uwsgi_settings | success
+  register: configured_uwsgi_app_main_settings
+
+- name: Configure Galaxy handler processes
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='server:handler0' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'use', value: 'egg:Paste#http' }
+  - { option: 'port', value: '8090' }
+  - { option: 'host', value: '127.0.0.1' }
+  - { option: 'use_threadpool', value: 'true' }
+  - { option: 'threadpool_workers', value: '5' }
+  when: configured_uwsgi_app_main_settings | success
+  register: configured_galaxy_handlers
+
+# See https://wiki.galaxyproject.org/Admin/Config/Jobs
+- name: Set up Galaxy job_conf file
+  template:
+    dest='{{ galaxy_root }}/config/job_conf.xml'
+    src=job_conf.xml.j2

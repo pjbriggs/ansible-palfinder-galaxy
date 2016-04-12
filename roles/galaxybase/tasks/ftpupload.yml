@@ -1,0 +1,58 @@
+# FTP upload
+---
+# Set up Postgresql Galaxy FTP user
+# NB do this after populating the database
+- name: Create PostgreSQL Galaxy FTP user
+  postgresql_user:
+    name='{{ galaxy_ftp_user }}'
+    password='{{ galaxy_ftp_user }}'
+    role_attr_flags=NOSUPERUSER
+    state=present
+  when: initialised_database | success
+  become: yes
+  become_user: postgres
+  register: postgresql_galaxy_ftp_user_created
+
+- name: Assign privileges for Galaxy FTP user
+  postgresql_privs:
+    database='{{ galaxy_db }}'
+    roles='{{ galaxy_ftp_user }}'
+    priv='SELECT'
+    type='table'
+    objs='galaxy_user'
+    state=present
+  when: postgresql_galaxy_ftp_user_created | success
+  become: yes
+  become_user: postgres
+
+# Configure ProFTPd for FTP upload
+- name: Check if default ProFTPd configuration is present
+  stat: path=/usr/local/etc/proftpd.conf
+  register: proftpd_default_conf
+
+- name: Move default ProFTPd configuration
+  command: mv /usr/local/etc/proftpd.conf /usr/local/etc/proftpd.conf.bak
+  when: proftpd_default_conf.stat.exists
+
+# Create proftpd-galaxy.conf file
+- name: Configure ProFTPd for Galaxy
+  template:
+    dest=/usr/local/etc/proftpd-galaxy.conf
+    src=proftpd-galaxy.conf.j2
+  register: created_proftpd_conf
+
+# Set up as a service
+- name: Create init.d script for ProFTPd
+  copy:
+    dest=/etc/init.d/proftpd
+    src=proftpd.init.sh
+    mode='ugo+x'
+  when: created_proftpd_conf | success
+  register: created_proftpd_init
+
+- name: Start ProFTPd service
+  service:
+    name=proftpd
+    enabled=on
+    state=started
+  when: created_proftpd_init | success

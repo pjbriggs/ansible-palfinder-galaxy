@@ -1,0 +1,7 @@
+# Set up log rotation of Galaxy logs
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Rotate_log_files
+---
+- name: Rotate Galaxy log files
+  template:
+    dest=/etc/logrotate.d/galaxy
+    src=logrotate-galaxy.j2

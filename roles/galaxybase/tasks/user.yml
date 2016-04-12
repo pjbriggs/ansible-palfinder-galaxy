@@ -1,0 +1,27 @@
+# Create the 'galaxy' user and group (both with UID/GID of 400)
+---
+- name: Create Galaxy group
+  group:
+    name=galaxy gid=400 state=present
+  register: group_created
+
+- name: Create Galaxy user
+  user:
+    name=galaxy
+    group=galaxy
+    home=/home/galaxy
+    uid=400
+    state=present
+  when: group_created | success
+  register: user_created
+
+# Need write permission on home so that static content
+# can be read by Nginx proxy
+- name: Allow group read on Galaxy user home
+  file:
+    path=/home/galaxy
+    mode='g+rx'
+  become: yes
+  become_user: galaxy
+  when: user_created
+  register: set_group_read_on_galaxy_home

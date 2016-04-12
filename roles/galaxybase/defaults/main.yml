@@ -1,0 +1,20 @@
+---
+# User running Galaxy service
+galaxy_user: galaxy
+
+# Postgresql database
+galaxy_db: galaxy_palfinder
+
+# Galaxy source code
+galaxy_repo: https://github.com/galaxyproject/galaxy.git
+galaxy_version: 'v16.01'
+
+# Galaxy installation
+galaxy_dir: /home/galaxy/galaxies/palfinder
+galaxy_root: /home/galaxy/galaxies/palfinder/galaxy
+
+# FTP uploads
+galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
+galaxy_ftp_upload_site: ftp://localhost:2121
+galaxy_ftp_user: galaxy_ftp
+galaxy_ftp_password: galaxy_ftp

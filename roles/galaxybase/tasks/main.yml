@@ -1,0 +1,26 @@
+---
+- include: user.yml
+
+- include: dependencies.yml
+
+- include: database.yml
+  become: yes
+  become_user: postgres
+
+- include: galaxy.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
+- include: purgehistories.yml
+
+- include: logrotate.yml
+
+- include: nginxproxy.yml
+
+- include: ftpupload.yml
+
+- include: uwsgi.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
+- include: supervisor.yml

@@ -1,0 +1,95 @@
+# Install and configure Galaxy
+---
+
+- name: Create Galaxy directories
+  file:
+    path='{{ item }}'
+    state=directory
+  with_items:
+  - '{{ galaxy_dir }}'
+  - '{{ galaxy_dir }}/tool_dependencies'
+  - '{{ galaxy_ftp_upload_dir }}'
+  - '{{ galaxy_dir }}/logs'
+  become: yes
+  become_user: galaxy
+
+- name: Clone Galaxy source
+  git:
+    repo='{{ galaxy_repo }}'
+    version='{{ galaxy_version }}'
+    dest={{ galaxy_root }}
+  when: installed_dependencies | success
+  register: cloned_source
+
+- name: Make virtualenv in Galaxy root
+  command:
+    chdir={{ galaxy_root }}
+    /usr/local/bin/virtualenv .venv -p /usr/local/bin/python
+    creates='{{ galaxy_root }}/.venv'
+  when: cloned_source | success
+  register: created_virtualenv
+
+- name: Create Galaxy configuration file
+  command:
+    chdir='{{ galaxy_root }}/config'
+    cp galaxy.ini.sample galaxy.ini
+    creates='{{ galaxy_root }}/config/galaxy.ini'
+  when: cloned_source | success
+  register: created_config_file
+
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
+- name: Disable Galaxy configuration developer settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'debug', value: 'False' }
+  - { option: 'use_interactive', value: 'False' }
+  when: created_config_file | success
+  register: disabled_developer_settings
+
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
+- name: Configure Galaxy database connection
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='database_connection'
+    value='postgres://galaxy:galaxy@localhost:5432/galaxy_palfinder'
+  when: created_config_file | success
+  register: configured_database_connection
+
+- name: Configure Galaxy FTP upload settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'ftp_upload_dir', value: '{{ galaxy_ftp_upload_dir }}' }
+  - { option: 'ftp_upload_site', value: '{{ galaxy_ftp_upload_site }}' }
+  when: created_config_file | success
+  register: configured_ftp_settings
+
+# Set other configuration options
+- name: General Galaxy configuration
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'allow_user_dataset_purge', value: 'True' }
+  - { option: 'allow_user_impersonation', value: 'True' }
+  - { option: 'tool_dependency_dir', value: '../tool_dependency_dir' }
+  when: created_config_file | success
+  register: configured_general_settings
+
+- name: Run common_startup.sh to initialise sample files and eggs/wheels
+  command:
+    chdir='{{ galaxy_root }}'
+    scripts/common_startup.sh
+  when: configured_general_settings | success
+  register: done_common_startup
+
+- name: Run create_db.py to initialise the database
+  command:
+    chdir='{{ galaxy_root }}'
+    .venv/bin/python scripts/create_db.py
+  when: done_common_startup | success
+  register: initialised_database
