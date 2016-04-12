@@ -1,0 +1,9 @@
+# Cron job to delete 'old' datasets
+---
+- name: Set up cron jobs to delete old datasets
+  cron:
+    user="{{ galaxy_user }}"
+    name="Delete old datasets"
+    job="{{ galaxy_root }}/delete_old_datasets.sh {{ galaxy_db }} {{ galaxy_user }} {{ galaxy_user }} '30 days'"
+    hour=23 minute=00
+    state=present

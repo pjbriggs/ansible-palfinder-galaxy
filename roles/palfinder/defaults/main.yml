@@ -1,0 +1,23 @@
+---
+# Name for Galaxy instance
+galaxy_name: "palfinder"
+
+# User running Galaxy service
+galaxy_user: galaxy
+
+# Postgresql database
+galaxy_db: galaxy_palfinder
+
+# Galaxy installation
+galaxy_dir: "/home/galaxy/galaxies/palfinder"
+galaxy_root: "{{ galaxy_dir }}/galaxy"
+
+# Admin user
+galaxy_admin_user: admin@galaxy.org
+galaxy_admin_passwd: galaxyadmin
+
+# Default quota size (Gb)
+default_quota_gb: 25
+
+# Master API key
+master_api_key: CDHyk0m8rbEmsh6zXNXke0BbocOPvUtOP6fQPhiIffp8IRHSQ0QVvuKiUxUhFBiW

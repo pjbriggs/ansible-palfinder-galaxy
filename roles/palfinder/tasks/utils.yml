@@ -1,0 +1,21 @@
+# Install utilities
+---
+- name: Install Nebulizer
+  pip:
+    name='https://github.com/pjbriggs/nebulizer/archive/v0.1.0.tar.gz'
+    executable='{{ galaxy_root }}/.venv/bin/pip'
+    extra_args='--no-binary :all:'
+    state=present
+  register: nebulizer_installed
+
+- name: Copy utility scripts
+  copy:
+    src={{ item }}
+    dest='{{ galaxy_root }}/{{ item }}'
+    mode='ugo+rx'
+  with_items:
+  - create_user.sh
+  - install_tool.sh
+  - delete_old_datasets.sh
+  - set_default_quota.sh
+  when: nebulizer_installed | success
