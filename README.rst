@@ -4,33 +4,45 @@ ansible-palfinder-galaxy
 ``ansible`` playbooks for deploying a Galaxy instance for running the
 ``pal_finder`` pipeline on a Scientific Linux 6.7 machine.
 
+Roles
+-----
+
+The following roles have been defined:
+
+ - ``dependencies``: set up the dependencies for Galaxy:
+   * Python 2.7
+   * Postgresql
+   * Nginx
+   * Supervisord
+   * Proftp
+   * nfslock/statd
+
+ - ``galaxybase``: set up a "base" Galaxy instance:
+   * Create Galaxy user
+   * Install Galaxy dependencies
+   * Set up database
+   * Clone specified Galaxy version
+   * Set up cron jobs to purge histories and datasets
+   * Set up log rotation
+   * Set up Nginx proxy
+   * Set up FTP server
+   * Configure uWSGI for Galaxy
+   * Configure Supervisord for Galaxy
+
+ - ``palfinder``: customises the base Galaxy instance:
+   * Installs utility scripts
+   * Uploads ``welcome`` and ``terms`` static pages
+   * Configures settings (i.e. require login, quotas etc)
+   * Installs customised ``tool_conf.xml``
+   * Sets default quota
+   * Adds admin user account
+   * Installs specific tools from toolshed
+   * Configures automatic deletion of old datasets
+
 Playbooks
 ---------
 
-The following playbooks exist:
-
- - ``python27.yml``: download, build and install Python 2.7 into
-   ``/usr/local`` on the remote host
-
- - ``galaxy_user.yml``: create the Galaxy user and group
-
- - ``postgresql.yml``: install and configure the PostgreSQL server
-
- - ``nginx.yml``: install and start the Nginx web server
-
- - ``supervisord.yml``: install and start the Supervisord service
-
- - ``proftpd.yml``: install ProFTPd FTP server
-
- - ``nfslock.yml``: install and start the nfslock/statd service
-
- - ``install_galaxy.yml``: clone and configure the Galaxy code, create
-    the database user and database for Galaxy, and configure Nginx to
-    act as web proxy with uWSGI and Supervisord.
-
- - ``setup_palfinder_galaxy.yml``: create admin user and install
-   tools needed for palfinder workflow. (NB you need to set the
-   ``master_api_key`` variable when running this playbook.)
+TBA
    
 Running the playbooks
 ---------------------
@@ -38,7 +50,7 @@ Running the playbooks
 You must pass in the hosts that the playbooks will be run on via
 the ``ansible-playbook`` command line, for example::
 
-    ansible-playbook python27.yml [ -b ] --extra-vars "hosts=palfinder"
+    ansible-playbook palfinder.yml [ -b ] --extra-vars "hosts=palfinder"
 
 Variables
 ---------
