@@ -1,4 +1,10 @@
 ---
+# Galaxy user
+galaxy_user: "galaxy"
+galaxy_uid: 400
+galaxy_group: "{{ galaxy_user }}"
+galaxy_gid: 400
+
 # Python
 python_version: '2.7.10'
 python_install_dir: '/usr/local'

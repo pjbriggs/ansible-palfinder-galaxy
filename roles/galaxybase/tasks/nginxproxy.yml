@@ -17,11 +17,21 @@
   notify:
   - Restart Nginx
 
+# Need write permission on home so that static content
+# can be read by Nginx proxy
+- name: Allow group read on Galaxy user home
+  file:
+    path=/home/{{ galaxy_user }}
+    mode='g+rx'
+  become: yes
+  become_user: '{{ galaxy_user }}'
+  register: set_group_read_on_galaxy_home
+
 # Required to allow Nginx to read static content
 # from Galaxy's home directory
 - name: Add Nginx user to galaxy group
   user:
     name=nginx
-    groups='nginx,galaxy'
+    groups='nginx,{{ galaxy_group }}'
   notify:
   - Restart Nginx

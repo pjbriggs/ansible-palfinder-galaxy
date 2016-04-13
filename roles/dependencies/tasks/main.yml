@@ -10,3 +10,5 @@
 - include: nfslock.yml
 
 - include: supervisord.yml
+
+- include: user.yml

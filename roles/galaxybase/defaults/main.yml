@@ -3,7 +3,8 @@
 galaxy_name: "palfinder"
 
 # User running Galaxy service
-galaxy_user: galaxy
+galaxy_user: "galaxy"
+galaxy_group: "{{ galaxy_user }}"
 
 # Postgresql database
 galaxy_db: galaxy_palfinder
