@@ -10,27 +10,32 @@
   - pam-devel
   register: installed_proftpd_dependencies
 
+- name: Create build directory
+  file:
+    path='{{ build_dir }}'
+    state=directory
+
 - name: Download ProFTPd source
   get_url:
     url='https://github.com/proftpd/proftpd/archive/v{{ proftpd_version }}.tar.gz'
-    dest=/root
+    dest='{{ build_dir }}'
   when: installed_proftpd_dependencies | success
   register: downloaded_proftpd_src
 
 - name: Unpack ProFTPd source
   unarchive:
-    src='/root/proftpd-{{ proftpd_version }}.tar.gz'
-    dest=/root
+    src='{{ build_dir }}/proftpd-{{ proftpd_version }}.tar.gz'
+    dest='{{ build_dir }}'
     copy=no
     owner=root
     group=root
-    creates='/root/proftpd-{{ proftpd_version }}'
+    creates='{{ build_dir }}/proftpd-{{ proftpd_version }}'
   when: downloaded_proftpd_src | success
   register: unpacked_proftpd_src
 
 - name: Install ProFTPd
   command:
-    chdir='/root/proftpd-{{ proftpd_version }}'
+    chdir='{{ build_dir }}/proftpd-{{ proftpd_version }}'
     {{item}}
     creates={{ proftpd_install_dir }}/sbin/proftpd
   with_items:

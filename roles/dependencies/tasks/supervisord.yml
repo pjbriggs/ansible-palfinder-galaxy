@@ -3,7 +3,6 @@
 # NOTE: we need a newer version of Supervisord than is available
 # via yum on Scientific Linux 6, hence installing it this way
 # rather than pulling in from yum
-
 ---
 - name: Uninstall yum version of Supervisor
   yum:
@@ -11,27 +10,32 @@
     state=absent
   register: uninstalled_supervisor
 
+- name: Create build directory
+  file:
+    path='{{ build_dir }}'
+    state=directory
+
 - name: Download Supervisor source
   get_url:
     url=https://pypi.python.org/packages/source/s/supervisor/supervisor-{{supervisor_version}}.tar.gz
-    dest=/root
+    dest='{{ build_dir }}'
   when: uninstalled_supervisor | success
   register: downloaded_supervisor_src
 
 - name: Unpack Supervisor source
   unarchive:
-    src='/root/supervisor-{{ supervisor_version }}.tar.gz'
-    dest=/root
+    src='{{ build_dir }}/supervisor-{{ supervisor_version }}.tar.gz'
+    dest='{{ build_dir }}'
     copy=no
     owner=root
     group=root
-    creates='/root/supervisor-{{ supervisor_version }}'
+    creates='{{ build_dir }}/supervisor-{{ supervisor_version }}'
   when: downloaded_supervisor_src | success
   register: unpacked_supervisor_src
 
 - name: Install Supervisor
   command:
-    chdir='/root/supervisor-{{ supervisor_version }}'
+    chdir='{{ build_dir }}/supervisor-{{ supervisor_version }}'
     {{ python_install_dir }}/bin/python setup.py install --prefix={{ supervisor_install_dir }}
     creates={{ supervisor_install_dir }}/bin/supervisord
   when: unpacked_supervisor_src | success

@@ -12,3 +12,8 @@
 - include: supervisord.yml
 
 - include: user.yml
+
+- include: python27.yml install_dir='{{ galaxy_python_dir }}'
+  become: yes
+  become_user: '{{ galaxy_user }}'
+  when: "'{{ galaxy_python_dir }}' != '{{ python_install_dir }}'"

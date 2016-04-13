@@ -28,27 +28,32 @@
     path='{{ install_dir }}'
     state=directory
 
+- name: Create build directory
+  file:
+    path='{{ build_dir }}'
+    state=directory
+
 - name: Download Python 2.7
   get_url:
     url='https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
-    dest=/root
+    dest='{{ build_dir }}'
   when: installed_python_dependencies | success
   register: downloaded_python_27
 
 - name: Unpack Python 2.7
   unarchive:
-    src='/root/Python-{{ python_version }}.tgz'
-    dest=/root
+    src='{{ build_dir }}/Python-{{ python_version }}.tgz'
+    dest='{{ build_dir }}'
     copy=no
     owner=root
     group=root
-    creates='/root/Python-{{ python_version }}'
+    creates='{{ build_dir }}/Python-{{ python_version }}'
   when: downloaded_python_27 | success
   register: unpacked_python_27
 
 - name: Install Python 2.7
   command:
-    chdir='/root/Python-{{ python_version }}'
+    chdir='{{ build_dir }}/Python-{{ python_version }}'
     {{item}}
     creates='{{ install_dir }}/bin/python2.7'
   with_items:

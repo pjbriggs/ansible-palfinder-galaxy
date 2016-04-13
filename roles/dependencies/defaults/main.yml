@@ -19,3 +19,6 @@ proftpd_install_dir: '/usr/local'
 # Supervisor
 supervisor_version: '3.2.2'
 supervisor_install_dir: '/usr/local'
+
+# Temporary top-level build directory
+build_dir: '/tmp/build'
