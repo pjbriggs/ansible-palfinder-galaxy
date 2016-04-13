@@ -1,5 +1,5 @@
 ---
-- include: python27.yml
+- include: python27.yml install_dir='{{ python_install_dir }}'
 
 - include: nginx.yml
 

@@ -6,6 +6,9 @@ galaxy_name: "palfinder"
 galaxy_user: "galaxy"
 galaxy_group: "{{ galaxy_user }}"
 
+# Python for Galaxy
+galaxy_python_dir: '/usr/local'
+
 # Postgresql database
 galaxy_db: galaxy_palfinder
 

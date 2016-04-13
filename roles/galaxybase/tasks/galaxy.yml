@@ -24,7 +24,7 @@
 - name: Make virtualenv in Galaxy root
   command:
     chdir={{ galaxy_root }}
-    /usr/local/bin/virtualenv .venv -p /usr/local/bin/python
+    {{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ galaxy_python_dir }}/bin/python
     creates='{{ galaxy_root }}/.venv'
   when: cloned_source | success
   register: created_virtualenv
