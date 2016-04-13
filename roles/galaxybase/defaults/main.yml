@@ -1,6 +1,7 @@
 ---
 # Name for Galaxy instance
 galaxy_name: "palfinder"
+galaxy_version: 'v16.01'
 
 # User running Galaxy service
 galaxy_user: "galaxy"
@@ -10,21 +11,23 @@ galaxy_group: "{{ galaxy_user }}"
 galaxy_python_dir: '/usr/local'
 
 # Postgresql database
-galaxy_db: galaxy_palfinder
+galaxy_db: "galaxy_{{ galaxy_name }}"
+galaxy_db_user: "{{ galaxy_user }}"
+galaxy_db_password: "{{ galaxy_db_user }}"
 
 # Galaxy web server name
-galaxy_server_name: palfinder.ls.manchester.ac.uk
+galaxy_server_name: "galaxy.example.org"
 
 # Galaxy source code
 galaxy_repo: https://github.com/galaxyproject/galaxy.git
-galaxy_version: 'v16.01'
 
-# Galaxy installation
-galaxy_dir: "/home/galaxy/galaxies/palfinder"
+# Galaxy installation directories
+galaxy_top: "/home/galaxy/galaxies"
+galaxy_dir: "{{ galaxy_top }}/{{ galaxy_name }}"
 galaxy_root: "{{ galaxy_dir }}/galaxy"
 
 # FTP uploads
-galaxy_ftp_upload_dir: /home/galaxy/galaxies/ftp_uploads
+galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"
 galaxy_ftp_upload_site: "ftp://{{ galaxy_server_name }}"
-galaxy_ftp_user: galaxy_ftp
-galaxy_ftp_password: galaxy_ftp
+galaxy_ftp_user: "{{ galaxy_user }}_ftp"
+galaxy_ftp_password: "{{ galaxy_ftp_user }}"

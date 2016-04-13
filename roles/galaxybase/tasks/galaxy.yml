@@ -54,7 +54,7 @@
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='app:main'
     option='database_connection'
-    value='postgres://galaxy:galaxy@localhost:5432/{{ galaxy_db }}'
+    value='postgres://{{ galaxy_db_user }}:{{ galaxy_db_password }}@localhost:5432/{{ galaxy_db }}'
   when: created_config_file | success
   register: configured_database_connection
 

@@ -2,8 +2,8 @@
 ---
 - name: Create PostgreSQL Galaxy user
   postgresql_user:
-    name='{{ galaxy_user }}'
-    password='{{ galaxy_user }}'
+    name='{{ galaxy_db_user }}'
+    password='{{ galaxy_db_password }}'
     role_attr_flags=NOSUPERUSER
     state=present
   when: installed_dependencies | success
@@ -12,7 +12,7 @@
 - name: Create PostgreSQL Galaxy database
   postgresql_db:
     name='{{ galaxy_db }}'
-    owner='{{ galaxy_user }}'
+    owner='{{ galaxy_db_user }}'
     state=present
   when: postgresql_galaxy_user_created | success
   register: postgresql_galaxy_db_created

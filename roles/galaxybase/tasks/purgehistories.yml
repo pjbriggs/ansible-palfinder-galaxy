@@ -1,7 +1,7 @@
 ---
 - name: Set up cron jobs to purge deleted data
   cron:
-    user=galaxy
+    user='{{ galaxy_user }}'
     name={{ item.name }}
     job="sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
     weekday=00 hour=03 minute=00

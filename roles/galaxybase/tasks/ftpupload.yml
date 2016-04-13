@@ -5,7 +5,7 @@
 - name: Create PostgreSQL Galaxy FTP user
   postgresql_user:
     name='{{ galaxy_ftp_user }}'
-    password='{{ galaxy_ftp_user }}'
+    password='{{ galaxy_ftp_password }}'
     role_attr_flags=NOSUPERUSER
     state=present
   when: initialised_database | success
