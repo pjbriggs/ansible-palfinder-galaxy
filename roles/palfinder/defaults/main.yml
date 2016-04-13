@@ -1,12 +1,18 @@
 ---
+# Name for Galaxy instance
+galaxy_name: "palfinder"
+
 # User running Galaxy service
-galaxy_user: galaxy
+galaxy_user: "galaxy"
 
 # Postgresql database
-galaxy_db: galaxy_palfinder
+galaxy_db: "galaxy_{{ galaxy_name }}"
+galaxy_db_user: "{{ galaxy_user }}"
+galaxy_db_password: "{{ galaxy_db_user }}"
 
-# Galaxy installation
-galaxy_dir: "/home/galaxy/galaxies/palfinder"
+# Galaxy installation directories
+galaxy_top: "/home/galaxy/galaxies"
+galaxy_dir: "{{ galaxy_top }}/{{ galaxy_name }}"
 galaxy_root: "{{ galaxy_dir }}/galaxy"
 
 # Admin user
