@@ -2,9 +2,11 @@
 - hosts: '{{ hosts }}'
   vars:
   - galaxy_name: "palfinder"
-  - galaxy_user: "galaxy"
-  - galaxy_dir: "/home/galaxy/galaxies/palfinder"
   - galaxy_version: "v16.01"
+    galaxy_top: "/home/galaxy/galaxies"
+  - galaxy_server_name: "palfinder.ls.manchester.ac.uk"
+  - default_quota_gb: 20
+  - galaxy_python_dir: "/usr/local"
   roles:
   - dependencies
   - galaxybase
