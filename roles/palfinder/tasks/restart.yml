@@ -7,7 +7,7 @@
     section='app:main' option='master_api_key' value={{ master_api_key }}
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: with_master_api_key == 'yes'
+  when: restart_with_master_api_key == 'yes'
   register: added_master_api_key
 
 # Remove master API key
@@ -18,7 +18,7 @@
     state='absent'
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: without_master_api_key == 'yes'
+  when: restart_without_master_api_key == 'yes'
   register: removed_master_api_key
 
 # Restart Galaxy

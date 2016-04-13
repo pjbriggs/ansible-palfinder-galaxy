@@ -7,7 +7,7 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
-- include: restart.yml with_master_api_key=yes
+- include: restart.yml restart_with_master_api_key=yes
 
 - include: adminuser.yml
   become: yes
@@ -19,4 +19,4 @@
 
 - include: deletedatasets.yml
 
-- include: restart.yml without_master_api_key=yes
+- include: restart.yml restart_without_master_api_key=yes

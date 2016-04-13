@@ -20,5 +20,5 @@ default_quota_gb: 25
 master_api_key: CDHyk0m8rbEmsh6zXNXke0BbocOPvUtOP6fQPhiIffp8IRHSQ0QVvuKiUxUhFBiW
 
 # Actions for restart
-with_master_api_key: 'no'
-without_master_api_key: 'no'
+restart_with_master_api_key: 'no'
+restart_without_master_api_key: 'no'
