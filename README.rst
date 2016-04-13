@@ -10,6 +10,7 @@ Roles
 The following roles have been defined:
 
  - ``dependencies``: set up the dependencies for Galaxy:
+
    * Python 2.7
    * Postgresql
    * Nginx
@@ -20,6 +21,7 @@ The following roles have been defined:
    * Optionally install Galaxy-specific Python
 
  - ``galaxybase``: set up a "base" Galaxy instance:
+
    * Install Galaxy dependencies
    * Set up database
    * Clone specified Galaxy version
@@ -31,6 +33,7 @@ The following roles have been defined:
    * Configure Supervisord for Galaxy
 
  - ``palfinder``: customises the base Galaxy instance:
+
    * Installs utility scripts
    * Uploads ``welcome`` and ``terms`` static pages
    * Configures settings (i.e. require login, quotas etc)
