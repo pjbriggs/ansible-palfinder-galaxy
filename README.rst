@@ -16,9 +16,10 @@ The following roles have been defined:
    * Supervisord
    * Proftp
    * nfslock/statd
+   * Create Galaxy user
+   * Optionally install Galaxy-specific Python
 
  - ``galaxybase``: set up a "base" Galaxy instance:
-   * Create Galaxy user
    * Install Galaxy dependencies
    * Set up database
    * Clone specified Galaxy version
@@ -39,10 +40,57 @@ The following roles have been defined:
    * Installs specific tools from toolshed
    * Configures automatic deletion of old datasets
 
+Variables
+---------
+
+Key variables:
+
+ - ``galaxy_name``: name for the Galaxy instance
+ - ``galaxy_version``: version of Galaxy to install
+ - ``galaxy_top``: top-level directory to use; by default Galaxy
+   will be installed under ``${galaxy_top}/${galaxy_name}``
+
+Webserver:
+
+ - ``galaxy_server_name``: URL for the Galaxy web service
+
+Admin user:
+
+ - ``galaxy_admin_user``: admin account email (default:
+   ``admin@galaxy.org``)
+ - ``galaxy_admin_passwd``: password for admin account
+   (default: ``galaxyadmin``)
+
+Database passwords:
+
+ - ``galaxy_db_password``: password for Postgresql database
+   (default: same name as the database user)
+ - ``galaxy_ftp_password``: password used by FTP server for
+   authenticating users against Postgresql database
+   (default: same name as the FTP database user)
+
+Other configuration settings:
+
+ - ``default_quota_gb``: quota in Gb for registered users
+   (default: 25Gb)
+
+Variables for handling special cases:
+
+ - ``galaxy_python_dir``: location to install Galaxy-specific
+   version of Python (e.g. if default installation of Python
+   isn't accessible across cluster nodes)
+
+Versions of installed components:
+
+ - ``python_version`` (2.7.10)
+ - ``proftpd_version`` (1.3.5a)
+ - ``supervisor_version`` (3.2.2)
+
 Playbooks
 ---------
 
-TBA
+ - ``palfinder.yml``: playbook for setting up the Palfinder Galaxy
+   instance.
    
 Running the playbooks
 ---------------------
@@ -50,12 +98,7 @@ Running the playbooks
 You must pass in the hosts that the playbooks will be run on via
 the ``ansible-playbook`` command line, for example::
 
-    ansible-playbook palfinder.yml [ -b ] --extra-vars "hosts=palfinder"
-
-Variables
----------
-
- - Python version is set by the ``python_version`` variable
+    ansible-playbook palfinder.yml [ -b ] [ -u USER ] --extra-vars "hosts=palfinder"
 
 Notes on the deployment
 -----------------------
@@ -88,4 +131,7 @@ Known Issues
 ------------
 
  - ``python27.yml``: fails on the ``pip`` installation step.
+
+ - Tool installation can timeout or fail in which case it will need
+   to be completed manually.
 
