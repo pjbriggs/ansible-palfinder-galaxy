@@ -1,19 +1,25 @@
 ---
-- include: python27.yml install_dir='{{ python_install_dir }}'
+- include:
+    python27.yml
+    install_dir='{{ python_install_dir }}'
+    build_dir='/root/build'
 
 - include: nginx.yml
 
 - include: postgresql.yml
 
-- include: proftpd.yml
+- include: proftpd.yml build_dir='/root/build'
 
 - include: nfslock.yml
 
-- include: supervisord.yml
+- include: supervisord.yml build_dir='/root/build'
 
 - include: user.yml
 
-- include: python27.yml install_dir='{{ galaxy_python_dir }}'
+- include:
+    python27.yml
+    install_dir='{{ galaxy_python_dir }}'
+    build_dir='/home/{{ galaxy_user }}/build'
   become: yes
   become_user: '{{ galaxy_user }}'
   when: "'{{ galaxy_python_dir }}' != '{{ python_install_dir }}'"
