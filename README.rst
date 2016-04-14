@@ -50,8 +50,8 @@ Key variables:
 
  - ``galaxy_name``: name for the Galaxy instance
  - ``galaxy_version``: version of Galaxy to install
- - ``galaxy_top``: top-level directory to use; by default Galaxy
-   will be installed under ``${galaxy_top}/${galaxy_name}``
+ - ``galaxy_install_dir``: top-level directory to use; by default Galaxy
+   will be installed under ``${galaxy_install_dir}/${galaxy_name}``
 
 Webserver:
 

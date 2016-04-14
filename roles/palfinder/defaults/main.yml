@@ -11,8 +11,8 @@ galaxy_db_user: "{{ galaxy_user }}"
 galaxy_db_password: "{{ galaxy_db_user }}"
 
 # Galaxy installation directories
-galaxy_top: "/home/galaxy/galaxies"
-galaxy_dir: "{{ galaxy_top }}/{{ galaxy_name }}"
+galaxy_install_dir: "/home/galaxy/galaxies"
+galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
 galaxy_root: "{{ galaxy_dir }}/galaxy"
 
 # Admin user
