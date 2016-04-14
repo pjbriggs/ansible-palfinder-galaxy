@@ -7,7 +7,7 @@
     state=directory
   with_items:
   - '{{ galaxy_dir }}'
-  - '{{ galaxy_dir }}/tool_dependencies'
+  - '{{ galaxy_tool_dependency_dir }}'
   - '{{ galaxy_ftp_upload_dir }}'
   - '{{ galaxy_dir }}/logs'
   become: yes
@@ -78,7 +78,7 @@
   - { option: 'logo_url', value: 'http://{{ galaxy_server_name }}' }
   - { option: 'allow_user_dataset_purge', value: 'True' }
   - { option: 'allow_user_impersonation', value: 'True' }
-  - { option: 'tool_dependency_dir', value: '../tool_dependency_dir' }
+  - { option: 'tool_dependency_dir', value: '{{ galaxy_tool_dependency_dir }}' }
   when: created_config_file | success
   register: configured_general_settings
 
