@@ -17,6 +17,7 @@ The following roles have been defined:
    * Supervisord
    * Proftp
    * nfslock/statd
+   * Postfix
    * Create Galaxy user
    * Optionally install Galaxy-specific Python
 
