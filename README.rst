@@ -94,6 +94,17 @@ Playbooks
 
  - ``palfinder.yml``: playbook for setting up the Palfinder Galaxy
    instance.
+
+Nb this playbook includes the passwords for the various accounts in
+the ``palfinder_passwds.yml`` file, which has been encrypted using
+``ansible-vault`` - use::
+
+    ansible-vault edit palfinder_passwds.yml
+
+to edit (use the ``view`` command just to see the contents).
+
+Use the ``--ask-vault`` option to prompt for the encryption password
+when running the playbook.
    
 Running the playbooks
 ---------------------
@@ -101,7 +112,7 @@ Running the playbooks
 You must pass in the hosts that the playbooks will be run on via
 the ``ansible-playbook`` command line, for example::
 
-    ansible-playbook palfinder.yml [ -b ] [ -u USER ] --extra-vars "hosts=palfinder"
+    ansible-playbook palfinder.yml [ -b ] [ -u USER ] [ --ask-vault ] --extra-vars "hosts=palfinder"
 
 Notes on the deployment
 -----------------------
