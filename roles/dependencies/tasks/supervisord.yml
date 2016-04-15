@@ -56,6 +56,13 @@
   when: installed_supervisor | success
   register: created_supervisord_conf_dir
 
+- name: Create supervisord log directory
+  file:
+    path='/var/log/supervisord'
+    state=directory
+  when: installed_supervisor | success
+  register: created_supervisord_log_dir
+
 - name: Update Supervisord conf file
   ini_file:
     dest='{{ supervisor_install_dir }}/etc/supervisord.conf'
@@ -63,7 +70,7 @@
     option={{ item.option }}
     value={{ item.value }}
   with_items:
-  - { section: 'supervisord', option: 'logfile', value: '/var/log/supervisor/supervisord.log' }
+  - { section: 'supervisord', option: 'logfile', value: '/var/log/supervisord/supervisord.log' }
   - { section: 'supervisord', option: 'pidfile', value: '/var/run/supervisord.pid' }
   - { section: 'include', option: 'files', value: '/usr/local/etc/supervisord.d/*.ini' }
   when: created_supervisord_conf | success
