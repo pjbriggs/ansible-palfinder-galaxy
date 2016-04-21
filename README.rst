@@ -30,6 +30,7 @@ The following roles have been defined:
    * Set up log rotation
    * Set up Nginx proxy
    * Set up FTP server
+   * Set up outgoing SMTP mail server
    * Configure uWSGI for Galaxy
    * Configure Supervisord for Galaxy
 
@@ -128,8 +129,12 @@ Notes on the deployment
    via ``yum`` on Scientific Linux is too old for the syntax used
    by the Galaxy config.
 
- - Check that port 21 is open if you want to make the FTP upload
-   available.
+ - The following ports need to be open for various services:
+
+   * 80: HTTP access
+   * 443: HTTPS access
+   * 21: FTP upload
+   * 25: outgoing email
 
 Known Issues
 ------------
