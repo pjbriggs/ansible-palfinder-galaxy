@@ -68,6 +68,15 @@
   when: created_config_file | success
   register: configured_ftp_settings
 
+- name: Configure Galaxy mail settings
+  ini
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='smtp_server'
+    value='localhost:25'
+  when: created_config_file | success
+  register: configured_mail_settings
+
 # Set other configuration options
 - name: General Galaxy configuration
   ini_file:
