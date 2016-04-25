@@ -69,7 +69,7 @@
   register: configured_ftp_settings
 
 - name: Configure Galaxy mail settings
-  ini
+  ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='app:main'
     option='smtp_server'
