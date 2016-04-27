@@ -1,5 +1,6 @@
-myhostname={{ galaxy_server_name }}
-myorigin=$mydomain
-relayhost ={{ smtp_relay_host }}
-inet_interfaces = loopback-only
-mydestination =
+# Configuration file for postfix to send activation emails,
+# password resets etc
+myhostname= {{ galaxy_server_name }}
+relayhost = {{ smtp_relay_host }}
+inet_interfaces = localhost
+mydestination = $myhostname, localhost.$mydomain, localhost
