@@ -7,6 +7,8 @@
   - galaxy_server_name: "palfinder.ls.manchester.ac.uk"
   - default_quota_gb: 20
   - galaxy_python_dir: "/usr/local"
+  vars_files:
+  - palfinder_passwds.yml
   roles:
   - dependencies
   - galaxybase
