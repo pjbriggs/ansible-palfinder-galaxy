@@ -68,6 +68,28 @@
   when: created_config_file | success
   register: configured_ftp_settings
 
+- name: Configure Galaxy mail settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'smtp_server', value: 'localhost:25' }
+  - { option: 'mailing_join_addr', value: '' }
+  - { option: 'error_email_to', value: 'None' }
+  - { option: 'email_from', value: 'Galaxy {{ galaxy_name }} <galaxy-no-reply@{{ galaxy_server_name  }}>' }
+  - { option: 'instance_resource_url', value: 'None' }
+  when: created_config_file | success
+  register: configured_mail_settings
+
+- name: Configure Galaxy user activation
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'user_activation_on', value: 'True' }
+  - { option: 'activation_grace_period', value: '0' }
+  when: configured_mail_settings | success
+
 # Set other configuration options
 - name: General Galaxy configuration
   ini_file:

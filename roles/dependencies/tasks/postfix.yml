@@ -1,0 +1,13 @@
+# Install and configure postfix for outgoing email
+---
+- name: Install Postfix yum packages
+  yum: name=postfix state=present
+  register: postfix_installed
+
+- name: Check if backup of Postfix configuration is present
+  stat: path=/etc/postfix/main.cf.bak
+  register: backup_postfix_default_conf
+
+- name: Move default Postfix config file
+  command: mv /etc/postfix/main.cf /etc/postfix/main.cf.bak
+  when: backup_postfix_default_conf.stat.exists == False

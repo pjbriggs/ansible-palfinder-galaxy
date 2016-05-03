@@ -1,0 +1,17 @@
+# Configure Postfix to sent outgoing emails for Galaxy for
+# registration activations & password resets etc
+---
+- name: Create null client Postfix config for Galaxy
+  template:
+    dest=/etc/postfix/main.cf
+    src=postfix-main.cf.j2
+  register: created_postfix_config
+  notify:
+  - Reload Postfix
+
+- name: Start Postfix
+  service:
+    name=postfix
+    enabled=on
+    state=started
+  when: created_postfix_config | success
