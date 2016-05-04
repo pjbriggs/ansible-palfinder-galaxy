@@ -5,3 +5,11 @@
     chdir={{ galaxy_root }}
     {{ galaxy_root }}/create_user.sh {{ galaxy_admin_user }} {{ galaxy_admin_passwd }} {{ master_api_key }}
   register: created_admin_user
+
+# Activate the admin user account
+- name: Activate Galaxy admin user account
+  command:
+    chdir={{ galaxy_root }}
+    {{ galaxy_root }}/activate_user.sh {{ galaxy_db }} {{ galaxy_db_user }} {{ galaxy_db_password }} {{ galaxy_admin_user }}
+  when: created_admin_user | success
+  register: activated_admin_user

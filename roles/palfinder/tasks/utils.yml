@@ -18,4 +18,5 @@
   - install_tool.sh
   - delete_old_datasets.sh
   - set_default_quota.sh
+  - activate_user.sh
   when: nebulizer_installed | success
