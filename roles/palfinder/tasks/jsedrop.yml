@@ -1,0 +1,27 @@
+# Set up Galaxy to use the JSE-drop job submission system
+---
+
+# Import the code for the runner plugin
+- name: Import the JSE-drop job runner plugin files
+  copy:
+    dest='{{ galaxy_root }}/lib/galaxy/jobs/runners/{{ item }}'
+    src='{{ item }}'
+  with_items:
+  - jse_drop.py
+  - jse_drop_runner.py
+  register: imported_jse_drop_plugin
+
+# Update the conf file
+# See https://wiki.galaxyproject.org/Admin/Config/Jobs
+- name: Update Galaxy job_conf file for JSE-drop
+  template:
+    dest='{{ galaxy_root }}/config/job_conf.xml'
+    src=job_conf.xml.j2
+  when: imported_jse_drop_plugin | success
+
+# Create the JSE-drop directory
+- name: Create JSE-drop directory
+  file:
+    path='{{ galaxy_jse_drop_dir }}'
+    state=directory
+  when: imported_jse_drop_plugin | success
