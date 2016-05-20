@@ -13,6 +13,8 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
+- include: demodata.yml
+  
 - include: tools.yml
   become: yes
   become_user: "{{ galaxy_user }}"

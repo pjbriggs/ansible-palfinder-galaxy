@@ -1,0 +1,10 @@
+# Set up and populate data library with demo data
+---
+- name: Create and populate demo data library
+  command:
+    chdir={{ galaxy_root }}
+    {{ galaxy_root }}/populate_data_library.sh {{ galaxy_admin_user }} {{ galaxy_admin_passwd }} "Example data/Illumina fastqs" {{ item.file }} --file_type {{ item.type }}
+  with_items:
+  - { file: 'illuminaPE_r1.fq', type: 'fastqsanger' }
+  - { file: 'illuminaPE_r2.fq', type: 'fastqsanger' }
+  register: created_demo_library
