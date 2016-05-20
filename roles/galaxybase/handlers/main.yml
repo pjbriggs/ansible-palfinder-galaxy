@@ -7,3 +7,6 @@
 
 - name: Reload Postfix
   service: name=postfix state=reloaded
+
+- name: Reload Galaxy reports
+  service: name=galaxy_reports state=reloaded

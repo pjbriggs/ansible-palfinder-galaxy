@@ -35,3 +35,8 @@ galaxy_ftp_password: "{{ galaxy_ftp_user }}"
 
 # Outgoing mail notifications
 smtp_relay_host:
+
+# Reporting interface
+galaxy_reports_htpasswd: "/etc/nginx/galaxy-reports.htpasswd"
+galaxy_reports_user: "galaxyreports"
+galaxy_reports_password: "{{ galaxy_reports_user }}"

@@ -9,11 +9,25 @@
 # scheme to prevent it from submitting POST requests more than
 # once (this is unsafe)
 proxy_next_upstream off;
+
+upstream reports {
+    server localhost:9001;
+}
 server {
     server_name {{ galaxy_server_name }};
     listen 80 default;
     client_max_body_size 10G;
     uwsgi_read_timeout 180;
+    # Galaxy reporting interface
+    location ^~ /reports/ {
+        proxy_pass  http://reports;
+        proxy_set_header   X-Forwarded-Host $host;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-URL-SCHEME https;
+        auth_basic "Restricted";
+        auth_basic_user_file {{ galaxy_reports_htpasswd }};
+    }
+    # Galaxy server
     location / {
         uwsgi_pass 127.0.0.1:4001;
         uwsgi_param UWSGI_SCHEME $scheme;

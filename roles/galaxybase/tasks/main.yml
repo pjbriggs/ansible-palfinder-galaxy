@@ -9,6 +9,8 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
+- include: reports.yml
+
 - include: purgehistories.yml
 
 - include: logrotate.yml
