@@ -43,6 +43,7 @@
   template:
     dest=/etc/init.d/galaxy_reports
     src=galaxy_reports.init.sh.j2
+    mode=0755
   when: configured_galaxy_reports | success
   register: created_galaxy_reports_init
   notify: Reload Galaxy reports
@@ -52,7 +53,7 @@
     name=galaxy_reports
     enabled=on
     state=started
-  when: created_galaxy_reports | success
+  when: created_galaxy_reports_init | success
 
 # Set up Nginx proxy password protection
 - name: Set up Galaxy reports access
@@ -61,7 +62,7 @@
     name={{ galaxy_reports_user }}
     password={{ galaxy_reports_password }}
     owner=root
-    group=www
-    mode=0640
+    group=root
+    mode=0644
     create=yes
   register: set_up_galaxy_reports_access
