@@ -1,12 +1,18 @@
 ---
 # Upload static pages (welcome, t&cs etc)
-- name: Upload static pages
+- name: Create welcome page
+  template:
+    dest='{{ galaxy_root }}/static/welcome.html'
+    src=palfinder-welcome.html.j2
+  register: created_welcome_page
+
+- name: Upload static content
   copy:
     src={{ item.src }}
     dest='{{ galaxy_root }}/static/{{ item.dest }}'
   with_items:
-  - { src: 'palfinder-welcome.html', dest: 'welcome.html' }
   - { src: 'palfinder-terms.html', dest: 'terms.html' }
+  when: created_welcome_page | success
   register: uploaded_static_content
 
 # Set configuration options specific to palfinder service
