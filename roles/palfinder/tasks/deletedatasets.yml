@@ -4,6 +4,6 @@
   cron:
     user="{{ galaxy_user }}"
     name="Delete old datasets"
-    job="{{ galaxy_root }}/delete_old_datasets.sh {{ galaxy_db }} {{ galaxy_user }} {{ galaxy_user }} '30 days'"
+    job="{{ galaxy_root }}/delete_old_datasets.sh {{ galaxy_db }} {{ galaxy_user }} {{ galaxy_user }} '{{ delete_datasets_after }}'"
     hour=23 minute=00
     state=present
