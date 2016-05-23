@@ -8,6 +8,7 @@
   - nginx
   - libselinux-python
   - libsemanage-python
+  - python-passlib
   register: nginx_installed
 
 - name: Set sebooleans for httpd
