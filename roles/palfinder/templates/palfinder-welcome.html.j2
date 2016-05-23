@@ -38,13 +38,14 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	  </ul>
 	</li>
 	<li>Download results files</li>
-	<li>Store data for a maximum of 20 days</li>
+	<li>Store data for a maximum of {{ delete_datasets_after }}</li>
       </ul>
 
       <h2>Limitations</h2>
-      <p>Accounts have a quota of 20GB. User accounts and any data uploaded
-	or generated are automatically deleted after 20 days. This is to
-	prevent the build up of large volumes of data onto our servers
+      <p>Accounts have a quota of <b>{{ default_quota_gb }} GB</b>. User
+	accounts and any data uploaded or generated are automatically
+	deleted after <b>{{ delete_datasets_after }}</b>. This is to
+	prevent the build up of	large volumes of data onto our servers
 	long-term. All outputs generated can be downloaded.</p>
       <p><b>By registering and using this service you agree to be bound by
 	  the <a href="terms.html">terms and conditions</a></b>.</p>
