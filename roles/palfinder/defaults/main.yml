@@ -22,6 +22,9 @@ galaxy_admin_passwd: galaxyadmin
 # Default quota size (Gb)
 default_quota_gb: 25
 
+# Demo data location
+demo_data_dir: "{{ galaxy_install_dir }}/demo-data"
+
 # Master API key
 master_api_key: CDHyk0m8rbEmsh6zXNXke0BbocOPvUtOP6fQPhiIffp8IRHSQ0QVvuKiUxUhFBiW
 
