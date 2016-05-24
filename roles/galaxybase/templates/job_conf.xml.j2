@@ -2,14 +2,17 @@
 <job_conf>
     <plugins workers="4">
         <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
-	<!--
+{% if enable_drmaa %}
         <plugin id="drmaa" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner"/>
-	-->
+{% endif %}
+{% if enable_jsedrop %}
+	<plugin id="jse_drop" type="runner" load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner" />
+{% endif %}
     </plugins>
     <handlers default="handlers">
 	<handler id="handler0" tags="handlers"/>
     </handlers>
-    <destinations default="local">
+    <destinations default="{{ galaxy_default_runner }}">
         <!-- Destinations define details about remote resources and how jobs
              should be executed on those remote resources.
          -->
@@ -19,6 +22,11 @@
 	  -->
           <env file="{{ galaxy_root }}/.venv/bin/activate" />
 	</destination>
+{% if enable_jsedrop %}
+	<destination id="jse_drop" runner="jse_drop">
+	  <param id="dropDir">{{ galaxy_jse_drop_dir }}</param>
+	</destination>
+{% endif %}
     </destinations>
     <tools>
     </tools>

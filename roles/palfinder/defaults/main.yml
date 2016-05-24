@@ -31,9 +31,6 @@ demo_data_dir: "{{ galaxy_install_dir }}/demo-data"
 # Master API key
 master_api_key: CDHyk0m8rbEmsh6zXNXke0BbocOPvUtOP6fQPhiIffp8IRHSQ0QVvuKiUxUhFBiW
 
-# JSE-Drop job submission parameters
-galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
-
 # Actions for restart
 restart_with_master_api_key: 'no'
 restart_without_master_api_key: 'no'

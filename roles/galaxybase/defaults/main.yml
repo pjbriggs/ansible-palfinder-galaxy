@@ -27,6 +27,14 @@ galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
 galaxy_root: "{{ galaxy_dir }}/galaxy"
 galaxy_tool_dependency_dir: '{{ galaxy_dir }}/tool_dependencies'
 
+# Job runners
+enable_drmaa: no
+enable_jsedrop: no
+galaxy_default_runner: "local"
+
+# JSE-Drop job submission parameters
+galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
+
 # FTP uploads
 galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"
 galaxy_ftp_upload_site: "ftp://{{ galaxy_server_name }}"
