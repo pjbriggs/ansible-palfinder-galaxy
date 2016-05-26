@@ -19,7 +19,7 @@ The following roles have been defined:
    * nfslock/statd
    * Postfix
    * Create Galaxy user
-   * Optionally install Galaxy-specific Python
+   * (Optionally) install Galaxy-specific Python
 
  - ``galaxybase``: set up a "base" Galaxy instance:
 
@@ -121,6 +121,16 @@ Notes on the deployment
 
  - The playbook specifies Python 2.7.10 as there is a problem with
    2.7.11 when used with Galaxy 15.10.
+
+ - Python is installed under ``/usr/local`` by default, this can be
+   changed via the ``python_install_dir`` parameter. This Python
+   installation is used by other system software (e.g. supervisord).
+
+   By default this is also the Python installation used by Galaxy,
+   however it is possible to specify a separate Python installation
+   for Galaxy via the ``galaxy_python_dir`` parameter (for example if
+   this needs to be accessible from other systems such as a compute
+   cluster).
 
  - The galaxy database user password is the same as the user name.
 
