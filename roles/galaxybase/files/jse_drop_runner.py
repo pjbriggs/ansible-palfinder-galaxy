@@ -147,7 +147,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             # Delete the job
             jse_drop.kill(job_name)
             log.debug("JSE-drop: killed job '%s'" % job_name)
-        except Exception,ex:
+        except Exception as ex:
             log.error("stop_job: failed with exception: %s", ex)
 
     def recover(self,job,job_wrapper):
@@ -196,7 +196,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             else:
                 # Can't find the job
                 message = "%s: no such job in JSE-drop?" % job_name
-            self.fail_job(job_state,message)
+            self.fail_job(job_state)
             return None
         if jse_drop_status == JSEDropStatus.RUNNING and not job_state.running:
             # Job started running
@@ -232,6 +232,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                       % external_job_id)
             job_state.job_wrapper.fail("JSE-drop error: unable to get exit code")
             return
+        log.debug("finish_job %s: exit code %s" % (external_job_id,
+                                                   exit_code))
         # Read contents of stdout and stderr
         with open(jse_drop.stdout_file(external_job_id)) as fp:
             stdout = fp.read()
