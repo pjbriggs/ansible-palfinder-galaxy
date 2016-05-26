@@ -31,6 +31,7 @@ The following roles have been defined:
    * Set up Nginx proxy
    * Set up FTP server
    * Set up outgoing SMTP mail server
+   * (Optionally) set up the JSE-drop job runner plugin
    * Configure uWSGI for Galaxy
    * Configure Supervisord for Galaxy
 
@@ -156,6 +157,17 @@ Notes on the deployment
    * 443: HTTPS access
    * 21: FTP upload
    * 25: outgoing email
+
+ - Optionally the deployment can make use of a novel job submission
+   called JSE-drop which has been developed at Manchester.
+
+   To enable the plugin for this system, set the ``enable_jsedrop``
+   parameter to ``yes``. The drop directory that JSE-drop will use
+   can be set via the ``galaxy_jse_drop_dir`` parameter.
+
+   By default jobs will use the same Python virtual environment as
+   the Galaxy installation; this can be changed by specifying the
+   ``galaxy_jse_drop_virtual_env`` parameter.
 
 Known Issues
 ------------
