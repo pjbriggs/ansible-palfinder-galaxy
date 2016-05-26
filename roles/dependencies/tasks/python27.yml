@@ -45,8 +45,6 @@
     src='{{ build_dir }}/Python-{{ python_version }}.tgz'
     dest='{{ build_dir }}'
     copy=no
-    owner=root
-    group=root
     creates='{{ build_dir }}/Python-{{ python_version }}'
   when: downloaded_python_27 | success
   register: unpacked_python_27
