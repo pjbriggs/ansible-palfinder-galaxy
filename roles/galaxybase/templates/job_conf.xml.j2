@@ -24,7 +24,8 @@
 	</destination>
 {% if enable_jsedrop %}
 	<destination id="jse_drop" runner="jse_drop">
-	  <param id="dropDir">{{ galaxy_jse_drop_dir }}</param>
+	  <param id="drop_dir">{{ galaxy_jse_drop_dir }}</param>
+	  <param id="virtual_env">{{ galaxy_jse_drop_virtual_env }}</param>
 	</destination>
 {% endif %}
     </destinations>

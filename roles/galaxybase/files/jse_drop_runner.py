@@ -49,7 +49,13 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         """
         Extract drop-off directory from job destination parameters
         """
-        return job_destination.params.get('dropDir',None)
+        return job_destination.params.get('drop_dir',None)
+
+    def _get_virtual_env(self,job_destination):
+        """
+        Extract virtual_env location from job destination parameters
+        """
+        return job_destination.params.get('virtual_env',None)
 
     def parse_destination_params(self, params):
         """Parse the JobDestination ``params`` dict and return the runner's native representation of those params.
@@ -64,7 +70,18 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Get the parameters defined for this destination
         # i.e. location of the drop-off directory etc
         drop_off_dir = self._get_drop_dir(job_destination)
+        virtual_env = self._get_virtual_env(job_destination)
         log.debug("queue_job: drop-off dir = %s" % drop_off_dir)
+        log.debug("queue_job: virtual_env  = %s" % virtual_env)
+        if drop_off_dir is None:
+            # Can't locate drop-off dir
+            job_wrapper.fail("failure preparing job script (no JSE-drop "
+                             "directory defined)",exception=True )
+            log.exception("(%s/%s) failure writing job script (no "
+                          "JSE-drop directory defined)" %
+                          (galaxy_id_tag,job_name))
+            return
+        # Initialise JSE-drop wrapper
         jse_drop = JSEDrop(drop_off_dir)
         # ID and name for job
         galaxy_id_tag = job_wrapper.get_id_tag()
@@ -77,6 +94,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             return
         # Create script contents
         script = self.get_job_file(job_wrapper,
+                                   galaxy_virtual_env=virtual_env,
                                    exit_code_path=None)
         # Separate leading shell specification from generated script
         shell = '\n'.join(filter(lambda x: x.startswith('#!'),
