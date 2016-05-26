@@ -62,18 +62,23 @@
 
 - name: Install Pip
   command:
+    chdir='{{ build_dir }}'
+    {{ install_dir }}/bin/python2.7 -m ensurepip
     creates='{{ install_dir }}/bin/pip'
-    "{{item}}"
-  with_items:
-  - "{{ install_dir }}/bin/python2.7 -m ensurepip"
-  - "{{ install_dir }}/pip install --upgrade pip"
   when: installed_python_27 | success
   register: installed_pip
+
+- name: Upgrade Pip
+  command:
+    chdir='{{ build_dir }}'
+    {{ install_dir }}/bin/pip install --upgrade pip
+  when: installed_pip | success
+  register: upgraded_pip
 
 - name: Install Virtualenv
   pip:
     name=virtualenv
     state=present
     executable='{{ install_dir }}/bin/pip'
-  when: installed_pip | success
+  when: upgraded_pip | success
   register: installed_virtualenv
