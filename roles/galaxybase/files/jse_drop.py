@@ -322,6 +322,34 @@ class JSEDrop(object):
         """
         raise NotImplementedError("JSEDrop.kill not implemented")
 
+    def cleanup(self,name):
+        """
+        Remove files associated with a job
+
+        Arguments:
+          name (str): name of the job
+
+        """
+        extensions = ('.drop.qsub',
+                      '.drop.qsubmit',
+                      '.drop.qfail',
+                      '.drop.qstat',
+                      '.drop.qdel',
+                      '.drop.qacct',)
+        # Remove stdout/stderr first
+        for f in (self.stdout_file(name),self.stderr_file(name)):
+            try:
+                os.remove(f)
+            except OSError:
+                pass
+        # Remove remaining files
+        for ext in extensions:
+            try:
+                os.remove(os.path.join(self._drop_dir,
+                                       "%s%s" % (name,ext)))
+            except OSError:
+                pass
+
 if __name__ == '__main__':
     # Test program
     import sys

@@ -243,6 +243,11 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         cleanup_job = self.app.config.cleanup_job
         if cleanup_job == "always" or (not stderr and cleanup_job == "onsuccess"):
             job_state.cleanup()
+            # Also remove JSE-drop files
+            try:
+                jse_drop.cleanup(external_job_id)
+            except Exception as ex:
+                log.warning("finish_job %s: unable to clean up JSE-drop files: %s" % (external_job_id,ex))
         # Set the job state
         try:
             job_state.job_wrapper.finish(stdout,stderr,exit_code)
