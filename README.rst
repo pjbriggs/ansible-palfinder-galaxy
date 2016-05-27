@@ -158,6 +158,16 @@ Notes on the deployment
    * 21: FTP upload
    * 25: outgoing email
 
+ - To enable TLS/SSL access (i.e. use HTTPS rather than HTTP)
+   set the ``enable_https`` variable.
+
+   Note that you will also need SSL certificate files. You can
+   create a dummy certificate using ``/etc/ssl/certs/make-dummy-cert``;
+   if this is named after the server in the ``/etc/ssl/certs/``
+   directory then it will used by default; set the
+   ``ssl_certificate`` and ``ssl_certificate_key`` variables to
+   specify the location of the certificate files explicitly.
+
  - Optionally the deployment can make use of a novel job submission
    called JSE-drop which has been developed at Manchester.
 
