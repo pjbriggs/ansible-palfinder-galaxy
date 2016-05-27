@@ -13,9 +13,23 @@ proxy_next_upstream off;
 upstream reports {
     server localhost:9001;
 }
+{% if not enable_https %}
+server {
+    listen 80;
+    server_name {{ galaxy_server_name }};
+    return 301 https://$host$request_uri;
+}
+{% endif %}
 server {
     server_name {{ galaxy_server_name }};
+{% if enable_https %}
+    listen 443 ssl;
+    ssl on;
+    ssl_certificate     /etc/ssl/certs/server.crt;
+    ssl_certificate_key /etc/ssl/certs/server.key;
+{% else %}
     listen 80 default;
+{% endif %}
     client_max_body_size 10G;
     uwsgi_read_timeout 180;
     # Galaxy reporting interface

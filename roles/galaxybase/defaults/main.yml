@@ -15,7 +15,8 @@ galaxy_db: "galaxy_{{ galaxy_name }}"
 galaxy_db_user: "{{ galaxy_user }}"
 galaxy_db_password: "{{ galaxy_db_user }}"
 
-# Galaxy web server name
+# Web server
+enable_https: no
 galaxy_server_name: "galaxy.example.org"
 
 # Galaxy source code
