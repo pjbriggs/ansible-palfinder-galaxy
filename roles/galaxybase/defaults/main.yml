@@ -35,6 +35,8 @@ galaxy_default_runner: "local"
 # JSE-Drop job submission parameters
 galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
 galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
+galaxy_jse_drop_qsub_options:
+galaxy_jse_drop_slots:
 
 # FTP uploads
 galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"

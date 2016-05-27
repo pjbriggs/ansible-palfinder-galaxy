@@ -26,6 +26,12 @@
 	<destination id="jse_drop" runner="jse_drop">
 	  <param id="drop_dir">{{ galaxy_jse_drop_dir }}</param>
 	  <param id="virtual_env">{{ galaxy_jse_drop_virtual_env }}</param>
+{% if galaxy_jse_drop_qsub_options %}
+	  <param id="qsub_options">{{ galaxy_jse_drop_qsub_options }}</param>
+{% endif %}
+{% if galaxy_jse_drop_qsub_slots %}
+	  <param id="galaxy_slots">{{ galaxy_jse_drop_slots }}</param>
+{% endif %}
 	</destination>
 {% endif %}
     </destinations>

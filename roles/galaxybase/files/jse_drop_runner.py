@@ -57,6 +57,18 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         """
         return job_destination.params.get('virtual_env',None)
 
+    def _get_qsub_options(self,job_destination):
+        """
+        Extract qsub options from job destination parameters
+        """
+        return job_destination.params.get('qsub_options',None)
+
+    def _get_galaxy_slots(self,job_destination):
+        """
+        Extract Galaxy slots from job destination parameters
+        """
+        return job_destination.params.get('galaxy_slots',None)
+
     def parse_destination_params(self, params):
         """Parse the JobDestination ``params`` dict and return the runner's native representation of those params.
         """
@@ -71,8 +83,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # i.e. location of the drop-off directory etc
         drop_off_dir = self._get_drop_dir(job_destination)
         virtual_env = self._get_virtual_env(job_destination)
+        qsub_options = self._get_qsub_options(job_destination)
+        galaxy_slots = self._get_galaxy_slots(job_destination)
         log.debug("queue_job: drop-off dir = %s" % drop_off_dir)
         log.debug("queue_job: virtual_env  = %s" % virtual_env)
+        log.debug("queue_job: qsub options = %s" % qsub_options)
+        log.debug("queue_job: galaxy_slots = %s" % galaxy_slots)
         if drop_off_dir is None:
             # Can't locate drop-off dir
             job_wrapper.fail("failure preparing job script (no JSE-drop "
@@ -92,9 +108,15 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Prepare the job wrapper (or abort)
         if not self.prepare_job(job_wrapper):
             return
+        # Sort out the slots (see e.g. condor.py for example)
+        if galaxy_slots:
+            galaxy_slots_statement = 'GALAXY_SLOTS="%s"; export GALAXY_SLOTS_CONFIGURED="1"' % galaxy_slots
+        else:
+            galaxy_slots_statement = 'GALAXY_SLOTS="1"'
         # Create script contents
         script = self.get_job_file(job_wrapper,
                                    galaxy_virtual_env=virtual_env,
+                                   slots_statement=galaxy_slots_statement,
                                    exit_code_path=None)
         # Separate leading shell specification from generated script
         shell = '\n'.join(filter(lambda x: x.startswith('#!'),
@@ -102,8 +124,11 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         script = '\n'.join(filter(lambda x: not x.startswith('#!'),
                                   script.split('\n')))
         # Create header with embedded qsub flags
-        qsub_header = '\n'.join(("#$ -V",
-                                 "#$ -wd %s" % job_wrapper.working_directory))
+        qsub_header = ["-V",
+                       "-wd %s" % job_wrapper.working_directory]
+        if qsub_options:
+            qsub_header.append(qsub_options)
+        qsub_header = '\n'.join(["#$ %s" % opt for opt in qsub_header])
         log.debug("qsub_header: %s" % qsub_header)
         # Reassemble the script components
         script = "\n".join((shell,qsub_header,script))
