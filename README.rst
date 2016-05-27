@@ -162,12 +162,21 @@ Notes on the deployment
    called JSE-drop which has been developed at Manchester.
 
    To enable the plugin for this system, set the ``enable_jsedrop``
-   parameter to ``yes``. The drop directory that JSE-drop will use
+   parameter to ``yes``. The 'drop directory' that JSE-drop will use
    can be set via the ``galaxy_jse_drop_dir`` parameter.
 
-   By default jobs will use the same Python virtual environment as
-   the Galaxy installation; this can be changed by specifying the
-   ``galaxy_jse_drop_virtual_env`` parameter.
+   In addition the following options can be set:
+
+   * By default jobs will use the same Python virtual environment as
+     the Galaxy installation; this can be changed by specifying the
+     ``galaxy_jse_drop_virtual_env`` parameter.
+
+   * By default the number of slots (i.e. cores) used for running
+     jobs is 1; this can be changed by specifying the
+     ``galaxy_jse_drop_slots`` parameter.
+
+   * Additional options can be set for ``qsub`` via the
+     ``galaxy_jse_drop_qsub_options`` parameter.
 
 Known Issues
 ------------
