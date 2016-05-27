@@ -25,8 +25,8 @@ server {
 {% if enable_https %}
     listen 443 ssl;
     ssl on;
-    ssl_certificate     /etc/ssl/certs/server.crt;
-    ssl_certificate_key /etc/ssl/certs/server.key;
+    ssl_certificate     {{ ssl_certificate }};
+    ssl_certificate_key {{ ssl_certificate_key }};
 {% else %}
     listen 80 default;
 {% endif %}

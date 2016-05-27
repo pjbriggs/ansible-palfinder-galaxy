@@ -16,8 +16,12 @@ galaxy_db_user: "{{ galaxy_user }}"
 galaxy_db_password: "{{ galaxy_db_user }}"
 
 # Web server
-enable_https: no
 galaxy_server_name: "galaxy.example.org"
+
+# HTTPS parameters
+enable_https: no
+ssl_certificate: "/etc/ssl/certs/{{ galaxy_server_name }}"
+ssl_certificate_key: "/etc/ssl/certs/{{ galaxy_server_name }}"
 
 # Galaxy source code
 galaxy_repo: https://github.com/galaxyproject/galaxy.git
