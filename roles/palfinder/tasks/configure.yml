@@ -25,6 +25,7 @@
   - { option: 'require_login', value: 'True' }
   - { option: 'enable_quotas', value: 'True' }
   - { option: 'welcome_url', value: '/static/welcome.html' }
+  - { option: 'show_welcome_with_login', value: 'True' }
   when: uploaded_static_content | success
   register: configured_general_settings
 
