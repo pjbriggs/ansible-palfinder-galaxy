@@ -3,7 +3,7 @@
 - name: Create Galaxy admin user account
   command:
     chdir={{ galaxy_root }}
-    {{ galaxy_root }}/create_user.sh {{ galaxy_admin_user }} {{ galaxy_admin_passwd }} {{ master_api_key }}
+    {{ galaxy_root }}/create_user.sh {{ galaxy_admin_user }} {{ galaxy_admin_passwd }} {{ master_api_key }} {{ galaxy_url }}
   register: created_admin_user
 
 # Activate the admin user account

@@ -3,7 +3,7 @@
 # Install tool using nebulizer & Galaxy API
 
 if [ $# -eq 0 ] ; then
-    echo Usage: $0 SHED TOOL OWNER APIKEY
+    echo Usage: $0 SHED TOOL OWNER APIKEY \[URL\]
     exit
 fi
 
@@ -11,9 +11,15 @@ SHED=$1
 TOOL=$2
 OWNER=$3
 APIKEY=$4
+if [ ! -z "$5" ] ; then
+    URL=$5
+else
+    URL=http://localhost:80
+fi
 
 MANAGE_TOOLS=.venv/bin/manage_tools
-URL=http://localhost:80
+#URL=http://localhost:80
+#URL=https://palfinder.ls.manchester.ac.uk
 
 function tool_exists() {
     $MANAGE_TOOLS installed $URL -k $APIKEY --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installed$" | head -n 1 | cut -f1

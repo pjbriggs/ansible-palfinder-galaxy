@@ -3,17 +3,19 @@
 # Create and populate data library using nebulizer & Galaxy API
 
 if [ $# -eq 0 ] ; then
-    echo Usage: $0 USER PASSWD LIBRARY FILE \[--file_type FILE_TYPE\] \[FILE ...\]
+    echo Usage: $0 URL USER PASSWD LIBRARY FILE \[--file_type FILE_TYPE\] \[FILE ...\]
     exit
 fi
 
-USER=$1
-PASSWD=$2
-LIBRARY=$(echo $3 | cut -d/ -f1)
-FOLDER=$(echo $3 | cut -d/ -f2-)
+URL=$1
+USER=$2
+PASSWD=$3
+LIBRARY=$(echo $4 | cut -d/ -f1)
+FOLDER=$(echo $4 | cut -d/ -f2-)
 
 MANAGE_LIBRARIES=.venv/bin/manage_libraries
-URL=http://localhost:80
+#URL=http://localhost:80
+#URL=https://palfinder.ls.manchester.ac.uk
 
 # Create data library
 got_library=$($MANAGE_LIBRARIES list $URL -u $USER -P $PASSWD 2>/dev/null | grep "^$LIBRARY")
@@ -36,12 +38,12 @@ if [ ! -z "$FOLDER" ] ; then
 fi
 
 # Upload each specified file
-while [ ! -z "$4" ] ; do
-    FILE=$4
+while [ ! -z "$5" ] ; do
+    FILE=$5
     shift
-    if [ "$4" == "--file_type" ] ; then
+    if [ "$5" == "--file_type" ] ; then
 	shift
-	FILE_TYPE="--file_type=$4"
+	FILE_TYPE="--file_type=$5"
 	shift
     else
 	FILE_TYPE=

@@ -1,0 +1,10 @@
+---
+- name: Set facts for SSL Galaxy configuration
+  set_fact:
+    galaxy_url: "https://{{ galaxy_server_name }}"
+  when: enable_https
+
+- name: Set facts for Galaxy configuration without SSL
+  set_fact:
+    galaxy_url: "http://{{ galaxy_server_name }}"
+  when: not enable_https

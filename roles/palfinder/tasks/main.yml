@@ -1,4 +1,6 @@
 ---
+- include: set_facts.yml
+
 - include: utils.yml
   become: yes
   become_user: "{{ galaxy_user }}"
@@ -9,15 +11,15 @@
 
 - include: restart.yml restart_with_master_api_key=yes
 
-- include: adminuser.yml
+- include: adminuser.yml galaxy_url="{{ galaxy_url }}"
   become: yes
   become_user: "{{ galaxy_user }}"
 
-- include: demodata.yml
+- include: demodata.yml galaxy_url="{{ galaxy_url }}"
   become: yes
   become_user: "{{ galaxy_user }}"
   
-- include: tools.yml
+- include: tools.yml galaxy_url="{{ galaxy_url }}"
   become: yes
   become_user: "{{ galaxy_user }}"
 

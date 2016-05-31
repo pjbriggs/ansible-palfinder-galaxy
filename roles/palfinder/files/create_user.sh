@@ -3,16 +3,22 @@
 # Create user using nebulizer & Galaxy API
 
 if [ $# -eq 0 ] ; then
-    echo Usage: $0 USER PASSWD APIKEY
+    echo Usage: $0 USER PASSWD APIKEY \[URL\]
     exit
 fi
 
 USER=$1
 PASSWD=$2
 APIKEY=$3
+if [ ! -z "$4" ] ; then
+    URL=$4
+else
+    URL=http://localhost:80
+fi
 
 MANAGE_USERS=.venv/bin/manage_users
-URL=http://localhost:80
+#URL=http://localhost:80
+#URL=https://palfinder.ls.manchester.ac.uk
 
 function user_exists() {
     $MANAGE_USERS list $URL -k $APIKEY --name "$USER" | grep ^$USER | cut -f1
