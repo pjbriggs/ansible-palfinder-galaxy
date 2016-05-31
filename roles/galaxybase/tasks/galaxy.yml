@@ -102,6 +102,7 @@
   - { option: 'allow_user_impersonation', value: 'True' }
   - { option: 'allow_library_path_paste', value: 'True' }
   - { option: 'tool_dependency_dir', value: '{{ galaxy_tool_dependency_dir }}' }
+  - { option: 'id_secret', value: '{{ galaxy_id_secret }}' }
   when: created_config_file | success
   register: configured_general_settings
 

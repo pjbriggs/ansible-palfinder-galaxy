@@ -17,6 +17,7 @@ galaxy_db_password: "{{ galaxy_db_user }}"
 
 # Web server
 galaxy_server_name: "galaxy.example.org"
+galaxy_id_secret:
 
 # HTTPS parameters
 enable_https: no
