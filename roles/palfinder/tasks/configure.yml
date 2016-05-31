@@ -25,9 +25,25 @@
   - { option: 'require_login', value: 'True' }
   - { option: 'enable_quotas', value: 'True' }
   - { option: 'welcome_url', value: '/static/welcome.html' }
-  - { option: 'terms_url', value: '/static/terms.html' }
   when: uploaded_static_content | success
   register: configured_general_settings
+
+# T&Cs
+- name: Set terms and conditions URL
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='terms_url'
+    value='https://{{ galaxy_server_name}}/static/terms.html'
+  when: not enable_https
+
+- name: Set terms and conditions URL for secure server
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='terms_url'
+    value='https://{{ galaxy_server_name}}/static/terms.html'
+  when: enable_https
 
 # Update the tool_conf.xml to remove unwanted tools
 - name: Update tool_conf.xml
