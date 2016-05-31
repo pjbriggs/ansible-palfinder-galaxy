@@ -75,8 +75,8 @@
   with_items:
   - { option: 'smtp_server', value: 'localhost:25' }
   - { option: 'mailing_join_addr', value: '' }
-  - { option: 'error_email_to', value: 'None' }
-  - { option: 'email_from', value: 'Galaxy {{ galaxy_name }} <galaxy-no-reply@{{ galaxy_server_name  }}>' }
+  - { option: 'error_email_to', value: '{{ galaxy_incoming_email_addr }}' }
+  - { option: 'email_from', value: '{{ galaxy_outgoing_email_addr }}' }
   - { option: 'instance_resource_url', value: 'None' }
   when: created_config_file | success
   register: configured_mail_settings

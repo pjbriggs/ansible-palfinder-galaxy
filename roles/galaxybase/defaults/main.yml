@@ -49,8 +49,10 @@ galaxy_ftp_upload_site: "ftp://{{ galaxy_server_name }}"
 galaxy_ftp_user: "{{ galaxy_user }}_ftp"
 galaxy_ftp_password: "{{ galaxy_ftp_user }}"
 
-# Outgoing mail notifications
+# Outgoing mail notification settings
 smtp_relay_host:
+galaxy_outgoing_email_addr: "Galaxy {{ galaxy_name }} <galaxy-no-reply@{{ galaxy_server_name  }}>"
+galaxy_incoming_email_addr: "None"
 
 # Reporting interface
 galaxy_reports_htpasswd: "/etc/nginx/galaxy-reports.htpasswd"
