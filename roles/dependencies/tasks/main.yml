@@ -18,6 +18,8 @@
 
 - include: user.yml
 
+- include: certbot.yml
+
 - include:
     python27.yml
     install_dir='{{ galaxy_python_dir }}'

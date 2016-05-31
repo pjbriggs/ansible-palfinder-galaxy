@@ -1,0 +1,43 @@
+# Fetch the Let's Encrypt 'certbot' client
+---
+- name: Install certbot system dependencies
+  yum: state=present name={{item}}
+  with_items:
+  - gcc
+  - dialog
+  - augeas-libs
+  - openssl
+  - openssl-devel
+  - libffi-devel
+  - redhat-rpm-config
+  - ca-certificates
+  - python
+  - python-devel
+  - python-virtualenv
+  - python-tools
+  - python-pip
+  register: installed_certbot_dependencies
+
+- name: Fetch certbot-auto
+  get_url:
+    url='https://dl.eff.org/certbot-auto'
+    dest='/usr/local/bin/certbot-auto'
+    mode=0755
+  when: installed_certbot_dependencies | success
+  register: installed_certbot_auto
+
+- name: Set up automatic renewal of certificates
+  cron:
+    user="root"
+    name="Check SSL certificate renewal"
+    job="/usr/local/bin/certbot-auto renew >> /var/log/le-renew"
+    hour=2 minute=30 weekday=1
+    state=present
+
+- name: Restart nginx after certificate renewal
+  cron:
+    user="root"
+    name="Restart nginx after SSL certificate renewal"
+    job="service nginx restart >> /var/log/le-renew"
+    hour=2 minute=35 weekday=1
+    state=present

@@ -35,3 +35,12 @@
     groups='nginx,{{ galaxy_group }}'
   notify:
   - Restart Nginx
+
+# Make sure that the .well-know directory exists for certbot
+# Let's Encrypt client
+- name: Add certbot .well-known web directory
+  file:
+    path=/usr/share/nginx/html/.well-known
+    state=directory
+  notify:
+  - Restart Nginx

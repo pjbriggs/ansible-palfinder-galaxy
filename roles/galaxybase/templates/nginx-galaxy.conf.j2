@@ -27,6 +27,10 @@ server {
     ssl on;
     ssl_certificate     {{ ssl_certificate }};
     ssl_certificate_key {{ ssl_certificate_key }};
+    # Validation directory for Let's Encrypt/certbot
+    location ~ /.well-known {
+        allow all;
+    }
 {% else %}
     listen 80 default;
 {% endif %}
