@@ -342,6 +342,13 @@ class JSEDrop(object):
                 os.remove(f)
             except OSError:
                 pass
+            try:
+                fp = os.path.splitext(f)[0] + \
+                     ".p" + \
+                     os.path.splitext(f)[0][1:]
+                os.remove(fp)
+            except (AttributeError,OSError):
+                pass
         # Remove remaining files
         for ext in extensions:
             try:
