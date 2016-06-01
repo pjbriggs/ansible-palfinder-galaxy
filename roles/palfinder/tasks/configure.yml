@@ -12,6 +12,7 @@
     dest='{{ galaxy_root }}/static/{{ item.dest }}'
   with_items:
   - { src: 'palfinder-terms.html', dest: 'terms.html' }
+  - { src: 'palfinder-citations.html', dest: 'citations.html' }
   when: created_welcome_page | success
   register: uploaded_static_content
 
@@ -29,22 +30,20 @@
   when: uploaded_static_content | success
   register: configured_general_settings
 
-# T&Cs
-- name: Set terms and conditions URL
+# T&Cs, citations etc
+- name: Setup terms and conditions page
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='app:main'
     option='terms_url'
-    value='https://{{ galaxy_server_name}}/static/terms.html'
-  when: not enable_https
+    value='{{ galaxy_url }}/static/terms.html'
 
-- name: Set terms and conditions URL for secure server
+- name: Setup citations page
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='app:main'
-    option='terms_url'
-    value='https://{{ galaxy_server_name}}/static/terms.html'
-  when: enable_https
+    option='citation_url'
+    value='{{ galaxy_url }}/static/citations.html'
 
 # Update the tool_conf.xml to remove unwanted tools
 - name: Update tool_conf.xml
