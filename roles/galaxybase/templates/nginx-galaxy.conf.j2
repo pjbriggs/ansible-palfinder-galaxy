@@ -36,6 +36,10 @@ server {
 {% endif %}
     client_max_body_size 10G;
     uwsgi_read_timeout 180;
+    # User manual
+    location ^~ /manual {
+        allow all;
+    }
     # Galaxy reporting interface
     location ^~ /reports/ {
         proxy_pass  http://reports;
