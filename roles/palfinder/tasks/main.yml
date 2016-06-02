@@ -9,6 +9,8 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
+- include: manual.yml
+
 - include: restart.yml restart_with_master_api_key=yes
 
 - include: adminuser.yml galaxy_url="{{ galaxy_url }}"

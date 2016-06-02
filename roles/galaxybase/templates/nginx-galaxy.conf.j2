@@ -38,7 +38,8 @@ server {
     uwsgi_read_timeout 180;
     # User manual
     location ^~ /manual {
-        allow all;
+        alias /usr/share/nginx/html/manual;
+        add_header Content-Type application/pdf;
     }
     # Galaxy reporting interface
     location ^~ /reports/ {
