@@ -13,6 +13,5 @@ fi
 
 psql -d $GALAXY_DB -U $GALAXY_USER 1>/dev/null 2>&1 <<EOF
 --
-UPDATE history_dataset_association SET deleted = TRUE WHERE create_time < (NOW() - INTERVAL '$INTERVAL') AND deleted = FALSE;
+UPDATE history_dataset_association SET deleted = TRUE WHERE create_time < (NOW() - INTERVAL '$INTERVAL') AND deleted = FALSE AND history_id IN (SELECT history.id FROM history JOIN galaxy_user ON history.user_id = galaxy_user.id WHERE username != 'admin');
 EOF
-
