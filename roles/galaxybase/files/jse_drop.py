@@ -320,7 +320,12 @@ class JSEDrop(object):
           name (str): name of the job
 
         """
-        raise NotImplementedError("JSEDrop.kill not implemented")
+        kill_file = os.path.join(self._drop_dir,"%s.drop.qdel" % name)
+        if os.path.exists(kill_file):
+            raise OSError("Kill file for job with name '%s' already exists" %
+                          name)
+        with open(kill_file,'w') as fp:
+            fp.write()
 
     def cleanup(self,name):
         """
