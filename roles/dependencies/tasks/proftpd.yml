@@ -8,6 +8,7 @@
   - postgresql-devel
   - openssl-devel
   - pam-devel
+  - libnetfilter_conntrack
   register: installed_proftpd_dependencies
 
 - name: Create build directory
