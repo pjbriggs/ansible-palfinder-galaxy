@@ -166,7 +166,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         job_name = job.get_job_runner_external_id()
         # Fetch the drop dir
         try:
-            drop_off_dir = job.destination_params['dropDir']
+            drop_off_dir = job.destination_params['drop_dir']
             log.debug("stop_job: drop-off dir = %s" % drop_off_dir)
             jse_drop = JSEDrop(drop_off_dir)
             # Delete the job

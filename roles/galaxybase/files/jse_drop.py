@@ -325,7 +325,7 @@ class JSEDrop(object):
             raise OSError("Kill file for job with name '%s' already exists" %
                           name)
         with open(kill_file,'w') as fp:
-            fp.write()
+            pass
 
     def cleanup(self,name):
         """
@@ -340,6 +340,7 @@ class JSEDrop(object):
                       '.drop.qfail',
                       '.drop.qstat',
                       '.drop.qdel',
+                      '.drop.qdeleted',
                       '.drop.qacct',)
         # Remove stdout/stderr first
         for f in (self.stdout_file(name),self.stderr_file(name)):
