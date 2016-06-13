@@ -20,4 +20,5 @@
   - set_default_quota.sh
   - activate_user.sh
   - populate_data_library.sh
+  - audit_report.py
   when: nebulizer_installed | success

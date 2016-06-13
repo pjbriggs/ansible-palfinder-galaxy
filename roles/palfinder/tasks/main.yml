@@ -27,4 +27,6 @@
 
 - include: deletedatasets.yml
 
+- include: audit.yml
+
 - include: restart.yml restart_without_master_api_key=yes
