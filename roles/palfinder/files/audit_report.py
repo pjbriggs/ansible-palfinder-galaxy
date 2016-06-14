@@ -47,6 +47,7 @@ def send_report(sender,recipients,subject,message,
                 smtp_host='localhost',
                 smtp_port=None):
     # Send report
+    # See http://stackoverflow.com/questions/6270782/how-to-send-an-email-with-python
     msg = MIMEText(message)
     msg['Subject'] = subject
     msg['From'] = sender
@@ -55,9 +56,9 @@ def send_report(sender,recipients,subject,message,
         s = smtplib.SMTP(smtp_host)
         s.sendmail(sender,recipients,msg.as_string())
         s.quit()
-        print "Successfully sent email"
+        logging.debug("Successfully sent email")
     except smtplib.SMTPException as ex:
-        print "Error: unable to send email:  %s" %ex
+        logging.error("Error: unable to send email:  %s" %ex)
 
 if __name__ == "__main__":
     # Process command line
@@ -94,6 +95,7 @@ if __name__ == "__main__":
                             password=dbpasswd)
     cur = conn.cursor()
     # Report user info
+    print "%s: generating audit report" % time.strftime("%d/%m/%Y %H:%M:%S")
     interval = opts.interval
     report = []
     report.append("Summary for %s" % time.strftime("%d/%m/%Y"))
@@ -108,14 +110,15 @@ if __name__ == "__main__":
     report.append("- Unactivated accts: %d" % len(users(cur,active=False)))
     report.append("- Total jobs run   : %d" % len(jobs(cur)))
     report.append('')
-    # Report job info
-    print '\n'.join(report)
-    # Send email
     if not opts.no_email:
+        # Send email
         send_report(email_from,
                     args,
                     "%s Galaxy: report %s" % (brand.title(),
                                               time.strftime("%d/%m/%Y")),
                     '\n'.join(report),
                     smtp_host=smtp_host)
+    else:
+        # Report job info
+        print '\n'.join(report)
     conn.close()

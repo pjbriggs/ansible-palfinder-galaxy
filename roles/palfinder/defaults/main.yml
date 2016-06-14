@@ -25,6 +25,9 @@ default_quota_gb: 25
 # Delete user datasets after specified time frame
 delete_datasets_after: "30 days"
 
+# Email audit report
+email_audit_report_to:
+
 # Demo data location
 demo_data_dir: "{{ galaxy_install_dir }}/demo-data"
 
