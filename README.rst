@@ -45,6 +45,7 @@ The following roles have been defined:
    * Adds admin user account
    * Installs specific tools from toolshed
    * Configures automatic deletion of old datasets
+   * Sets up weekly emailing of audit reports
 
 Variables
 ---------
@@ -79,6 +80,9 @@ Other configuration settings:
 
  - ``default_quota_gb``: quota in Gb for registered users
    (default: 25Gb)
+ - ``email_audit_reports_to``: list of space-separated email
+   to send weekly audit reports to (default: don't send
+   reports to anyone)
 
 Variables for handling special cases:
 
