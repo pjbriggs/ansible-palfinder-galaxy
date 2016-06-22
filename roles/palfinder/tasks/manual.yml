@@ -1,13 +1,13 @@
 ---
 - name: Upload manual PDF
   copy:
-    src='palfinder_galaxy_manual_v1.pdf'
-    dest='/usr/share/nginx/html/palfinder_galaxy_manual_v1.pdf'
+    src='palfinder_galaxy_manual_v1.2.pdf'
+    dest='/usr/share/nginx/html/palfinder_galaxy_manual_v1.2.pdf'
   register: uploaded_manual
 
 - name: Make link to manual PDF
   file:
-    src='/usr/share/nginx/html/palfinder_galaxy_manual_v1.pdf'
+    src='/usr/share/nginx/html/palfinder_galaxy_manual_v1.2.pdf'
     dest='/usr/share/nginx/html/manual'
     state=link
   when: uploaded_manual
