@@ -2,6 +2,7 @@
 Python API for the JSE-drop job submission mechnanism.
 """
 import os
+import shutil
 import tempfile
 import re
 
@@ -93,7 +94,7 @@ class JSEDrop(object):
         with open(tmp_drop_file,'w') as fp:
             fp.write(script)
         os.close(fd)
-        os.rename(tmp_drop_file,drop_file)
+        shutil.move(tmp_drop_file,drop_file)
         os.chmod(drop_file,mode)
         return drop_file
 
