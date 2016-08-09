@@ -57,6 +57,10 @@ class JSEDrop(object):
 
     >>> jse.kill('my_job')
 
+    Clean up (i.e. remove) outputs from a JSE-drop job:
+
+    >>> jse.cleanup('my_job')
+
     """
     def __init__(self,drop_dir):
         """
