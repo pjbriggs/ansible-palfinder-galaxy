@@ -5,6 +5,7 @@ import os
 import shutil
 import tempfile
 import re
+import glob
 
 # JSE-drop job status codes
 class JSEDropStatus(object):
@@ -75,6 +76,17 @@ class JSEDrop(object):
         Return absolute path to JSE drop-off directory
         """
         return self._drop_dir
+
+    def jobs(self):
+        """
+        Return a list of job names found in the JSE-drop directory
+
+        """
+        jobs = []
+        for f in glob.glob(os.path.join(self._drop_dir,'*.drop.qsub')):
+            jobs.append(os.path.basename(f)[:-len('.drop.qsub')])
+        jobs.sort()
+        return jobs
 
     def run(self,name,script,mode=0775):
         """
