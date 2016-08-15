@@ -3,10 +3,21 @@
   vars:
   - galaxy_name: "palfinder"
   - galaxy_version: "v16.01"
-  - galaxy_install_dir: "/home/galaxy/galaxies"
+  - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - galaxy_server_name: "palfinder.ls.manchester.ac.uk"
+  - enable_jsedrop: yes
+  - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"
+  - galaxy_default_runner: "jse_drop"
   - default_quota_gb: 20
-  - galaxy_python_dir: "/usr/local"
+  - delete_datasets_after: "30 days"
+  - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
+  - smtp_relay_host: "[smtp.manchester.ac.uk]"
+  - galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+  - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+  - email_audit_report_to: "peter.briggs@manchester.ac.uk"
+  - enable_https: yes
+  - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
+  - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
   vars_files:
   - palfinder_passwds.yml
   roles:
