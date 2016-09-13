@@ -2,8 +2,10 @@
 Python API for the JSE-drop job submission mechnanism.
 """
 import os
+import shutil
 import tempfile
 import re
+import glob
 
 # JSE-drop job status codes
 class JSEDropStatus(object):
@@ -55,6 +57,10 @@ class JSEDrop(object):
 
     >>> jse.kill('my_job')
 
+    Clean up (i.e. remove) outputs from a JSE-drop job:
+
+    >>> jse.cleanup('my_job')
+
     """
     def __init__(self,drop_dir):
         """
@@ -75,6 +81,17 @@ class JSEDrop(object):
         """
         return self._drop_dir
 
+    def jobs(self):
+        """
+        Return a list of job names found in the JSE-drop directory
+
+        """
+        jobs = []
+        for f in glob.glob(os.path.join(self._drop_dir,'*.drop.qsub')):
+            jobs.append(os.path.basename(f)[:-len('.drop.qsub')])
+        jobs.sort()
+        return jobs
+
     def run(self,name,script,mode=0775):
         """
         Submit a script to JSE-drop
@@ -93,7 +110,7 @@ class JSEDrop(object):
         with open(tmp_drop_file,'w') as fp:
             fp.write(script)
         os.close(fd)
-        os.rename(tmp_drop_file,drop_file)
+        shutil.move(tmp_drop_file,drop_file)
         os.chmod(drop_file,mode)
         return drop_file
 
