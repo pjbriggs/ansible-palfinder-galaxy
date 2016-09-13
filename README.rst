@@ -1,8 +1,8 @@
 ansible-palfinder-galaxy
 ========================
 
-``ansible`` playbooks for deploying a Galaxy instance for running the
-``pal_finder`` pipeline on a Scientific Linux 6.7 machine.
+``ansible`` playbook and roles for deploying a Galaxy instance for running
+the ``pal_finder`` pipeline on a Scientific Linux 6.7 machine.
 
 Roles
 -----
@@ -112,14 +112,27 @@ to edit (use the ``view`` command just to see the contents).
 
 Use the ``--ask-vault`` option to prompt for the encryption password
 when running the playbook.
+
+Inventory files
+---------------
+
+Inventory files for various deployment environments are included
+under the ``inventories`` subdirectory. These inventories are
+intended to be used as an alternative to the central inventory file
+(typically ``/etc/ansible/hosts``).
+
+To explicitly specify which inventory to target for a playbook run,
+use the ``-i`` option i.e.::
+
+    ansible-playbook palfinder.yml -i inventories/inventory-prod ...
    
-Running the playbooks
----------------------
+Running the playbook
+--------------------
 
 You must pass in the hosts that the playbooks will be run on via
 the ``ansible-playbook`` command line, for example::
 
-    ansible-playbook palfinder.yml [ -b ] [ -u USER ] [ --ask-vault ] --extra-vars "hosts=palfinder"
+    ansible-playbook palfinder.yml [ -b ] [ -u USER ] [ --ask-vault ] [ -i INVENTORY ]
 
 Notes on the deployment
 -----------------------

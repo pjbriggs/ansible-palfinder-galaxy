@@ -1,5 +1,5 @@
 ---
-- hosts: '{{ hosts }}'
+- hosts: palfinder
   vars:
   - galaxy_name: "palfinder"
   - galaxy_version: "v16.01"
