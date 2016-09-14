@@ -9,7 +9,11 @@
   - libselinux-python
   - libsemanage-python
   - python-passlib
-  register: nginx_installed
+
+- name: Get status of SELinux
+  command: getenforce
+  register: sestatus
+  changed_when: false
 
 - name: Set sebooleans for httpd
   seboolean:
@@ -17,12 +21,10 @@
   with_items:
   - httpd_can_network_connect
   - httpd_enable_homedirs
-  when: nginx_installed | success
-  register: httpd_set_sebooleans
+  when: "'Disabled' not in sestatus.stdout"
 
 - name: Start Nginx
   service:
     name=nginx
     state=started
     enabled=on
-  when: httpd_set_sebooleans | success
