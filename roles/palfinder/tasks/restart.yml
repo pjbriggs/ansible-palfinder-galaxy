@@ -4,7 +4,7 @@
 - name: Add master API key
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='master_api_key' value={{ master_api_key }}
+    section='app:main' option='master_api_key' value='{{ master_api_key }}'
   become: yes
   become_user: "{{ galaxy_user }}"
   when: restart_with_master_api_key == 'yes'
