@@ -4,6 +4,8 @@
     install_dir='{{ python_install_dir }}'
     build_dir='/root/build'
 
+- include: epel.yml
+
 - include: nginx.yml
 
 - include: postgresql.yml
