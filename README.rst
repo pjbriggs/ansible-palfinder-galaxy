@@ -221,3 +221,9 @@ Known Issues
  - Tool installation can timeout or fail in which case it will need
    to be completed manually.
 
+ - In the vagrant testing environment restarting Galaxy using the
+   ``supervisorctl`` utility can fail. This appears to be due to
+   ``uWSGI`` child processes not being removed, and subsequently
+   blocking the port used by ``uWSGI``/``Galaxy``. Why this is the
+   case is not clear, so for now the ``restart_galaxy.sh`` utility
+   script has been added to work around this problem.

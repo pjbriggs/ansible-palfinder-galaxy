@@ -22,9 +22,13 @@
   register: removed_master_api_key
 
 # Restart Galaxy
-- name: Restart Galaxy
-  supervisorctl:
-    name='galaxy:'
-    state=restarted
-    supervisorctl_path=/usr/local/bin/supervisorctl
-    config=/usr/local/etc/supervisord.conf
+- name: Restart Galaxy using restart utility
+  command:
+    "{{ galaxy_root }}/restart_galaxy.sh galaxy"
+
+#- name: Restart Galaxy
+#  supervisorctl:
+#    name='galaxy:'
+#    state=restarted
+#    supervisorctl_path=/usr/local/bin/supervisorctl
+#    config=/usr/local/etc/supervisord.conf
