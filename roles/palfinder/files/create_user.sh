@@ -31,7 +31,7 @@ if [ -n "$(user_exists)" ] ; then
 fi
 
 # Check password length
-if [ $(wc -c $PASSWD) -lt 6 ] ; then
+if [ "$(echo $PASSWD | wc -c)" -le 6 ] ; then
     echo Password too short >&2
     exit 1
 fi
