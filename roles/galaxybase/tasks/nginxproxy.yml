@@ -42,5 +42,7 @@
   file:
     path=/usr/share/nginx/html/.well-known
     state=directory
-  notify:
-  - Restart Nginx
+
+# Force restart of nginx
+- name: Restart Nginx
+  service: name=nginx state=reloaded

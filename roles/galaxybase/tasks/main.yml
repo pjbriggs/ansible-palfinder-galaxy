@@ -15,8 +15,6 @@
 
 - include: logrotate.yml
 
-- include: nginxproxy.yml
-
 - include: ftpupload.yml
 
 - include: postfix.yml
@@ -31,3 +29,5 @@
   become_user: "{{ galaxy_user }}"
 
 - include: supervisor.yml
+
+- include: nginxproxy.yml
