@@ -41,7 +41,7 @@
 - name: Disable Galaxy configuration developer settings
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'debug', value: 'False' }
   - { option: 'use_interactive', value: 'False' }
@@ -61,7 +61,7 @@
 - name: Configure Galaxy FTP upload settings
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'ftp_upload_dir', value: '{{ galaxy_ftp_upload_dir }}' }
   - { option: 'ftp_upload_site', value: '{{ galaxy_ftp_upload_site }}' }
@@ -71,7 +71,7 @@
 - name: Configure Galaxy mail settings
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'smtp_server', value: 'localhost:25' }
   - { option: 'mailing_join_addr', value: '' }
@@ -84,7 +84,7 @@
 - name: Configure Galaxy user activation
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'user_activation_on', value: 'True' }
   - { option: 'activation_grace_period', value: '0' }
@@ -94,7 +94,7 @@
 - name: General Galaxy configuration
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'brand', value: '{{ galaxy_name }}' }
   - { option: 'logo_url', value: 'http://{{ galaxy_server_name }}' }

@@ -2,7 +2,7 @@
 - name: Set up cron jobs to purge deleted data
   cron:
     user='{{ galaxy_user }}'
-    name={{ item.name }}
+    name='{{ item.name }}'
     job="sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
     weekday=00 hour=03 minute=00
     state=present
@@ -15,7 +15,7 @@
 
 - name: Set up cron jobs to clean up FTP area
   cron:
-    user=galaxy
+    user='galaxy'
     name="Delete old FTP files"
     job="find {{ galaxy_ftp_upload_dir }} -mindepth 2 -mtime +5 -exec rm -rf {} \;"
     hour=00 minute=00
