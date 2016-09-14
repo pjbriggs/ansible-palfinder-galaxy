@@ -134,6 +134,14 @@ the ``ansible-playbook`` command line, for example::
 
     ansible-playbook palfinder.yml [ -b ] [ -u USER ] [ --ask-vault ] [ -i INVENTORY ]
 
+Testing using Vagrant
+---------------------
+
+The repo includes a ``Vagrantfile`` which can be used to create a
+virtual machine for testing the deployment.
+
+**This is a work-in-progress!**
+
 Notes on the deployment
 -----------------------
 
