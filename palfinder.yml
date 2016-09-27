@@ -17,7 +17,7 @@
         runner: "jse_drop"
         jse_drop_dir: "{{ galaxy_jse_drop_dir }}"
         jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
-        jse_drop_qsub_options: "-smp.pe 8"
+        jse_drop_qsub_options: "-pe smp.pe 8"
         jse_drop_slots: "8"
   - galaxy_tool_destinations:
       - id: "trimmomatic"
