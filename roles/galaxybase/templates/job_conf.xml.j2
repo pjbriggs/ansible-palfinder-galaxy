@@ -5,7 +5,7 @@
 {% if enable_drmaa %}
         <plugin id="drmaa" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner"/>
 {% endif %}
-{% if enable_jsedrop %}
+{% if enable_jse_drop %}
 	<plugin id="jse_drop" type="runner" load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner" />
 {% endif %}
     </plugins>
@@ -22,20 +22,25 @@
 	  -->
           <env file="{{ galaxy_root }}/.venv/bin/activate" />
 	</destination>
-{% if enable_jsedrop %}
-	<destination id="jse_drop" runner="jse_drop">
-	  <param id="drop_dir">{{ galaxy_jse_drop_dir }}</param>
-	  <param id="virtual_env">{{ galaxy_jse_drop_virtual_env }}</param>
-{% if galaxy_jse_drop_qsub_options %}
-	  <param id="qsub_options">{{ galaxy_jse_drop_qsub_options }}</param>
+{% for dest in galaxy_job_destinations %}
+        <destination id="{{ dest.id }}" runner="{{ dest.runner }}">
+{% if dest.runner == "jse_drop" and enable_jse_drop %}
+	  <param id="drop_dir">{{ dest.jse_drop_dir }}</param>
+	  <param id="virtual_env">{{ dest.jse_drop_virtual_env }}</param>
+{% if dest.jse_drop_qsub_options is defined %}
+          <param id="qsub_options">{{ dest.jse_drop_qsub_options }}</param>
 {% endif %}
-{% if galaxy_jse_drop_slots %}
-	  <param id="galaxy_slots">{{ galaxy_jse_drop_slots }}</param>
+{% if dest.jse_drop_slots is defined %}
+	  <param id="galaxy_slots">{{ dest.jse_drop_slots }}</param>
+{% endif %}
 {% endif %}
 	</destination>
-{% endif %}
+{% endfor %}
     </destinations>
     <tools>
+{% for tool in galaxy_tool_destinations %}
+      <tool id="{{ tool.id }}" destination="{{ tool.destination }}"/>
+{% endfor %}
     </tools>
     <limits>
         <limit type="registered_user_concurrent_jobs">2</limit>

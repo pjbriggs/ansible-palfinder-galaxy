@@ -120,3 +120,27 @@
     .venv/bin/python scripts/create_db.py
   when: done_common_startup | success
   register: initialised_database
+
+# Import the code for the JSE-drop job runner plugin
+- name: Import the JSE-drop job runner plugin files
+  copy:
+    dest='{{ galaxy_root }}/lib/galaxy/jobs/runners/{{ item }}'
+    src='{{ item }}'
+  with_items:
+  - jse_drop.py
+  - jse_drop_runner.py
+  when: enable_jse_drop
+
+# Create the JSE-drop directory
+- name: Create JSE-drop directory
+  file:
+    path='{{ galaxy_jse_drop_dir }}'
+    state=directory
+  when: enable_jse_drop
+
+# Create/update the job_conf.xml file
+# See https://wiki.galaxyproject.org/Admin/Config/Jobs
+- name: Update Galaxy job_conf XML file
+  template:
+    dest='{{ galaxy_root }}/config/job_conf.xml'
+    src=job_conf.xml.j2

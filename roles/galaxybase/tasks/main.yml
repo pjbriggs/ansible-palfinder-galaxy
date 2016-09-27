@@ -19,11 +19,6 @@
 
 - include: postfix.yml
 
-- include: jsedrop.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: enable_jsedrop
-
 - include: uwsgi.yml
   become: yes
   become_user: "{{ galaxy_user }}"

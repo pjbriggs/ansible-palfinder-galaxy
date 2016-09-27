@@ -7,7 +7,7 @@ the ``pal_finder`` pipeline on a Scientific Linux 6.7 machine.
 Roles
 -----
 
-The following roles have been defined:
+The following roles are defined:
 
  - ``dependencies``: set up the dependencies for Galaxy:
 
@@ -75,6 +75,23 @@ Database passwords:
  - ``galaxy_ftp_password``: password used by FTP server for
    authenticating users against Postgresql database
    (default: same name as the FTP database user)
+
+Job runner configuration:
+
+ - ``default_job_runner``: the default job runner to use
+   (default: ``local``)
+ - ``enable_jse_drop``: if true then enables the use of
+   the JSE-drop job runner mechanism, and creates a runner
+   definition ``jse_drop`` in ``job_conf.xml`` (default:
+   not enabled)
+ - ``galaxy_job_destinations``: a list where each item should
+   be a dictionary defining a job destination to be added
+   to the ``destinations`` section of ``job_conf.xml``
+   (default: no job destinations are defined)
+ - ``galaxy_tool_destinations``: a list where each item should
+   be a dictionary defining a tool destination to be added to
+   the ``tools`` section of ``job_conf.xml`` (default: no
+   tool destinations are defined)
 
 Other configuration settings:
 

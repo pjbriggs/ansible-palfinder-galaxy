@@ -35,14 +35,17 @@ galaxy_tool_dependency_dir: '{{ galaxy_dir }}/tool_dependencies'
 
 # Job runners
 enable_drmaa: no
-enable_jsedrop: no
+enable_jse_drop: no
 galaxy_default_runner: "local"
 
-# JSE-Drop job submission parameters
+# JSE-drop defaults
 galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
-galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
-galaxy_jse_drop_qsub_options:
-galaxy_jse_drop_slots:
+
+# Job destinations
+galaxy_job_destinations:
+
+# Tool destinations
+galaxy_tool_destinations:
 
 # FTP uploads
 galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"
