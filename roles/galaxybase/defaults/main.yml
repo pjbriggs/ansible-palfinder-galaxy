@@ -47,6 +47,9 @@ enable_require_login: no
 # Quotas
 enable_quotas: no
 
+# Tool conf XML file
+galaxy_tool_conf_file:
+
 # Job runners
 enable_drmaa: no
 enable_jse_drop: no

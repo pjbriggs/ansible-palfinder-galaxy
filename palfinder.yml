@@ -8,6 +8,7 @@
   - galaxy_welcome_template: "roles/palfinder/templates/palfinder-welcome.html.j2"
   - galaxy_terms: "roles/palfinder/files/palfinder-terms.html"
   - galaxy_citations: "roles/palfinder/files/palfinder-citations.html"
+  - galaxy_tool_conf_file: "roles/palfinder/files/palfinder-tool_conf.xml"
   - enable_require_login: yes
   - enable_user_activation: yes
   - enable_jse_drop: yes

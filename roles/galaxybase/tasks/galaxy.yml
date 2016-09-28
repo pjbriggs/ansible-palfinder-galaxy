@@ -156,6 +156,13 @@
     chdir='{{ galaxy_root }}'
     .venv/bin/python scripts/create_db.py
 
+# Update tool_conf.xml
+- name: Update base tool_conf.xml
+  copy:
+    src='{{ galaxy_tool_conf_file }}'
+    dest='{{ galaxy_root}}/config/tool_conf.xml'
+  when: galaxy_tool_conf_file is defined
+
 # Import the code for the JSE-drop job runner plugin
 - name: Import the JSE-drop job runner plugin files
   copy:

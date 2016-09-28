@@ -1,12 +1,4 @@
 ---
-# General configuration
-
-# Update the tool_conf.xml to remove unwanted tools
-- name: Update tool_conf.xml
-  copy:
-    src=palfinder-tool_conf.xml
-    dest='{{ galaxy_root}}/config/tool_conf.xml'
-
 # Set the default quota
 - name: Set default quota
   command:

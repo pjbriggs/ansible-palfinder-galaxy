@@ -5,13 +5,13 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
-- include: configure.yml galaxy_url="{{ galaxy_url }}"
-  become: yes
-  become_user: "{{ galaxy_user }}"
-
 - include: manual.yml
 
 - include: restart.yml restart_with_master_api_key=yes
+
+- include: default_quota.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
 
 - include: adminuser.yml galaxy_url="{{ galaxy_url }}"
   become: yes
