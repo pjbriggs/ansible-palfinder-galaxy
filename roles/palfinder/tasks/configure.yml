@@ -1,60 +1,14 @@
 ---
-# Upload static pages (welcome, t&cs etc)
-- name: Create welcome page
-  template:
-    dest='{{ galaxy_root }}/static/welcome.html'
-    src=palfinder-welcome.html.j2
-  register: created_welcome_page
-
-- name: Upload static content
-  copy:
-    src={{ item.src }}
-    dest='{{ galaxy_root }}/static/{{ item.dest }}'
-  with_items:
-  - { src: 'palfinder-terms.html', dest: 'terms.html' }
-  - { src: 'palfinder-citations.html', dest: 'citations.html' }
-  when: created_welcome_page | success
-  register: uploaded_static_content
-
-# Set configuration options specific to palfinder service
-- name: General Galaxy configuration
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
-  with_items:
-  - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
-  - { option: 'require_login', value: 'True' }
-  - { option: 'enable_quotas', value: 'True' }
-  - { option: 'welcome_url', value: '/static/welcome.html' }
-  - { option: 'show_welcome_with_login', value: 'True' }
-  when: uploaded_static_content | success
-  register: configured_general_settings
-
-# T&Cs, citations etc
-- name: Setup terms and conditions page
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main'
-    option='terms_url'
-    value='{{ galaxy_url }}/static/terms.html'
-
-- name: Setup citations page
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main'
-    option='citation_url'
-    value='{{ galaxy_url }}/static/citations.html'
+# General configuration
 
 # Update the tool_conf.xml to remove unwanted tools
 - name: Update tool_conf.xml
   copy:
     src=palfinder-tool_conf.xml
     dest='{{ galaxy_root}}/config/tool_conf.xml'
-  register: updated_tool_conf
 
 # Set the default quota
 - name: Set default quota
   command:
     chdir={{ galaxy_root }}
     {{ galaxy_root }}/set_default_quota.sh {{ galaxy_db }} {{ galaxy_db_user }} {{ galaxy_db_password }} {{ default_quota_gb }}
-  register: set_default_quota

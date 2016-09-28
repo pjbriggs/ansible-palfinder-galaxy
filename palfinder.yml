@@ -5,6 +5,11 @@
   - galaxy_version: "v16.01"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - galaxy_server_name: "palfinder.ls.manchester.ac.uk"
+  - galaxy_welcome_template: "roles/palfinder/templates/palfinder-welcome.html.j2"
+  - galaxy_terms: "roles/palfinder/files/palfinder-terms.html"
+  - galaxy_citations: "roles/palfinder/files/palfinder-citations.html"
+  - enable_require_login: yes
+  - enable_user_activation: yes
   - enable_jse_drop: yes
   - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"
   - galaxy_default_runner: "jse_drop_default"
@@ -22,9 +27,13 @@
   - galaxy_tool_destinations:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
+  - enable_quotas: yes
   - default_quota_gb: 20
   - delete_datasets_after: "30 days"
   - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
+  - enable_reports: yes
+  - enable_ftp_upload: yes
+  - enable_smtp: yes
   - postfix_host_name: "{{ galaxy_server_name }}"
   - postfix_relay_host: "[smtp.manchester.ac.uk]"
   - galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"

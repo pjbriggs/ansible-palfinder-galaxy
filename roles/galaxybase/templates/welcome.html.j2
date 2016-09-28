@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.or
+g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style/base.css" type="text/css" />
+</head>
+<body>
+    <div class="document">
+      <h1>Welcome to {{ galaxy_name.title() }} Galaxy</h1>
+
+      <p><b>This is the default welcome page</b></p>
+
+      <h2>About this service</h2>
+      <ul>
+	<li>Reporting: {{ enable_reports }}</li>
+	<li>Email notifications: {{ enable_smtp }}</li>
+	<li>FTP upload: {{ enable_ftp_upload }}</li>
+	<li>User activation: {{ enable_user_activation }}</li>
+      </ul>
+
+      <h2>Terms and conditions</h2>
+      <p><b>By registering and using this service you agree to be bound by
+	  the <a href="terms.html">terms and conditions</a></b>.</p>
+
+      <h2>Data upload</h2>
+      <p>Small files can be uploaded directly via your web browser.</p>
+{% if enable_ftp_upload %}
+      <p>For large files please upload to the FTP server via
+      <a href="ftp://{{ galaxy_server_name }}">ftp://{{ galaxy_server_name }}</a>
+      using your email address and Galaxy password to log in. (Uploaded files
+      will then be available for import via the <em>Upload</em> tool.)
+{% endif %}
+</p>
+
+      <h2>Citations</h2>
+      <p>Full information on citing this service can be found
+	<a href="citations.html">here</a></p>
+
+      <h2>Contact</h2>
+      <p><a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
+    </div>
+</body>
+</html>

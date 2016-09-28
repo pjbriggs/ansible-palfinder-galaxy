@@ -19,6 +19,11 @@ galaxy_db_password: "{{ galaxy_db_user }}"
 galaxy_server_name: "galaxy.example.org"
 galaxy_id_secret:
 
+# Welcome page template and static content
+galaxy_welcome_template: "welcome.html.j2"
+galaxy_terms:
+galaxy_citations:
+
 # HTTPS parameters
 enable_https: no
 ssl_certificate: "/etc/ssl/certs/{{ galaxy_server_name }}"
@@ -32,6 +37,15 @@ galaxy_install_dir: "/home/galaxy/galaxies"
 galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
 galaxy_root: "{{ galaxy_dir }}/galaxy"
 galaxy_tool_dependency_dir: '{{ galaxy_dir }}/tool_dependencies'
+
+# User account creation
+enable_user_activation: no
+
+# User login
+enable_require_login: no
+
+# Quotas
+enable_quotas: no
 
 # Job runners
 enable_drmaa: no
@@ -48,16 +62,19 @@ galaxy_job_destinations:
 galaxy_tool_destinations:
 
 # FTP uploads
+enable_ftp_upload: no
 galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"
 galaxy_ftp_upload_site: "ftp://{{ galaxy_server_name }}"
 galaxy_ftp_user: "{{ galaxy_user }}_ftp"
 galaxy_ftp_password: "{{ galaxy_ftp_user }}"
 
 # Outgoing mail notification settings
+enable_smtp: no
 galaxy_outgoing_email_addr: "Galaxy {{ galaxy_name }} <galaxy-no-reply@{{ galaxy_server_name  }}>"
 galaxy_incoming_email_addr: "None"
 
 # Reporting interface
+enable_reports: no
 galaxy_reports_htpasswd: "/etc/nginx/galaxy-reports.htpasswd"
 galaxy_reports_user: "galaxyreports"
 galaxy_reports_password: "{{ galaxy_reports_user }}"

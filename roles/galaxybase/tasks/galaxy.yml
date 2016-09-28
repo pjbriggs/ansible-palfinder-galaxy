@@ -13,84 +13,46 @@
   become: yes
   become_user: galaxy
 
+- name: Set Galaxy URL
+  set_fact:
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}/{{ galaxy_server_name }}" 
+
 - name: Clone Galaxy source
   git:
     repo='{{ galaxy_repo }}'
     version='{{ galaxy_version }}'
     dest={{ galaxy_root }}
-  when: installed_dependencies | success
-  register: cloned_source
+
+- name: Create welcome page
+  template:
+    dest='{{ galaxy_root }}/static/welcome.html'
+    src='{{ galaxy_welcome_template }}'
+
+- name: Import terms and conditions page
+  copy:
+    src='{{ galaxy_terms }}'
+    dest='{{ galaxy_root }}/static/terms.html'
+  when: galaxy_terms is defined
+
+- name: Import citations page
+  copy:
+    src='{{ galaxy_citations }}'
+    dest='{{ galaxy_root }}/static/citations.html'
+  when: galaxy_citations is defined
 
 - name: Make virtualenv in Galaxy root
   command:
     chdir={{ galaxy_root }}
     {{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ galaxy_python_dir }}/bin/python
     creates='{{ galaxy_root }}/.venv'
-  when: cloned_source | success
-  register: created_virtualenv
 
 - name: Create Galaxy configuration file
   command:
     chdir='{{ galaxy_root }}/config'
     cp galaxy.ini.sample galaxy.ini
     creates='{{ galaxy_root }}/config/galaxy.ini'
-  when: cloned_source | success
-  register: created_config_file
 
-# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
-- name: Disable Galaxy configuration developer settings
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
-  with_items:
-  - { option: 'debug', value: 'False' }
-  - { option: 'use_interactive', value: 'False' }
-  when: created_config_file | success
-  register: disabled_developer_settings
-
-# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
-- name: Configure Galaxy database connection
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main'
-    option='database_connection'
-    value='postgres://{{ galaxy_db_user }}:{{ galaxy_db_password }}@localhost:5432/{{ galaxy_db }}'
-  when: created_config_file | success
-  register: configured_database_connection
-
-- name: Configure Galaxy FTP upload settings
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
-  with_items:
-  - { option: 'ftp_upload_dir', value: '{{ galaxy_ftp_upload_dir }}' }
-  - { option: 'ftp_upload_site', value: '{{ galaxy_ftp_upload_site }}' }
-  when: created_config_file | success
-  register: configured_ftp_settings
-
-- name: Configure Galaxy mail settings
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
-  with_items:
-  - { option: 'smtp_server', value: 'localhost:25' }
-  - { option: 'mailing_join_addr', value: '' }
-  - { option: 'error_email_to', value: '{{ galaxy_incoming_email_addr }}' }
-  - { option: 'email_from', value: '{{ galaxy_outgoing_email_addr }}' }
-  - { option: 'instance_resource_url', value: 'None' }
-  when: created_config_file | success
-  register: configured_mail_settings
-
-- name: Configure Galaxy user activation
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
-  with_items:
-  - { option: 'user_activation_on', value: 'True' }
-  - { option: 'activation_grace_period', value: '0' }
-  when: configured_mail_settings | success
-
-# Set other configuration options
+# Set general configuration options
 - name: General Galaxy configuration
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
@@ -104,22 +66,95 @@
   - { option: 'allow_library_path_paste', value: 'True' }
   - { option: 'tool_dependency_dir', value: '{{ galaxy_tool_dependency_dir }}' }
   - { option: 'id_secret', value: '{{ galaxy_id_secret }}' }
-  when: created_config_file | success
-  register: configured_general_settings
+  - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
+  - { option: 'welcome_url', value: '/static/welcome.html' }
+  - { option: 'show_welcome_with_login', value: 'True' }
+
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
+- name: Configure Galaxy database connection
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='database_connection'
+    value='postgres://{{ galaxy_db_user }}:{{ galaxy_db_password }}@localhost:5432/{{ galaxy_db }}'
+
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
+- name: Disable Galaxy configuration developer settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'debug', value: 'False' }
+  - { option: 'use_interactive', value: 'False' }
+
+- name: Configure use of quotas
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'enable_quotas', value: '{{ enable_quotas }}' }
+
+- name: Configure Galaxy user activation
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'user_activation_on', value: '{{ enable_user_activation }}' }
+  - { option: 'activation_grace_period', value: '0' }
+
+- name: Configure whether to require login
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'require_login', value: '{{ enable_require_login }}' }
+
+- name: Configure Galaxy FTP upload settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'ftp_upload_dir', value: '{{ galaxy_ftp_upload_dir }}' }
+  - { option: 'ftp_upload_site', value: '{{ galaxy_ftp_upload_site }}' }
+  when: enable_ftp_upload
+
+- name: Configure Galaxy mail settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'smtp_server', value: 'localhost:25' }
+  - { option: 'mailing_join_addr', value: '' }
+  - { option: 'error_email_to', value: '{{ galaxy_incoming_email_addr }}' }
+  - { option: 'email_from', value: '{{ galaxy_outgoing_email_addr }}' }
+  - { option: 'instance_resource_url', value: 'None' }
+  when: enable_smtp
+
+- name: Configure terms and conditions page
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='terms_url'
+    value='{{ galaxy_url }}/static/terms.html'
+  when: galaxy_terms is defined
+
+- name: Configure citations page
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='citation_url'
+    value='{{ galaxy_url }}/static/citations.html'
+  when: galaxy_citations is defined
 
 - name: Run common_startup.sh to initialise sample files and eggs/wheels
   command:
     chdir='{{ galaxy_root }}'
     scripts/common_startup.sh
-  when: configured_general_settings | success
-  register: done_common_startup
 
 - name: Run create_db.py to initialise the database
   command:
     chdir='{{ galaxy_root }}'
     .venv/bin/python scripts/create_db.py
-  when: done_common_startup | success
-  register: initialised_database
 
 # Import the code for the JSE-drop job runner plugin
 - name: Import the JSE-drop job runner plugin files

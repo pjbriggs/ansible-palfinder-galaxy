@@ -7,8 +7,6 @@
     creates='{{ galaxy_root }}/config/reports.ini'
   become: yes
   become_user: '{{ galaxy_user }}'
-  when: cloned_source | success
-  register: created_reports_config_file
 
 - name: Configure Galaxy reports settings
   ini_file:
@@ -20,8 +18,6 @@
   - { option: 'cookie_path', value: '/reports' }
   become: yes
   become_user: '{{ galaxy_user }}'
-  when: created_reports_config_file | success
-  register: configured_galaxy_reports
   notify: Reload Galaxy reports
 
 - name: Configure Galaxy reports proxy settings
@@ -34,8 +30,6 @@
   - { option: 'prefix', value: '/reports' }
   become: yes
   become_user: '{{ galaxy_user }}'
-  when: configured_galaxy_reports | success
-  register: configured_galaxy_reports_proxy
   notify: Reload Galaxy reports
 
 # Set up as a service
@@ -44,8 +38,6 @@
     dest=/etc/init.d/galaxy_reports
     src=galaxy_reports.init.sh.j2
     mode=0755
-  when: configured_galaxy_reports | success
-  register: created_galaxy_reports_init
   notify: Reload Galaxy reports
 
 - name: Start Galaxy reports service
@@ -53,7 +45,6 @@
     name=galaxy_reports
     enabled=on
     state=started
-  when: created_galaxy_reports_init | success
 
 # Set up Nginx proxy password protection
 - name: Set up Galaxy reports access
@@ -65,4 +56,3 @@
     group=root
     mode=0644
     create=yes
-  register: set_up_galaxy_reports_access

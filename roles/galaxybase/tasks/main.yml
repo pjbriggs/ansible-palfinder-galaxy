@@ -10,12 +10,14 @@
   become_user: "{{ galaxy_user }}"
 
 - include: reports.yml
+  when: enable_reports
 
 - include: purgehistories.yml
 
 - include: logrotate.yml
 
 - include: ftpupload.yml
+  when: enable_ftp_upload
 
 - include: uwsgi.yml
   become: yes
