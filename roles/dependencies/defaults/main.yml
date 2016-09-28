@@ -20,5 +20,9 @@ proftpd_install_dir: '/usr/local'
 supervisor_version: '3.2.2'
 supervisor_install_dir: '/usr/local'
 
+# Postfix
+postfix_host_name:
+postfix_relay_host:
+
 # Temporary top-level build directory
 build_dir: '/tmp/build'

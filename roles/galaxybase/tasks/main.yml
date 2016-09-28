@@ -17,8 +17,6 @@
 
 - include: ftpupload.yml
 
-- include: postfix.yml
-
 - include: uwsgi.yml
   become: yes
   become_user: "{{ galaxy_user }}"

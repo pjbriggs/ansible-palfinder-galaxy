@@ -1,8 +1,7 @@
-# Install and configure postfix for outgoing email
+# Install and configure postfix as null client for outgoing email
 ---
 - name: Install Postfix yum packages
   yum: name=postfix state=present
-  register: postfix_installed
 
 - name: Check if backup of Postfix configuration is present
   stat: path=/etc/postfix/main.cf.bak
@@ -11,3 +10,16 @@
 - name: Move default Postfix config file
   command: mv /etc/postfix/main.cf /etc/postfix/main.cf.bak
   when: backup_postfix_default_conf.stat.exists == False
+
+- name: Create null client Postfix config
+  template:
+    dest=/etc/postfix/main.cf
+    src=postfix-main.cf.j2
+  notify:
+  - Reload Postfix
+
+- name: Start Postfix
+  service:
+    name=postfix
+    enabled=on
+    state=started
