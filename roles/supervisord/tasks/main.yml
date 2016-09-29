@@ -8,7 +8,18 @@
   yum:
     name=supervisor
     state=absent
-  register: uninstalled_supervisor
+
+- name: Determine the user home directory
+  shell:
+    "echo $HOME"
+  register: user_home
+
+- name: Determine the build directory
+  set_fact:
+    build_dir: "{{ user_home.stdout }}/build"
+
+- name: Print the location of the build directory
+  debug: msg="Build directory {{ build_dir }}"
 
 - name: Create build directory
   file:
@@ -19,8 +30,6 @@
   get_url:
     url=https://pypi.python.org/packages/source/s/supervisor/supervisor-{{supervisor_version}}.tar.gz
     dest='{{ build_dir }}'
-  when: uninstalled_supervisor | success
-  register: downloaded_supervisor_src
 
 - name: Unpack Supervisor source
   unarchive:
@@ -30,50 +39,45 @@
     owner=root
     group=root
     creates='{{ build_dir }}/supervisor-{{ supervisor_version }}'
-  when: downloaded_supervisor_src | success
-  register: unpacked_supervisor_src
 
 - name: Install Supervisor
   command:
     chdir='{{ build_dir }}/supervisor-{{ supervisor_version }}'
-    {{ python_install_dir }}/bin/python setup.py install --prefix={{ supervisor_install_dir }}
+    {{ supervisor_python_dir }}/bin/python setup.py install --prefix={{ supervisor_install_dir }}
     creates={{ supervisor_install_dir }}/bin/supervisord
-  when: unpacked_supervisor_src | success
-  register: installed_supervisor
 
 - name: Create Supervisord conf file
   shell: >-
     {{ supervisor_install_dir }}/bin/echo_supervisord_conf > {{ supervisor_install_dir }}/etc/supervisord.conf
     creates={{ supervisor_install_dir }}/etc/supervisord.conf
-  when: installed_supervisor | success
-  register: created_supervisord_conf
   notify: Restart Supervisord
 
 - name: Create supervisord.d directory
   file:
     path='{{ supervisor_install_dir }}/etc/supervisord.d'
     state=directory
-  when: installed_supervisor | success
-  register: created_supervisord_conf_dir
 
 - name: Create supervisord log directory
   file:
     path='/var/log/supervisord'
     state=directory
-  when: installed_supervisor | success
-  register: created_supervisord_log_dir
 
 - name: Update Supervisord conf file
   ini_file:
     dest='{{ supervisor_install_dir }}/etc/supervisord.conf'
-    section={{ item.section }}
-    option={{ item.option }}
-    value={{ item.value }}
+    section='{{ item.section }}'
+    option='{{ item.option }}'
+    value='{{ item.value }}'
   with_items:
-  - { section: 'supervisord', option: 'logfile', value: '/var/log/supervisord/supervisord.log' }
-  - { section: 'supervisord', option: 'pidfile', value: '/var/run/supervisord.pid' }
-  - { section: 'include', option: 'files', value: '/usr/local/etc/supervisord.d/*.ini' }
-  when: created_supervisord_conf | success
+  - section: 'supervisord'
+    option: 'logfile'
+    value: '/var/log/supervisord/supervisord.log'
+  - section: 'supervisord'
+    option: 'pidfile'
+    value: '/var/run/supervisord.pid'
+  - section: 'include'
+    option: 'files'
+    value: '/usr/local/etc/supervisord.d/*.ini'
   notify: Restart Supervisord
 
 # Set up as a service
@@ -82,8 +86,6 @@
     dest=/etc/init.d/supervisord
     src=supervisord.init.sh
     mode='ugo+x'
-  when: created_supervisord_conf | success
-  register: created_supervisord_init
   notify: Restart Supervisord
 
 - name: Start Supervisord service
@@ -91,4 +93,3 @@
     name=supervisord
     enabled=on
     state=started
-  when: created_supervisord_init | success

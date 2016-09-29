@@ -7,6 +7,9 @@ galaxy_version: 'v16.01'
 galaxy_user: "galaxy"
 galaxy_group: "{{ galaxy_user }}"
 
+# Galaxy admin user
+galaxy_admin_user: "admin@galaxy.org"
+
 # Python for Galaxy
 galaxy_python_dir: '/usr/local'
 

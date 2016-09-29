@@ -1,9 +1,8 @@
-# Create the 'galaxy' user and group with specified UID/GIDs
 ---
+# Create the 'galaxy' user and group with specified UID/GIDs
 - name: Create Galaxy group
   group:
     name={{ galaxy_group }} gid={{ galaxy_gid }} state=present
-  register: group_created
 
 - name: Create Galaxy user
   user:
@@ -12,5 +11,3 @@
     home=/home/{{ galaxy_user }}
     uid={{ galaxy_uid }}
     state=present
-  when: group_created | success
-  register: user_created

@@ -1,6 +1,5 @@
-# Install and start the nfslock service
-
 ---
+# Install and start the nfslock service
 - name: Install NFS dependencies
   yum:
     name={{ item }} state=present

@@ -1,0 +1,7 @@
+---
+# Supervisord defaults
+supervisor_version: '3.2.2'
+supervisor_install_dir: '/usr/local'
+
+# Location of Python installation to use
+supervisor_python_dir: '/usr/local'

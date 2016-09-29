@@ -37,15 +37,8 @@
     dest=/usr/local/etc/proftpd-galaxy.conf
     src=proftpd-galaxy.conf.j2
 
-# Set up as a service
-- name: Create init.d script for ProFTPd
-  copy:
-    dest=/etc/init.d/proftpd
-    src=proftpd.init.sh
-    mode='ugo+x'
-
-- name: Start ProFTPd service
+- name: Restart ProFTPd service
   service:
     name=proftpd
     enabled=on
-    state=started
+    state=restarted

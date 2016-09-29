@@ -1,0 +1,4 @@
+---
+# Handlers for postfix null client
+- name: Reload Postfix
+  service: name=postfix state=reloaded

@@ -1,32 +1,44 @@
+---
 # Build and install Python 2.7 on the remote host
 # Also installs pip and virtualenv packages
----
+
 - name: Install Python build dependencies
-  yum: state=present name={{item}}
+  yum: state="present" name="{{item}}"
   with_items:
   - autoconf
   - make
   - automake
   - gcc
-  - bzip2
-  - ncurses
-  - openssl
   - readline
   - sqlite
   - zlib
   - bzip2-devel
+  - bzip2
   - ncurses-devel
+  - ncurses
   - openssl-devel
+  - openssl
   - readline-devel
   - sqlite-devel
   - zlib-devel
   - tkinter
-  register: installed_python_dependencies
 
 - name: Create installation directory
   file:
     path='{{ install_dir }}'
     state=directory
+
+- name: Determine the user home directory
+  shell:
+    "echo $HOME"
+  register: user_home
+
+- name: Determine the build directory
+  set_fact:
+    build_dir: "{{ user_home.stdout }}/build"
+
+- name: Print the location of the build directory
+  debug: msg="Build directory {{ build_dir }}"
 
 - name: Create build directory
   file:
@@ -37,8 +49,6 @@
   get_url:
     url='https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
     dest='{{ build_dir }}'
-  when: installed_python_dependencies | success
-  register: downloaded_python_27
 
 - name: Unpack Python 2.7
   unarchive:
@@ -46,8 +56,6 @@
     dest='{{ build_dir }}'
     copy=no
     creates='{{ build_dir }}/Python-{{ python_version }}'
-  when: downloaded_python_27 | success
-  register: unpacked_python_27
 
 - name: Install Python 2.7
   command:
@@ -57,28 +65,20 @@
   with_items:
   - ./configure --prefix={{ install_dir }}
   - make install
-  when: unpacked_python_27 | success
-  register: installed_python_27
 
 - name: Install Pip
   command:
     chdir='{{ build_dir }}'
     {{ install_dir }}/bin/python2.7 -m ensurepip
     creates='{{ install_dir }}/bin/pip'
-  when: installed_python_27 | success
-  register: installed_pip
 
 - name: Upgrade Pip
   command:
     chdir='{{ build_dir }}'
     {{ install_dir }}/bin/pip install --upgrade pip
-  when: installed_pip | success
-  register: upgraded_pip
 
 - name: Install Virtualenv
   pip:
     name=virtualenv
     state=present
     executable='{{ install_dir }}/bin/pip'
-  when: upgraded_pip | success
-  register: installed_virtualenv

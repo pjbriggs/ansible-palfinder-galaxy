@@ -1,7 +1,5 @@
-# Install, configure and start Nginx on remote server
-
 ---
-# Set up Nginx
+# Install, configure and start Nginx on remote server
 - name: Install Nginx
   yum: name={{item}} state=present
   with_items:

@@ -1,9 +1,0 @@
----
-- name: Restart PostgreSQL
-  service: name=postgresql state=restarted
-
-- name: Restart Supervisord
-  service: name=supervisord state=reloaded
-
-- name: Reload Postfix
-  service: name=postfix state=reloaded

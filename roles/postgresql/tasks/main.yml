@@ -1,7 +1,5 @@
-# Install, configure and start PostgreSQL on remote server
-
 ---
-# Set up the PostgreSQL server
+# Install, configure and start PostgreSQL on remote server
 - name: Install PostgreSQL server
   yum: name={{item}} state=present
   with_items:
@@ -21,14 +19,6 @@
   when: postgresql_conf.stat.exists == False
   register: postgresql_initialised
 
-- name: Start PostgreSQL service and enable on boot
-  service:
-    name=postgresql
-    state=started
-    enabled=yes
-  when: postgresql_initialised | success
-  register: postgresql_started
-
 - name: Update PostgreSQL authentication for postgres user
   lineinfile:
     dest=/var/lib/pgsql/data/pg_hba.conf
@@ -45,3 +35,12 @@
     replace='\1md5'
   notify:
     Restart PostgreSQL
+
+- name: Start PostgreSQL service and enable on boot
+  service:
+    name=postgresql
+    state=started
+    enabled=yes
+  when: postgresql_initialised | success
+  register: postgresql_started
+

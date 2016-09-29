@@ -7,3 +7,8 @@
     src=supervisord-galaxy.ini.j2
   notify:
     - Restart Supervisord
+
+- name: Force restart of supervisord
+  service:
+    name='supervisord'
+    state='restarted'

@@ -5,11 +5,23 @@
 - name: Install ProFTPd build dependencies
   yum: state=present name={{item}}
   with_items:
+  - gcc
   - postgresql-devel
   - openssl-devel
   - pam-devel
   - libnetfilter_conntrack
-  register: installed_proftpd_dependencies
+
+- name: Determine the user home directory
+  shell:
+    "echo $HOME"
+  register: user_home
+
+- name: Determine the build directory
+  set_fact:
+    build_dir: "{{ user_home.stdout }}/build"
+
+- name: Print the location of the build directory
+  debug: msg="Build directory {{ build_dir }}"
 
 - name: Create build directory
   file:
@@ -20,8 +32,6 @@
   get_url:
     url='https://github.com/proftpd/proftpd/archive/v{{ proftpd_version }}.tar.gz'
     dest='{{ build_dir }}'
-  when: installed_proftpd_dependencies | success
-  register: downloaded_proftpd_src
 
 - name: Unpack ProFTPd source
   unarchive:
@@ -31,8 +41,6 @@
     owner=root
     group=root
     creates='{{ build_dir }}/proftpd-{{ proftpd_version }}'
-  when: downloaded_proftpd_src | success
-  register: unpacked_proftpd_src
 
 - name: Install ProFTPd
   command:
@@ -43,5 +51,17 @@
   - ./configure --prefix={{ proftpd_install_dir }} --disable-auth-file --disable-ncurses --disable-ident --disable-shadow --enable-openssl --with-modules=mod_sql:mod_sql_postgres:mod_sql_passwd
   - make
   - make install
-  when: unpacked_proftpd_src | success
-  register: installed_proftpd
+
+# Set up as a service
+- name: Create init.d script for ProFTPd
+  copy:
+    dest=/etc/init.d/proftpd
+    src=proftpd.init.sh
+    mode='ugo+x'
+
+- name: Start ProFTPd service
+  service:
+    name=proftpd
+    enabled=on
+    state=started
+

@@ -1,5 +1,6 @@
 ---
 - hosts: palfinder
+
   vars:
   - galaxy_name: "palfinder"
   - galaxy_version: "v16.01"
@@ -43,9 +44,27 @@
   - enable_https: yes
   - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
   - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
+
   vars_files:
   - palfinder_passwds.yml
+
   roles:
-  - dependencies
+  # Dependencies
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - python27
+  - nginx
+  - postgresql
+  - proftpd
+  - supervisord
+  - postfix-null-client
+  - lets-encrypt-client
+  # Install Galaxy-specific Python 2.7
+  - role: python27
+    install_dir: "{{ galaxy_python_dir }}"
+    become: yes
+    become_user: "{{ galaxy_user }}"
+  # Install and configure Galaxy
   - galaxybase
   - palfinder

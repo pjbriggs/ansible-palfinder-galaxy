@@ -1,0 +1,4 @@
+---
+# Defaults for Postfix null client setup
+postfix_host_name:
+postfix_relay_host:

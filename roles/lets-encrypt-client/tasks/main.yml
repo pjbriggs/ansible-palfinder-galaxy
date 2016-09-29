@@ -1,5 +1,5 @@
-# Fetch the Let's Encrypt 'certbot' client
 ---
+# Fetch the Let's Encrypt 'certbot' client
 - name: Install certbot system dependencies
   yum: state=present name={{item}}
   with_items:
@@ -23,8 +23,6 @@
     url='https://dl.eff.org/certbot-auto'
     dest='/usr/local/bin/certbot-auto'
     mode=0755
-  when: installed_certbot_dependencies | success
-  register: installed_certbot_auto
 
 - name: Set up automatic renewal of certificates
   cron:
