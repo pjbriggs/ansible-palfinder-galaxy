@@ -18,39 +18,46 @@ else
 fi
 
 MANAGE_TOOLS=.venv/bin/manage_tools
-#URL=http://localhost:80
-#URL=https://palfinder.ls.manchester.ac.uk
 
-function tool_exists() {
+function tool_installed() {
     $MANAGE_TOOLS installed $URL -k $APIKEY --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installed$" | head -n 1 | cut -f1
 }
 
+function tool_installing() {
+    $MANAGE_TOOLS installed $URL -k $APIKEY --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installing$" | head -n 1 | cut -f1
+}
+
 echo RUN
-echo \"$(tool_exists)\"
+echo \"$(tool_installed)\"
 echo RUN
 
 # Check for tool
-if [ -n "$(tool_exists)" ] ; then
+if [ -n "$(tool_installed)" ] ; then
     echo $TOOL: already installed
     exit
 fi
 
 # Install the tool
 $MANAGE_TOOLS install $URL -k $APIKEY $SHED $OWNER $TOOL
-if [ $? -ne 0 ] ; then
-    echo Failed to install tool $TOOL >&2
-    exit 1
+retcode=$?
+echo Tool installation returned $retcode
+if [ $retcode -ne 0 ] ; then
+    echo Nonzero return code ignored
 fi
 
 # Check that tool exists
 ntries=0
 while [ $ntries -lt 10 ] ; do
-    if [ -n "$(tool_exists)" ] ; then
+    if [ -n "$(tool_installing)" ] ; then
+	echo -n .
+	ntries=$((ntries+1))
+	sleep 30
+    elif [ -n "$(tool_installed)" ] ; then
 	echo $TOOL: installed
 	exit
     fi
     ntries=$((ntries+1))
-    sleep 5
+    sleep 30
 done
 echo Failed to install tool $TOOL >&2
 exit 1
