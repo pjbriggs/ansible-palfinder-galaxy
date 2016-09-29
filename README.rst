@@ -9,17 +9,18 @@ Roles
 
 The following roles are defined:
 
- - ``dependencies``: set up the dependencies for Galaxy:
-
-   * Python 2.7
-   * Postgresql
-   * Nginx
-   * Supervisord
-   * Proftp
-   * nfslock/statd
-   * Postfix
-   * Create Galaxy user
-   * (Optionally) install Galaxy-specific Python
+ - ``galaxy-user``: creates the Galaxy user and group
+ - ``epel-repo``: installs the EPEL package repository
+ - ``nfslock``: installs the NFSLock package
+ - ``python27``: builds and installs Python 2.7 from source
+ - ``nginx``: installs Nginx
+ - ``postgresql``: installs and configures PostgreSQL
+ - ``proftpd``: builds and installs ProFTPd from source
+ - ``supervisord``: builds and installs Supervisord from source
+ - ``postfix-null-client``: installs and configures Postfix as
+    a 'null client'
+ - ``lets-encrypt-client``: install the Let's Encrypt client
+   ``cert-bot``, and sets up automatic certificate renewal
 
  - ``galaxybase``: set up a "base" Galaxy instance:
 
