@@ -10,15 +10,24 @@ Roles
 The following roles are defined:
 
  - ``galaxy-user``: creates the Galaxy user and group
+
  - ``epel-repo``: installs the EPEL package repository
+
  - ``nfslock``: installs the NFSLock package
+
  - ``python27``: builds and installs Python 2.7 from source
+
  - ``nginx``: installs Nginx
+
  - ``postgresql``: installs and configures PostgreSQL
+
  - ``proftpd``: builds and installs ProFTPd from source
+
  - ``supervisord``: builds and installs Supervisord from source
+
  - ``postfix-null-client``: installs and configures Postfix as
     a 'null client'
+
  - ``lets-encrypt-client``: install the Let's Encrypt client
    ``cert-bot``, and sets up automatic certificate renewal
 
@@ -31,7 +40,6 @@ The following roles are defined:
    * Set up log rotation
    * Set up Nginx proxy
    * Set up FTP server
-   * Set up outgoing SMTP mail server
    * (Optionally) set up the JSE-drop job runner plugin
    * Configure uWSGI for Galaxy
    * Configure Supervisord for Galaxy
