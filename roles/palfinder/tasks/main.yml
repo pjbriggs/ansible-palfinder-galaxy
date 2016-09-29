@@ -1,5 +1,7 @@
 ---
-- include: set_facts.yml
+- name: Set Galaxy URL
+  set_fact:
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}"
 
 - include: utils.yml
   become: yes
