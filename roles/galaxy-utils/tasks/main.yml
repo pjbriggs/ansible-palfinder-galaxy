@@ -1,0 +1,29 @@
+# Install utilities
+---
+- name: Install dependencies for utilities
+  pip:
+    name="psycopg2"
+    executable='{{ python_install_dir }}/bin/pip'
+    state=present
+
+- name: Install Nebulizer
+  pip:
+    name='https://github.com/pjbriggs/nebulizer/archive/v0.1.1.tar.gz'
+    executable='{{ python_install_dir }}/bin/pip'
+    extra_args='--prefix {{ galaxy_utils_dir }} --no-binary :all:'
+    state=present
+
+- name: Install utility scripts
+  copy:
+    src={{ item }}
+    dest='{{ galaxy_utils_dir }}/bin/{{ item }}'
+    mode='ugo+rx'
+  with_items:
+  - restart_galaxy.sh
+  - create_user.sh
+  - install_tool.sh
+  - delete_old_datasets.sh
+  - set_default_quota.sh
+  - activate_user.sh
+  - populate_data_library.sh
+  - audit_report.py
