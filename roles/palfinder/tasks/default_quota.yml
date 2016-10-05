@@ -1,6 +1,0 @@
----
-# Set the default quota
-- name: Set default quota
-  command:
-    chdir={{ galaxy_root }}
-    {{ galaxy_root }}/set_default_quota.sh {{ galaxy_db }} {{ galaxy_db_user }} {{ galaxy_db_password }} {{ default_quota_gb }}
