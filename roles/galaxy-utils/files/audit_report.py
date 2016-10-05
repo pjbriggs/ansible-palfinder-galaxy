@@ -2,6 +2,7 @@
 #
 # Generate and email report on Galaxy usage
 import sys
+import os
 import optparse
 from ConfigParser import ConfigParser
 from ConfigParser import NoOptionError
@@ -75,6 +76,9 @@ if __name__ == "__main__":
     send_email = (not opts.no_email)
     # Get database connection from config
     if opts.galaxy_ini:
+        if not os.path.isfile(opts.galaxy_ini):
+            logging.critical("Config file '%s': not found" % opts.galaxy_ini)
+            sys.exit(1)
         c = ConfigParser()
         c.read(opts.galaxy_ini)
         database_connection = c.get('app:main','database_connection')
