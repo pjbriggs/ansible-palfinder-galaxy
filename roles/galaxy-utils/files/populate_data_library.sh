@@ -13,9 +13,7 @@ PASSWD=$3
 LIBRARY=$(echo $4 | cut -d/ -f1)
 FOLDER=$(echo $4 | cut -d/ -f2-)
 
-MANAGE_LIBRARIES=.venv/bin/manage_libraries
-#URL=http://localhost:80
-#URL=https://palfinder.ls.manchester.ac.uk
+MANAGE_LIBRARIES=$(dirname $0)/manage_libraries
 
 # Create data library
 got_library=$($MANAGE_LIBRARIES list $URL -u $USER -P $PASSWD 2>/dev/null | grep "^$LIBRARY")
@@ -56,7 +54,7 @@ while [ ! -z "$5" ] ; do
 	    wget -O $(basename $FILE) $FILE
 	    FILE=$(basename $FILE)
 	fi
-	$MANAGE_LIBRARIES add_datasets $URL -u $USER -P $PASSWD --server "$LIBRARY/$FOLDER" $FILE $FILE_TYPE 2>/dev/null
+	$MANAGE_LIBRARIES add_datasets $URL -u $USER -P $PASSWD --server "$LIBRARY/$FOLDER" $FILE $FILE_TYPE
     else
 	echo "File $(basename $FILE) exists under $LIBRARY/$FOLDER"
     fi

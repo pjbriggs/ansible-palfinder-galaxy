@@ -1,0 +1,17 @@
+---
+# Defaults for automatic dataset deletion
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# Location under which the Galaxy instance is installed
+galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
+
+# Postgresql database
+galaxy_db: "galaxy_{{ galaxy_name }}"
+galaxy_db_user: "{{ galaxy_user }}"
+galaxy_db_password: "{{ galaxy_db_user }}"
+
+# Delete user datasets after specified time frame
+delete_datasets_after: "30 days"

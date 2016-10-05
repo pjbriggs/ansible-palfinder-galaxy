@@ -1,0 +1,6 @@
+---
+# Set/update Galaxy user quotas
+
+- name: Set default quota
+  command:
+    "{{ galaxy_utils_dir }}/bin/set_default_quota.sh {{ galaxy_db }} {{ galaxy_db_user }} {{ galaxy_db_password }} {{ default_quota_gb }}"

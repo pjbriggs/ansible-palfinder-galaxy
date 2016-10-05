@@ -1,0 +1,14 @@
+---
+# Defaults for setting user quotas
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# Postgresql database
+galaxy_db: "galaxy_{{ galaxy_name }}"
+galaxy_db_user: "{{ galaxy_user }}"
+galaxy_db_password: "{{ galaxy_db_user }}"
+
+# Default quota size (Gb)
+default_quota_gb: 25

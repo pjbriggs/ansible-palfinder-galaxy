@@ -1,0 +1,9 @@
+---
+# Defaults for tool installation into Galaxy
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# Is https enabled
+enable_https: no

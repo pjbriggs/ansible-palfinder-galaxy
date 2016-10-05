@@ -32,6 +32,20 @@ enable_https: no
 ssl_certificate: "/etc/ssl/certs/{{ galaxy_server_name }}"
 ssl_certificate_key: "/etc/ssl/certs/{{ galaxy_server_name }}"
 
+# Additional location entries in nginx config
+# Define entries as a dictionary with:
+# - location
+# - alias
+# - add_header (optional)
+galaxy_nginx_extra_locations:
+
+# Additional static content
+# Define entries as a dictionary with:
+# - src (file to be uploaded)
+# - dest (target location)
+# - link (option, also make a link to dest)
+galaxy_extra_static_content:
+
 # Galaxy source code
 galaxy_repo: https://github.com/galaxyproject/galaxy.git
 

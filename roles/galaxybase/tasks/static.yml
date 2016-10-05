@@ -1,0 +1,15 @@
+---
+# Upload additional static content
+- name: Upload static content
+  copy:
+    src="{{ item.src }}"
+    dest="{{ item.dest }}"
+  with_items: "{{ galaxy_extra_static_content }}"
+
+- name: Create links to static content
+  file:
+    src="{{ item.dest }}"
+    dest="{{ item.link }}"
+    state=link
+  when: item.link is defined
+  with_items: "{{ galaxy_extra_static_content }}"

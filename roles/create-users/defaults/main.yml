@@ -1,0 +1,20 @@
+---
+# Defaults for user account creation
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# User accounts to be created
+galaxy_users:
+
+# Postgresql database
+galaxy_db: "galaxy_{{ galaxy_name }}"
+galaxy_db_user: "{{ galaxy_user }}"
+galaxy_db_password: "{{ galaxy_db_user }}"
+
+# Is https enabled
+enable_https: no
+
+# Is user activation enable?
+enable_user_activation: no

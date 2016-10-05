@@ -26,7 +26,7 @@ The following roles are defined:
  - ``supervisord``: builds and installs Supervisord from source
 
  - ``postfix-null-client``: installs and configures Postfix as
-    a 'null client'
+   a 'null client'
 
  - ``lets-encrypt-client``: install the Let's Encrypt client
    ``cert-bot``, and sets up automatic certificate renewal
@@ -35,26 +35,43 @@ The following roles are defined:
 
    * Install Galaxy dependencies
    * Set up database
-   * Clone specified Galaxy version
+   * Clone and configure specified Galaxy version
+   * Uploads ``welcome``, ``terms`` and ``citation`` pages,
+     (plus any additional static content)
    * Set up cron jobs to purge histories and datasets
    * Set up log rotation
    * Set up Nginx proxy
    * Set up FTP server
+   * Installs customised ``tool_conf.xml``
    * (Optionally) set up the JSE-drop job runner plugin
    * Configure uWSGI for Galaxy
    * Configure Supervisord for Galaxy
 
- - ``palfinder``: customises the base Galaxy instance:
+ - ``galaxy-utils``: installs utility scripts for Galaxy
+   user creation, tool installation etc
 
-   * Installs utility scripts
-   * Uploads ``welcome`` and ``terms`` static pages
-   * Configures settings (i.e. require login, quotas etc)
-   * Installs customised ``tool_conf.xml``
-   * Sets default quota
-   * Adds admin user account
-   * Installs specific tools from toolshed
-   * Configures automatic deletion of old datasets
-   * Sets up weekly emailing of audit reports
+ - ``create-users``: creates user accounts in the Galaxy
+   instance, as specified in the ``galaxy_users`` variable
+
+ - ``install-tools``: installs tools from the main toolshed,
+   specified in the ``galaxy_tools`` variable
+
+ - ``add-library-data``: uploads files to a data library
+   (creating the library first if necessary), as specified
+   in the ``galaxy_library_datasets`` variable
+
+ - ``set-default-quota``: set the default quota for the
+   Galaxy instance
+
+ - ``auto-delete-datasets``: configures automatic deletion
+   of old datasets
+
+ - ``audit-report``: sets up weekly emailing of audit
+   reports
+
+ - ``restart-galaxy``: restart the Galaxy instance using
+   Supervisord, optionally enabling the master API key
+   first
 
 Variables
 ---------

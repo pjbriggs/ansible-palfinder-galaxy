@@ -9,6 +9,8 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
+- include: static.yml
+
 - include: reports.yml
   when: enable_reports
 

@@ -5,13 +5,27 @@
   - galaxy_name: "palfinder"
   - galaxy_version: "v16.01"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
+  - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
   - galaxy_server_name: "palfinder.ls.manchester.ac.uk"
+  # Galaxy configuration
+  - enable_require_login: yes
+  - enable_user_activation: yes
+  - enable_quotas: yes
+  - enable_ftp_upload: yes
+  # Welcome page etc
   - galaxy_welcome_template: "roles/palfinder/templates/palfinder-welcome.html.j2"
   - galaxy_terms: "roles/palfinder/files/palfinder-terms.html"
   - galaxy_citations: "roles/palfinder/files/palfinder-citations.html"
-  - galaxy_tool_conf_file: "roles/palfinder/files/palfinder-tool_conf.xml"
-  - enable_require_login: yes
-  - enable_user_activation: yes
+  # User manual
+  - galaxy_extra_static_content:
+      - src: "roles/palfinder/files/palfinder_galaxy_manual_v1.2.pdf"
+        dest: "/usr/share/nginx/html/palfinder_galaxy_manual_v1.2.pdf"
+        link: "/usr/share/nginx/html/manual"
+  - galaxy_nginx_extra_locations:
+      - location: "^~ /manual"
+        alias: "/usr/share/nginx/html/manual"
+        add_header: "Content-Type application/pdf"
+  # Job configuration
   - enable_jse_drop: yes
   - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"
   - galaxy_default_runner: "jse_drop_default"
@@ -29,18 +43,43 @@
   - galaxy_tool_destinations:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
-  - enable_quotas: yes
+  # Users
+  - galaxy_admin_user: "admin@galaxy.org"
+  - galaxy_users:
+      - email: "{{ galaxy_admin_user }}"
+        password: "{{ galaxy_admin_passwd }}"
+  # Tools
+  - galaxy_tool_conf_file: "roles/palfinder/files/palfinder-tool_conf.xml"
+  - galaxy_tools:
+      - tool: "fastqc"
+        owner: "devteam"
+      - tool: "trimmomatic"
+        owner: "pjbriggs"
+      - tool: "pal_finder"
+        owner: "pjbriggs"
+  # Demo data
+  - demo_data_dir: "{{ galaxy_install_dir }}/demo-data"
+  - galaxy_library_datasets:
+      - file: "{{ demo_data_dir }}/miseq_R1.fq"
+        type: "fastqsanger"
+        library: "Example data/Fastqs"
+      - file: "{{ demo_data_dir }}/miseq_R2.fq"
+        type: "fastqsanger"
+        library: "Example data/Fastqs"
+  # Default quota
   - default_quota_gb: 20
+  # Automatic dataset deletion
   - delete_datasets_after: "30 days"
-  - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
+  # Audit report
   - enable_reports: yes
-  - enable_ftp_upload: yes
+  - email_audit_report_to: "peter.briggs@manchester.ac.uk"
+  # Postfix/email configuration
   - enable_smtp: yes
   - postfix_host_name: "{{ galaxy_server_name }}"
   - postfix_relay_host: "[smtp.manchester.ac.uk]"
   - galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
   - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
-  - email_audit_report_to: "peter.briggs@manchester.ac.uk"
+  # SSL configuration
   - enable_https: yes
   - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
   - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
@@ -67,4 +106,19 @@
     become_user: "{{ galaxy_user }}"
   # Install and configure Galaxy
   - galaxybase
-  - palfinder
+  # Install utilities
+  - galaxy-utils
+  # Restart with master API key enabled (needed
+  # to create user accounts)
+  - role: restart-galaxy
+    enable_master_api_key: yes
+  - create-users
+  - install-tools
+  - set-default-quota
+  # Restart with master API key disabled
+  - role: restart-galaxy
+    enable_master_api_key: no
+  # Additional set up
+  - add-library-data
+  - auto-delete-datasets
+  - audit-report

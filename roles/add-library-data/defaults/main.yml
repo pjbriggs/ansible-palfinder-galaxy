@@ -1,0 +1,13 @@
+---
+# Defaults for populating Galaxy data libraries
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# Admin user account
+galaxy_admin_user: "admin@galaxy.org"
+galaxy_admin_passwd: "galaxyadmin"
+
+# Is https enabled
+enable_https: no

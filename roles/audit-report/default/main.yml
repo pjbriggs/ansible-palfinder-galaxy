@@ -1,0 +1,16 @@
+---
+# Defaults for emailing audit reports
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# User running Galaxy service
+galaxy_user: "galaxy"
+
+# Galaxy installation directories
+galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
+galaxy_root: "{{ galaxy_dir }}/galaxy"
+
+# Who to email audit report to
+email_audit_report_to:

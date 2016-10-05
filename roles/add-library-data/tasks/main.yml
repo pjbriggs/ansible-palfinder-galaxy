@@ -1,0 +1,17 @@
+---
+# Set up and populate data library with demo data
+
+- name: Set Galaxy URL
+  set_fact:
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}"
+
+- name: Check admin user account name
+  debug:
+    msg="Admin user {{ galaxy_admin_user }}"
+
+- name: Add datasets to data library
+  command:
+    "{{ galaxy_utils_dir }}/bin/populate_data_library.sh {{ galaxy_url }}
+    {{ galaxy_admin_user }} {{ galaxy_admin_passwd }}
+    '{{ item.library }}' {{ item.file }} --file_type {{ item.type }}"
+  with_items: "{{ galaxy_library_datasets }}"

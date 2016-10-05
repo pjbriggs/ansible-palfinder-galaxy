@@ -1,0 +1,15 @@
+---
+# Defaults for restarting Galaxy
+
+# galaxy-utils should be installed under the 'bin' subdirectory
+# of this location
+galaxy_utils_dir: "/usr/local"
+
+# Location where the Galaxy source code is installed
+galaxy_root: "{{ galaxy_install_dir }}/{{ galaxy_name }}/galaxy"
+
+# User running Galaxy service
+galaxy_user: "galaxy"
+
+# Enable/disable the master API key
+enable_master_api_key: no
