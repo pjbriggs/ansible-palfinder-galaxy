@@ -13,12 +13,12 @@
   - enable_quotas: yes
   - enable_ftp_upload: yes
   # Welcome page etc
-  - galaxy_welcome_template: "roles/palfinder/templates/palfinder-welcome.html.j2"
-  - galaxy_terms: "roles/palfinder/files/palfinder-terms.html"
-  - galaxy_citations: "roles/palfinder/files/palfinder-citations.html"
+  - galaxy_welcome_template: "instances/palfinder/templates/palfinder-welcome.html.j2"
+  - galaxy_terms: "instances/palfinder/files/palfinder-terms.html"
+  - galaxy_citations: "instances/palfinder/files/palfinder-citations.html"
   # User manual
   - galaxy_extra_static_content:
-      - src: "roles/palfinder/files/palfinder_galaxy_manual_v1.2.pdf"
+      - src: "instances/palfinder/files/palfinder_galaxy_manual_v1.2.pdf"
         dest: "/usr/share/nginx/html/palfinder_galaxy_manual_v1.2.pdf"
         link: "/usr/share/nginx/html/manual"
   - galaxy_nginx_extra_locations:
@@ -49,7 +49,7 @@
       - email: "{{ galaxy_admin_user }}"
         password: "{{ galaxy_admin_passwd }}"
   # Tools
-  - galaxy_tool_conf_file: "roles/palfinder/files/palfinder-tool_conf.xml"
+  - galaxy_tool_conf_file: "instances/palfinder/files/palfinder-tool_conf.xml"
   - galaxy_tools:
       - tool: "fastqc"
         owner: "devteam"
