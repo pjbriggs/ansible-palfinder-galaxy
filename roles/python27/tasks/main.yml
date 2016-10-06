@@ -32,6 +32,7 @@
   shell:
     "echo $HOME"
   register: user_home
+  changed_when: False
 
 - name: Determine the build directory
   set_fact:

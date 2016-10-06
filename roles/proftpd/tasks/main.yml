@@ -1,7 +1,8 @@
+---
 # Build and install ProFTP on the remote host
 # We need v1.3.5+ for PBKDF2 support
 # See http://galacticengineer.blogspot.co.uk/2015/02/ftp-upload-to-galaxy-using-proftpd-and.html
----
+
 - name: Install ProFTPd build dependencies
   yum: state=present name={{item}}
   with_items:
@@ -15,6 +16,7 @@
   shell:
     "echo $HOME"
   register: user_home
+  changed_when: False
 
 - name: Determine the build directory
   set_fact:
