@@ -18,12 +18,12 @@
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='uwsgi' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
-  - { option: 'processes', value: '8' }
+  - { option: 'processes', value: '{{ galaxy_uwsgi_processes }}' }
   - { option: 'stats', value: '127.0.0.1:9191' }
   - { option: 'socket', value: '127.0.0.1:4001' }
   - { option: 'pythonpath', value: 'lib' }
   - { option: 'threads', value: '4' }
-  - { option: 'logto', value: '{{ galaxy_dir }}/logs/uwsgi.log' }
+  - { option: 'logto', value: '{{ galaxy_log_dir }}/uwsgi.log' }
   - { option: 'master', value: 'True' }
   when: uwsgi_installed | success
   register: configured_uwsgi_settings

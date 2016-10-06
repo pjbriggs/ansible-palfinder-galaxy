@@ -81,6 +81,12 @@ galaxy_job_destinations:
 # Tool destinations
 galaxy_tool_destinations:
 
+# uWSGI configuration
+galaxy_uwsgi_processes: 8
+
+# Logging
+galaxy_log_dir: "{{ galaxy_dir }}/logs"
+
 # FTP uploads
 enable_ftp_upload: no
 galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"

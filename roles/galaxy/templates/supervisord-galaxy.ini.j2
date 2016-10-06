@@ -14,7 +14,7 @@ numprocs        = 1
 stopsignal      = INT
 
 [program:handler]
-command         = {{ galaxy_root }}/.venv/bin/python ./scripts/paster.py serve config/galaxy.ini --server-name=handler%(process_num)s --pid-file={{ galaxy_root }}/handler%(process_num)s.pid --log-file={{ galaxy_root }}/handler%(process_num)s.log
+command         = {{ galaxy_root }}/.venv/bin/python ./scripts/paster.py serve config/galaxy.ini --server-name=handler%(process_num)s --pid-file={{ galaxy_root }}/handler%(process_num)s.pid --log-file={{ galaxy_log_dir }}/handler%(process_num)s.log
 directory       = {{ galaxy_root }}
 process_name    = handler%(process_num)s
 numprocs        = 1
