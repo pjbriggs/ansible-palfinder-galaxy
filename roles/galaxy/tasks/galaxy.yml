@@ -130,6 +130,12 @@
   - { option: 'instance_resource_url', value: 'None' }
   when: enable_smtp
 
+- name: Configure Galaxy handler processes
+  include: handlers.yml
+  with_sequence: start=0 count={{ galaxy_handler_processes }}
+  loop_control:
+    loop_var: handler_number
+
 - name: Configure terms and conditions page
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'

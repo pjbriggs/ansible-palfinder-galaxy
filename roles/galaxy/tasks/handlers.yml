@@ -1,0 +1,21 @@
+---
+- name: Check handler number
+  debug:
+    msg="Setting up handler number {{ handler_number }}"
+
+- name: Set handler port
+  set_fact:
+    handler_port: "{{ handler_number | int + 8090 }}"
+
+- name: Configure Galaxy handler processes
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='server:handler{{ handler_number }}'
+    option='{{ item.option }}'
+    value='{{ item.value }}'
+  with_items:
+  - { option: 'use', value: 'egg:Paste#http' }
+  - { option: 'port', value: '{{ handler_port }}' }
+  - { option: 'host', value: '127.0.0.1' }
+  - { option: 'use_threadpool', value: 'true' }
+  - { option: 'threadpool_workers', value: '5' }

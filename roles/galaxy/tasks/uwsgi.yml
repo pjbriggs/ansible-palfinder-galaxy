@@ -11,7 +11,6 @@
   - uwsgi
   - uwsgitop
   - PasteDeploy
-  register: uwsgi_installed
 
 - name: Configure Galaxy uWSGI settings
   ini_file:
@@ -25,8 +24,6 @@
   - { option: 'threads', value: '4' }
   - { option: 'logto', value: '{{ galaxy_log_dir }}/uwsgi.log' }
   - { option: 'master', value: 'True' }
-  when: uwsgi_installed | success
-  register: configured_uwsgi_settings
 
 - name: Configure Galaxy uWSGI settings in app-main
   ini_file:
@@ -35,24 +32,3 @@
   with_items:
   - { option: 'static_enabled', value: 'False' }
   - { option: 'track_jobs_in_database', value: 'True' }
-  when: configured_uwsgi_settings | success
-  register: configured_uwsgi_app_main_settings
-
-- name: Configure Galaxy handler processes
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='server:handler0' option='{{ item.option }}' value='{{ item.value }}'
-  with_items:
-  - { option: 'use', value: 'egg:Paste#http' }
-  - { option: 'port', value: '8090' }
-  - { option: 'host', value: '127.0.0.1' }
-  - { option: 'use_threadpool', value: 'true' }
-  - { option: 'threadpool_workers', value: '5' }
-  when: configured_uwsgi_app_main_settings | success
-  register: configured_galaxy_handlers
-
-# See https://wiki.galaxyproject.org/Admin/Config/Jobs
-- name: Set up Galaxy job_conf file
-  template:
-    dest='{{ galaxy_root }}/config/job_conf.xml'
-    src=job_conf.xml.j2

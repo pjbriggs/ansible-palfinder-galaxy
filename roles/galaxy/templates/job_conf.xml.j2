@@ -10,7 +10,9 @@
 {% endif %}
     </plugins>
     <handlers default="handlers">
-	<handler id="handler0" tags="handlers"/>
+{% for handler_number in range(galaxy_handler_processes) %}
+	<handler id="handler{{ handler_number }}" tags="handlers"/>
+{% endfor %}
     </handlers>
     <destinations default="{{ galaxy_default_runner }}">
         <!-- Destinations define details about remote resources and how jobs

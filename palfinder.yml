@@ -25,6 +25,9 @@
       - location: "^~ /manual"
         alias: "/usr/share/nginx/html/manual"
         add_header: "Content-Type application/pdf"
+  # uWSGI and handler configuration
+  - galaxy_uwsgi_processes: 8
+  - galaxy_handler_processes: 1
   # Job configuration
   - enable_jse_drop: yes
   - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"

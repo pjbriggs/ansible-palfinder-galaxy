@@ -84,6 +84,9 @@ galaxy_tool_destinations:
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
 
+# Galaxy handler processes
+galaxy_handler_processes: 1
+
 # Logging
 galaxy_log_dir: "{{ galaxy_dir }}/logs"
 
