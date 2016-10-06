@@ -105,20 +105,20 @@
     become: yes
     become_user: "{{ galaxy_user }}"
   # Install and configure Galaxy
-  - galaxybase
+  - galaxy
   # Install utilities
   - galaxy-utils
   # Restart with master API key enabled (needed
   # to create user accounts)
   - role: restart-galaxy
     enable_master_api_key: yes
-  - create-users
-  - install-tools
-  - set-default-quota
+  - galaxy-create-users
+  - galaxy-install-tools
+  - galaxy-set-default-quota
   # Restart with master API key disabled
   - role: restart-galaxy
     enable_master_api_key: no
   # Additional set up
-  - add-library-data
-  - auto-delete-datasets
-  - audit-report
+  - galaxy-add-library-data
+  - galaxy-auto-delete-datasets
+  - galaxy-audit-report

@@ -31,7 +31,7 @@ The following roles are defined:
  - ``lets-encrypt-client``: install the Let's Encrypt client
    ``cert-bot``, and sets up automatic certificate renewal
 
- - ``galaxybase``: set up a "base" Galaxy instance:
+ - ``galaxy``: install and configure a Galaxy instance:
 
    * Install Galaxy dependencies
    * Set up database
@@ -50,23 +50,23 @@ The following roles are defined:
  - ``galaxy-utils``: installs utility scripts for Galaxy
    user creation, tool installation etc
 
- - ``create-users``: creates user accounts in the Galaxy
+ - ``galaxy-create-users``: creates user accounts in the Galaxy
    instance, as specified in the ``galaxy_users`` variable
 
- - ``install-tools``: installs tools from the main toolshed,
+ - ``galaxy-install-tools``: installs tools from the main toolshed,
    specified in the ``galaxy_tools`` variable
 
- - ``add-library-data``: uploads files to a data library
+ - ``galaxy-add-library-data``: uploads files to a data library
    (creating the library first if necessary), as specified
    in the ``galaxy_library_datasets`` variable
 
- - ``set-default-quota``: set the default quota for the
+ - ``galaxy-set-default-quota``: set the default quota for the
    Galaxy instance
 
- - ``auto-delete-datasets``: configures automatic deletion
+ - ``galaxy-auto-delete-datasets``: configures automatic deletion
    of old datasets
 
- - ``audit-report``: sets up weekly emailing of audit
+ - ``galaxy-audit-report``: sets up weekly emailing of audit
    reports
 
  - ``restart-galaxy``: restart the Galaxy instance using
