@@ -24,6 +24,7 @@
 	  -->
           <env file="{{ galaxy_root }}/.venv/bin/activate" />
 	</destination>
+{% if galaxy_job_destinations %}
 {% for dest in galaxy_job_destinations %}
         <destination id="{{ dest.id }}" runner="{{ dest.runner }}">
 {% if dest.runner == "jse_drop" and enable_jse_drop %}
@@ -38,12 +39,15 @@
 {% endif %}
 	</destination>
 {% endfor %}
+{% endif %}
     </destinations>
+{% if galaxy_tool_destinations %}
     <tools>
 {% for tool in galaxy_tool_destinations %}
       <tool id="{{ tool.id }}" destination="{{ tool.destination }}"/>
 {% endfor %}
     </tools>
+{% endif %}
     <limits>
         <limit type="registered_user_concurrent_jobs">2</limit>
         <limit type="unregistered_user_concurrent_jobs">0</limit>
