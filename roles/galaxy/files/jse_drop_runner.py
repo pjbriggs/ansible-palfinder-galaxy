@@ -25,6 +25,7 @@ To configure Galaxy to use JSE-drop:
    <destinations>
       <destination id="jse_drop_8core" runner="jse_drop">
          <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
+         <param id="galaxy_name">devel</param>
          <param id="virtual_env">/mnt/galaxy/.venv</param>
          <param id="qsub_options">-pe smp.pe 8</param>
          <param id="galaxy_slots">8</param>
@@ -36,6 +37,10 @@ The parameters available for the runner are:
  * drop_dir: the path to the directory that JSE-drop is
    monitoring; Galaxy will drop files for jobs here, and
    JSE-drop will write its outputs here (required)
+ * galaxy_name: a string that will be inserted into job
+   names as an identifier (optional, but can be used to
+   ensure that multiple Galaxy instances using the same
+   'drop_dir' won't have a job name collision)
  * virtual_env: the path to a virtualenv that jobs should
    use when being run by JSE-drop (optional)
  * qsub_options: options to be passed to Grid Engine when
@@ -78,11 +83,13 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         self._init_monitor_thread()
         self._init_worker_threads()
 
-    def _get_job_name(self,galaxy_id_tag,tool_id=None):
+    def _get_job_name(self,galaxy_id_tag,tool_id=None,galaxy_id=None):
         """
         Return a unique job id for JSE-Drop
         """
         job_name = 'g%s' % galaxy_id_tag
+        if galaxy_id:
+            job_name += '_%s' % galaxy_id
         if tool_id:
             job_name += '_%s' % tool_id
         job_name = ''.join(map(lambda x:
@@ -114,6 +121,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         """
         return job_destination.params.get('galaxy_slots',None)
 
+    def _get_galaxy_id(self,job_destination):
+        """
+        Extract Galaxy id from job destination parameters
+        """
+        return job_destination.params.get('galaxy_id',None)
+
     def parse_destination_params(self, params):
         """Parse the JobDestination ``params`` dict and return the runner's native representation of those params.
         """
@@ -130,10 +143,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         virtual_env = self._get_virtual_env(job_destination)
         qsub_options = self._get_qsub_options(job_destination)
         galaxy_slots = self._get_galaxy_slots(job_destination)
+        galaxy_id = self._get_galaxy_id(job_destination)
         log.debug("queue_job: drop-off dir = %s" % drop_off_dir)
         log.debug("queue_job: virtual_env  = %s" % virtual_env)
         log.debug("queue_job: qsub options = %s" % qsub_options)
         log.debug("queue_job: galaxy_slots = %s" % galaxy_slots)
+        log.debug("queue_job: galaxy_id    = %s" % galaxy_id)
         if drop_off_dir is None:
             # Can't locate drop-off dir
             job_wrapper.fail("failure preparing job script (no JSE-drop "
@@ -148,7 +163,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         galaxy_id_tag = job_wrapper.get_id_tag()
         log.debug("ID tag: %s" % galaxy_id_tag)
         job_name = self._get_job_name(galaxy_id_tag,
-                                      job_wrapper.tool.old_id)
+                                      job_wrapper.tool.old_id,
+                                      galaxy_id)
         log.debug("Job name: %s" % job_name)
         # Prepare the job wrapper (or abort)
         if not self.prepare_job(job_wrapper):

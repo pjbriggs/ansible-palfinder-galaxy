@@ -30,6 +30,9 @@
 {% if dest.runner == "jse_drop" and enable_jse_drop %}
 	  <param id="drop_dir">{{ dest.jse_drop_dir }}</param>
 	  <param id="virtual_env">{{ dest.jse_drop_virtual_env }}</param>
+{% if dest.jse_drop_galaxy_id is defined %}
+	  <param id="galaxy_id">{{ dest.jse_drop_galaxy_id }}</param>
+{% endif %}
 {% if dest.jse_drop_qsub_options is defined %}
           <param id="qsub_options">{{ dest.jse_drop_qsub_options }}</param>
 {% endif %}
