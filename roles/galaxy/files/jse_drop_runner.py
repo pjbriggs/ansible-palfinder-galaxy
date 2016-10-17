@@ -1,5 +1,50 @@
 """
 Job runner used to execute Galaxy jobs through JSE-drop.
+
+To configure Galaxy to use JSE-drop:
+
+1. Enable the plugin in job_conf.xml, for example:
+
+   <plugins>
+      <plugin id="jse_drop" type="runner"
+              load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner" />
+   </plugins>
+
+2. Create destinations that target this runner.
+
+   For example, the simplest invocation:
+
+   <destinations>
+      <destination id="jse_drop_basic" runner="jse_drop">
+         <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
+      </destination>
+   </destinations>
+
+   A more advanced example:
+
+   <destinations>
+      <destination id="jse_drop_8core" runner="jse_drop">
+         <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
+         <param id="virtual_env">/mnt/galaxy/.venv</param>
+         <param id="qsub_options">-pe smp.pe 8</param>
+         <param id="galaxy_slots">8</param>
+      </destination>
+   </destinations>
+
+The parameters available for the runner are:
+
+ * drop_dir: the path to the directory that JSE-drop is
+   monitoring; Galaxy will drop files for jobs here, and
+   JSE-drop will write its outputs here (required)
+ * virtual_env: the path to a virtualenv that jobs should
+   use when being run by JSE-drop (optional)
+ * qsub_options: options to be passed to Grid Engine when
+   running jobs (optional)
+ * galaxy_slots: the number of slots/processors available
+   to Galaxy jobs (optional, but should match the number
+   of cores available under Grid Engine when using the
+   environment defined by 'qsub_options')
+
 """
 
 import logging
