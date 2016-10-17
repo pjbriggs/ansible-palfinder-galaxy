@@ -256,6 +256,9 @@ Notes on the deployment
    * Additional options can be set for ``qsub`` via the
      ``galaxy_jse_drop_qsub_options`` parameter.
 
+   * An optional identifier can be inserted into job names by
+     setting the ``galaxy_jse_drop_galaxy_id`` parameter.
+
 Known Issues
 ------------
 
