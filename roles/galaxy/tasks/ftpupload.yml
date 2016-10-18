@@ -22,6 +22,14 @@
   become: yes
   become_user: postgres
 
+- name: Set up cron jobs to clean up FTP area
+  cron:
+    user='{{ galaxy_user }}'
+    name="Delete old FTP files"
+    job="find {{ galaxy_ftp_upload_dir }} -mindepth 2 -mtime +5 -exec rm -rf {} \;"
+    hour=00 minute=00
+    state=present
+
 # Configure ProFTPd for FTP upload
 - name: Check if default ProFTPd configuration is present
   stat: path=/usr/local/etc/proftpd.conf
