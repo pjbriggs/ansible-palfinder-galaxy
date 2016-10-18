@@ -8,7 +8,7 @@ umask           = 022
 autostart       = true
 autorestart     = true
 startsecs       = 10
-user            = galaxy
+user            = {{ galaxy_user }}
 environment     = PATH={{ galaxy_root }}/.venv:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,PYTHON_EGG_CACHE={{ galaxy_root }}/.python-eggs,PYTHONPATH={{ galaxy_root }}/eggs/PasteDeploy-1.5.0-py2.7.egg
 numprocs        = 1
 stopsignal      = INT
@@ -22,7 +22,7 @@ umask           = 022
 autostart       = true
 autorestart     = true
 startsecs       = 15
-user            = galaxy
+user            = {{ galaxy_user }}
 environment     = PYTHON_EGG_CACHE={{ galaxy_root }}/.python-eggs,SGE_ROOT=/var/lib/gridengine
 
 [group:galaxy]
