@@ -8,7 +8,7 @@
 
 - name: Install Nebulizer
   pip:
-    name='https://github.com/pjbriggs/nebulizer/archive/v0.1.1.tar.gz'
+    name='https://github.com/pjbriggs/nebulizer/archive/v0.2.0.tar.gz'
     executable='{{ python_install_dir }}/bin/pip'
     extra_args='--prefix {{ galaxy_utils_dir }} --no-binary :all:'
     state=present

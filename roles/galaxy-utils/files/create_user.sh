@@ -16,10 +16,10 @@ else
     URL=http://localhost:80
 fi
 
-MANAGE_USERS=$(dirname $0)/manage_users
+NEBULIZER=$(dirname $0)/nebulizer
 
 function user_exists() {
-    $MANAGE_USERS list $URL -k $APIKEY --name "$USER" | grep ^$USER | cut -f1
+    $NEBULIZER -k $APIKEY list_users $URL --name "$USER" | grep ^$USER | cut -f1
 }
 
 # Check for user
@@ -35,7 +35,7 @@ if [ "$(echo $PASSWD | wc -c)" -le 6 ] ; then
 fi
 
 # Create the user
-$MANAGE_USERS create $URL -k $APIKEY -p $PASSWD $USER
+$NEBULIZER -k $APIKEY create_user $URL -p $PASSWD $USER
 if [ $? -ne 0 ] ; then
     echo Failed to create user $USER >&2
     exit 1

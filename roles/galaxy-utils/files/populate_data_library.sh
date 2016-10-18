@@ -13,23 +13,23 @@ PASSWD=$3
 LIBRARY=$(echo $4 | cut -d/ -f1)
 FOLDER=$(echo $4 | cut -d/ -f2-)
 
-MANAGE_LIBRARIES=$(dirname $0)/manage_libraries
+NEBULIZER=$(dirname $0)/nebulizer
 
 # Create data library
-got_library=$($MANAGE_LIBRARIES list $URL -u $USER -P $PASSWD 2>/dev/null | grep "^$LIBRARY")
+got_library=$($NEBULIZER -u $USER -P $PASSWD list_libraries $URL 2>/dev/null | grep "^$LIBRARY")
 if [ -z "$got_library" ] ; then
     echo "Making library $LIBRARY"
-    $MANAGE_LIBRARIES create_library $URL -u $USER -P $PASSWD "$LIBRARY" 2>/dev/null
+    $NEBULIZER -u $USER -P $PASSWD create_library $URL "$LIBRARY" 2>/dev/null
 else
     echo "Library $LIBRARY exists"
 fi
 
 # Create subfolder
 if [ ! -z "$FOLDER" ] ; then
-    got_folder=$($MANAGE_LIBRARIES list $URL -u $USER -P $PASSWD "$LIBRARY" 2>/dev/null | grep "^/$FOLDER")
+    got_folder=$($NEBULIZER -u $USER -P $PASSWD list_libraries $URL "$LIBRARY" 2>/dev/null | grep "^/$FOLDER")
     if [ -z "$got_folder" ] ; then
 	echo "Making folder $FOLDER in $LIBRARY"
-	$MANAGE_LIBRARIES create_folder $URL -u $USER -P $PASSWD "$LIBRARY/$FOLDER" 2>/dev/null
+	$NEBULIZER -u $USER -P $PASSWD create_library_folder $URL "$LIBRARY/$FOLDER" 2>/dev/null
     else
 	echo "Folder $FOLDER exists under $LIBRARY"
     fi
@@ -41,12 +41,12 @@ while [ ! -z "$5" ] ; do
     shift
     if [ "$5" == "--file_type" ] ; then
 	shift
-	FILE_TYPE="--file_type=$5"
+	FILE_TYPE="$5"
 	shift
     else
-	FILE_TYPE=
+	FILE_TYPE="auto"
     fi
-    got_file=$($MANAGE_LIBRARIES list $URL -u $USER -P $PASSWD "$LIBRARY/$FOLDER" 2>/dev/null | grep "^$(basename $FILE)")
+    got_file=$($NEBULIZER -u $USER -P $PASSWD list_libraries $URL "$LIBRARY/$FOLDER" 2>/dev/null | grep "^$(basename $FILE)")
     if [ -z "$got_file" ] ; then
 	echo "Adding file $FILE to $LIBRARY/$FOLDER"
 	if [ ! -z "$(echo $FILE | grep ^http)" ] ; then
@@ -54,7 +54,7 @@ while [ ! -z "$5" ] ; do
 	    wget -O $(basename $FILE) $FILE
 	    FILE=$(basename $FILE)
 	fi
-	$MANAGE_LIBRARIES add_datasets $URL -u $USER -P $PASSWD --server "$LIBRARY/$FOLDER" $FILE $FILE_TYPE
+	$NEBULIZER -u $USER -P $PASSWD add_library_datasets $URL --server "$LIBRARY/$FOLDER" $FILE --file-type="$FILE_TYPE"
     else
 	echo "File $(basename $FILE) exists under $LIBRARY/$FOLDER"
     fi

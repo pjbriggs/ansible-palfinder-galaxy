@@ -17,14 +17,14 @@ else
     URL=http://localhost:80
 fi
 
-MANAGE_TOOLS=$(dirname $0)/manage_tools
+NEBULIZER=$(dirname $0)/nebulizer
 
 function tool_installed() {
-    $MANAGE_TOOLS installed $URL -k $APIKEY --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installed$" | head -n 1 | cut -f1
+    $NEBULIZER -k $APIKEY list_installed_tools $URL --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installed$" | head -n 1 | cut -f1
 }
 
 function tool_installing() {
-    $MANAGE_TOOLS installed $URL -k $APIKEY --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installing$" | head -n 1 | cut -f1
+    $NEBULIZER -k $APIKEY list_installed_tools $URL --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installing$" | head -n 1 | cut -f1
 }
 
 echo RUN
@@ -38,7 +38,7 @@ if [ -n "$(tool_installed)" ] ; then
 fi
 
 # Install the tool
-$MANAGE_TOOLS install $URL -k $APIKEY $SHED $OWNER $TOOL
+$NEBULIZER -k $APIKEY install_tool $URL $SHED $OWNER $TOOL
 retcode=$?
 echo Tool installation returned $retcode
 if [ $retcode -ne 0 ] ; then
