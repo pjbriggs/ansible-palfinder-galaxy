@@ -25,7 +25,7 @@ To configure Galaxy to use JSE-drop:
    <destinations>
       <destination id="jse_drop_8core" runner="jse_drop">
          <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
-         <param id="galaxy_name">devel</param>
+         <param id="galaxy_id">devel</param>
          <param id="virtual_env">/mnt/galaxy/.venv</param>
          <param id="qsub_options">-pe smp.pe 8</param>
          <param id="galaxy_slots">8</param>
@@ -37,7 +37,7 @@ The parameters available for the runner are:
  * drop_dir: the path to the directory that JSE-drop is
    monitoring; Galaxy will drop files for jobs here, and
    JSE-drop will write its outputs here (required)
- * galaxy_name: a string that will be inserted into job
+ * galaxy_id: a string that will be inserted into job
    names as an identifier (optional, but can be used to
    ensure that multiple Galaxy instances using the same
    'drop_dir' won't have a job name collision)
