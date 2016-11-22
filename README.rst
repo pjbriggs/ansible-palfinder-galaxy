@@ -249,15 +249,17 @@ Notes on the deployment
      the Galaxy installation; this can be changed by specifying the
      ``galaxy_jse_drop_virtual_env`` parameter.
 
-   * By default the number of slots (i.e. cores) used for running
-     jobs is 1; this can be changed by specifying the
-     ``galaxy_jse_drop_slots`` parameter.
-
-   * Additional options can be set for ``qsub`` via the
-     ``galaxy_jse_drop_qsub_options`` parameter.
-
    * An optional identifier can be inserted into job names by
      setting the ``galaxy_jse_drop_galaxy_id`` parameter.
+
+   For each JSE-drop job destination there are additional parameters:
+
+   * Set the number of slots (i.e. cores) used for running by
+     specifying the ``jse_drop_slots`` parameter (defaults
+     to 1 slot if not specified).
+
+   * Options to use with ``qsub`` when submitting jobs can be
+     specified via the ``jse_drop_qsub_options`` parameter.
 
 Known Issues
 ------------

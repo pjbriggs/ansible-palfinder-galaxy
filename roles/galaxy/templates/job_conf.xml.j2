@@ -6,7 +6,13 @@
         <plugin id="drmaa" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner"/>
 {% endif %}
 {% if enable_jse_drop %}
-	<plugin id="jse_drop" type="runner" load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner" />
+	<plugin id="jse_drop" type="runner" load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner">
+	  <param id="drop_dir">{{ galaxy_jse_drop_dir }}</param>
+	  <param id="virtual_env">{{ galaxy_jse_drop_virtual_env }}</param>
+{% if galaxy_jse_drop_name is defined %}
+	  <param id="galaxy_id">{{ galaxy_jse_drop_galaxy_id }}</param>
+{% endif %}
+        </plugin>
 {% endif %}
     </plugins>
     <handlers default="handlers">
@@ -27,12 +33,6 @@
 {% if galaxy_job_destinations %}
 {% for dest in galaxy_job_destinations %}
         <destination id="{{ dest.id }}" runner="{{ dest.runner }}">
-{% if dest.runner == "jse_drop" and enable_jse_drop %}
-	  <param id="drop_dir">{{ dest.jse_drop_dir }}</param>
-	  <param id="virtual_env">{{ dest.jse_drop_virtual_env }}</param>
-{% if dest.jse_drop_galaxy_id is defined %}
-	  <param id="galaxy_id">{{ dest.jse_drop_galaxy_id }}</param>
-{% endif %}
 {% if dest.jse_drop_qsub_options is defined %}
           <param id="qsub_options">{{ dest.jse_drop_qsub_options }}</param>
 {% endif %}
