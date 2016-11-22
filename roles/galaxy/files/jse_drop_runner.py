@@ -8,6 +8,17 @@ To configure Galaxy to use JSE-drop:
    <plugins>
       <plugin id="jse_drop" type="runner"
               load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner" />
+         <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
+   </plugins>
+
+   A more advanced example:
+
+   <plugins>
+      <plugin id="jse_drop" type="runner"
+              load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner" />
+         <param id="galaxy_id">devel</param>
+         <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
+         <param id="virtual_env">/mnt/galaxy/.venv</param>
    </plugins>
 
 2. Create destinations that target this runner.
@@ -15,24 +26,19 @@ To configure Galaxy to use JSE-drop:
    For example, the simplest invocation:
 
    <destinations>
-      <destination id="jse_drop_basic" runner="jse_drop">
-         <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
-      </destination>
+      <destination id="jse_drop_basic" runner="jse_drop" />
    </destinations>
 
    A more advanced example:
 
    <destinations>
       <destination id="jse_drop_8core" runner="jse_drop">
-         <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
-         <param id="galaxy_id">devel</param>
-         <param id="virtual_env">/mnt/galaxy/.venv</param>
          <param id="qsub_options">-pe smp.pe 8</param>
          <param id="galaxy_slots">8</param>
       </destination>
    </destinations>
 
-The parameters available for the runner are:
+The parameters available for the runner plugin are:
 
  * drop_dir: the path to the directory that JSE-drop is
    monitoring; Galaxy will drop files for jobs here, and
@@ -43,6 +49,9 @@ The parameters available for the runner are:
    'drop_dir' won't have a job name collision)
  * virtual_env: the path to a virtualenv that jobs should
    use when being run by JSE-drop (optional)
+
+The parameters available for the destinations are:
+
  * qsub_options: options to be passed to Grid Engine when
    running jobs (optional)
  * galaxy_slots: the number of slots/processors available
@@ -77,6 +86,16 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         """
         Start the job runner
         """
+        # Define any JSE-drop plugin-specific parameters here
+        # and add to the keyworded arguments
+        runner_param_specs = {
+            'galaxy_id': dict(map=str,default=None),
+            'virtual_env': dict(map=str,default=None),
+            'drop_dir': dict(map=str,default=None),
+        }
+        if 'runner_param_specs' not in kwargs:
+            kwargs[ 'runner_param_specs' ] = dict()
+        kwargs[ 'runner_param_specs' ].update( runner_param_specs )
         # Initialise the base class
         super( JSEDropJobRunner, self ).__init__( app, nworkers, **kwargs )
         # Initialise the queues from the base class
@@ -99,15 +118,21 @@ class JSEDropJobRunner(AsynchronousJobRunner):
 
     def _get_drop_dir(self,job_destination):
         """
-        Extract drop-off directory from job destination parameters
+        Extract drop-off directory from runner parameters
         """
-        return job_destination.params.get('drop_dir',None)
+        try:
+            return self.runner_params['drop_dir']
+        except KeyError:
+            return None
 
     def _get_virtual_env(self,job_destination):
         """
-        Extract virtual_env location from job destination parameters
+        Extract virtual_env location from runner parameters
         """
-        return job_destination.params.get('virtual_env',None)
+        try:
+            return self.runner_params['virtual_env']
+        except KeyError:
+            return None
 
     def _get_qsub_options(self,job_destination):
         """
@@ -123,9 +148,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
 
     def _get_galaxy_id(self,job_destination):
         """
-        Extract Galaxy id from job destination parameters
+        Extract Galaxy id from runner parameters
         """
-        return job_destination.params.get('galaxy_id',None)
+        try:
+            return self.runner_params['galaxy_id']
+        except KeyError:
+            return None
 
     def parse_destination_params(self, params):
         """Parse the JobDestination ``params`` dict and return the runner's native representation of those params.

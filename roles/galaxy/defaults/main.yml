@@ -73,7 +73,9 @@ enable_jse_drop: no
 galaxy_default_runner: "local"
 
 # JSE-drop defaults
+galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
 galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
+galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
 
 # Job destinations
 galaxy_job_destinations:

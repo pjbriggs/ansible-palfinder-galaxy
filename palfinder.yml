@@ -35,14 +35,8 @@
   - galaxy_job_destinations:
       - id: "jse_drop_default"
         runner: "jse_drop"
-        jse_drop_galaxy_id: "{{ galaxy_name }}"
-        jse_drop_dir: "{{ galaxy_jse_drop_dir }}"
-        jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
       - id: "jse_drop_8_cores"
         runner: "jse_drop"
-        jse_drop_galaxy_id: "{{ galaxy_name }}"
-        jse_drop_dir: "{{ galaxy_jse_drop_dir }}"
-        jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
         jse_drop_qsub_options: "-pe smp.pe 8"
         jse_drop_slots: "8"
   - galaxy_tool_destinations:
