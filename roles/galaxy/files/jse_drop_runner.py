@@ -116,7 +116,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                                else '_', job_name))
         return job_name
 
-    def _get_drop_dir(self,job_destination):
+    def _get_drop_dir(self):
         """
         Extract drop-off directory from runner parameters
         """
@@ -125,7 +125,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         except KeyError:
             return None
 
-    def _get_virtual_env(self,job_destination):
+    def _get_virtual_env(self):
         """
         Extract virtual_env location from runner parameters
         """
@@ -146,7 +146,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         """
         return job_destination.params.get('galaxy_slots',None)
 
-    def _get_galaxy_id(self,job_destination):
+    def _get_galaxy_id(self):
         """
         Extract Galaxy id from runner parameters
         """
@@ -167,11 +167,11 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         job_destination = job_wrapper.job_destination
         # Get the parameters defined for this destination
         # i.e. location of the drop-off directory etc
-        drop_off_dir = self._get_drop_dir(job_destination)
-        virtual_env = self._get_virtual_env(job_destination)
+        drop_off_dir = self._get_drop_dir()
+        virtual_env = self._get_virtual_env()
         qsub_options = self._get_qsub_options(job_destination)
         galaxy_slots = self._get_galaxy_slots(job_destination)
-        galaxy_id = self._get_galaxy_id(job_destination)
+        galaxy_id = self._get_galaxy_id()
         log.debug("queue_job: drop-off dir = %s" % drop_off_dir)
         log.debug("queue_job: virtual_env  = %s" % virtual_env)
         log.debug("queue_job: qsub options = %s" % qsub_options)
@@ -248,6 +248,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         job_state.job_destination = job_destination
         # Add to the queue of jobs to monitor
         self.monitor_job(job_state)
+        log.info("%s: queued" % job_name)
 
     def stop_job(self,job):
         # Attempts to remove a job from the JSE-Drop queue
@@ -255,7 +256,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         job_name = job.get_job_runner_external_id()
         # Fetch the drop dir
         try:
-            drop_off_dir = job.destination_params['drop_dir']
+            drop_off_dir = self._get_drop_dir()
             log.debug("stop_job: drop-off dir = %s" % drop_off_dir)
             jse_drop = JSEDrop(drop_off_dir)
             # Delete the job
@@ -273,7 +274,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Get the job destination
         job_destination = job_wrapper.job_destination
         # Fetch the drop dir
-        drop_off_dir = self._get_drop_dir(job_destination)
+        drop_off_dir = self._get_drop_dir()
         log.debug("recover: drop-off dir = %s" % drop_off_dir)
         jse_drop = JSEDrop(drop_off_dir)
         # Store state information for job
@@ -293,27 +294,31 @@ class JSEDropJobRunner(AsynchronousJobRunner):
 
     def check_watched_item(self,job_state):
         # Return updated job state
-        drop_off_dir = self._get_drop_dir(job_state.job_destination)
+        drop_off_dir = self._get_drop_dir()
         jse_drop = JSEDrop(drop_off_dir)
         job_name = job_state.job_id
         jse_drop_status = jse_drop.status(job_name)
         if jse_drop_status == JSEDropStatus.FINISHED:
             # Mark as finished
+            log.info("%s: finished" % job_name)
             self.mark_as_finished(job_state)
             return None
         if jse_drop_status in (JSEDropStatus.FAILED,
                                JSEDropStatus.MISSING):
             if jse_drop_status == JSEDropStatus.FAILED:
                 # Get message from qfail file
+                log.warn("%s: failed" % job_name)
                 message = "Submission to JSE-drop failed: %s" % \
                           jse_drop.qfail(job_name)['stderr']
             else:
                 # Can't find the job
+                log.warn("%s: no such job in JSE-drop?" % job_name)
                 message = "%s: no such job in JSE-drop?" % job_name
             self.fail_job(job_state)
             return None
         if jse_drop_status == JSEDropStatus.RUNNING and not job_state.running:
             # Job started running
+            log.info("%s: started running" % job_name)
             job_state.running = True
             job_state.job_wrapper.change_state(model.Job.states.RUNNING)
         return job_state
@@ -325,7 +330,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         galaxy_id_tag = job_state.job_wrapper.get_id_tag()
         external_job_id = job_state.job_id
         # Initialise JSE-drop
-        drop_off_dir = self._get_drop_dir(job_state.job_destination)
+        drop_off_dir = self._get_drop_dir()
         log.debug("stop_job: drop-off dir = %s" % drop_off_dir)
         jse_drop = JSEDrop(drop_off_dir)
         # Get stdout, stderr and exit code
