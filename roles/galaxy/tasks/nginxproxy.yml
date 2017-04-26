@@ -43,7 +43,7 @@
 
 - name: Create strong Diffie-Hellman parameter group
   command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
-  when: dhparam_file.exists == False
+  when: dhparam_file.stat.exists == False
 
 # Make sure that the .well-know directory exists for certbot
 # Let's Encrypt client
