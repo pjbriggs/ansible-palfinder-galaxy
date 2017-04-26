@@ -27,6 +27,10 @@ server {
     ssl on;
     ssl_certificate     {{ ssl_certificate }};
     ssl_certificate_key {{ ssl_certificate_key }};
+    # Disable SSLv3
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    # Use strong Diffie-Hellman group
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
     # Validation directory for Let's Encrypt/certbot
     location ~ /.well-known {
         allow all;
