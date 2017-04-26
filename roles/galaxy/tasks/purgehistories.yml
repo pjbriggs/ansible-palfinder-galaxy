@@ -11,4 +11,5 @@
   - { name: 'Purge histories', script: 'purge_histories.sh' }
   - { name: 'Purge libraries', script: 'purge_libraries.sh' }
   - { name: 'Purge folders', script: 'purge_folders.sh' }
+  - { name: 'Delete datasets', script: 'delete_datasets.sh' }
   - { name: 'Purge datasets', script: 'purge_datasets.sh' }
