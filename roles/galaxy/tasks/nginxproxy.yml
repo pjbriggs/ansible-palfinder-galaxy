@@ -36,6 +36,15 @@
   notify:
   - Restart Nginx
 
+# Set up strong Diffie-Hellman group for TLS/SSL
+- name: Check for Diffie-Hellman parameter file
+  stat: path=/etc/ssl/certs/dhparam.pem
+  register: dhparam_file
+
+- name: Create strong Diffie-Hellman parameter group
+  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  when: dhparam_file.exists == False
+
 # Make sure that the .well-know directory exists for certbot
 # Let's Encrypt client
 - name: Add certbot .well-known web directory
