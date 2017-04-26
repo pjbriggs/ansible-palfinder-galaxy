@@ -3,7 +3,7 @@
   cron:
     user='{{ galaxy_user }}'
     name='{{ item.name }}'
-    job="sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
+    job=". {{ galaxy_root }}/.venv/bin/activate && sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
     weekday=00 hour=03 minute=00
     state=present
   with_items:
