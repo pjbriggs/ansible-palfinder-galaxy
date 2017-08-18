@@ -3,7 +3,7 @@
 
 - name: Set Galaxy URL
   set_fact:
-    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}"
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}"
 
 - name: Install Galaxy tools
   command:

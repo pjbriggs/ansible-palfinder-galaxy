@@ -52,7 +52,7 @@ server {
     {% endfor %}
 {% endif %}
     # Galaxy reporting interface
-    location ^~ /reports/ {
+    location ^~ {{ galaxy_proxy_prefix }}/reports/ {
         proxy_pass  http://reports;
         proxy_set_header   X-Forwarded-Host $host;
         proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
@@ -61,29 +61,29 @@ server {
         auth_basic_user_file {{ galaxy_reports_htpasswd }};
     }
     # Galaxy server
-    location / {
+    location {{ galaxy_proxy_prefix }}/ {
         uwsgi_pass 127.0.0.1:4001;
         uwsgi_param UWSGI_SCHEME $scheme;
         include uwsgi_params;
     }
     # serve static content for visualization plugins
-    location ~ ^/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+    location ~ ^{{ galaxy_proxy_prefix }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
         alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
     }
     # Serve static content
-    location /static {
+    location {{ galaxy_proxy_prefix }}/static {
         alias {{ galaxy_root }}/static;
     }
-    location /static/style {
+    location {{ galaxy_proxy_prefix }}/static/style {
         alias {{ galaxy_root }}/static/style/blue;
     }
-    location /static/scripts {
+    location {{ galaxy_proxy_prefix }}/static/scripts {
         alias {{ galaxy_root }}/static/scripts/packed;
     }
-    location /favicon.ico {
+    location {{ galaxy_proxy_prefix }}/favicon.ico {
         alias {{ galaxy_root }}/static/favicon.ico;
     }
-    location /robots.txt {
+    location {{ galaxy_proxy_prefix }}/robots.txt {
         alias {{ galaxy_root }}/static/robots.txt;
     }
 }

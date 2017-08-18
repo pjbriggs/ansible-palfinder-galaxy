@@ -68,6 +68,19 @@
   - { option: 'welcome_url', value: '/static/welcome.html' }
   - { option: 'show_welcome_with_login', value: 'True' }
 
+# Set proxy prefix options
+- name: Set proxy prefix options
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='{{ item.section }}'
+    option='{{ item.option }}'
+    value='{{ item.value }}'
+  with_items:
+  - { section: 'filter:proxy-prefix', option: 'prefix', value: '{{ galaxy_proxy_prefix }}' }
+  - { section: 'app:main', option: 'filter-with', value: 'proxy-prefix' }
+  - { section: 'app:main', option: 'cookie_path', value: '{{ galaxy_proxy_prefix }}' }
+  when: galaxy_proxy_prefix|default(None) != None
+
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
 - name: Configure Galaxy database connection
   ini_file:
