@@ -10,6 +10,7 @@
   become_user: "{{ galaxy_user }}"
 
 - include: static.yml
+  when: galaxy_extra_static_content|default(None) != None
 
 - include: reports.yml
   when: enable_reports

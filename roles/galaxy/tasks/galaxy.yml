@@ -30,13 +30,13 @@
   copy:
     src='{{ galaxy_terms }}'
     dest='{{ galaxy_root }}/static/terms.html'
-  when: galaxy_terms is defined
+  when: galaxy_terms|default(None) != None
 
 - name: Import citations page
   copy:
     src='{{ galaxy_citations }}'
     dest='{{ galaxy_root }}/static/citations.html'
-  when: galaxy_citations is defined
+  when: galaxy_citations|default(None) != None
 
 - name: Make virtualenv in Galaxy root
   command:
@@ -140,7 +140,7 @@
     section='app:main'
     option='terms_url'
     value='{{ galaxy_url }}/static/terms.html'
-  when: galaxy_terms is defined
+  when: galaxy_terms|default(None) != None
 
 - name: Configure citations page
   ini_file:
@@ -148,7 +148,7 @@
     section='app:main'
     option='citation_url'
     value='{{ galaxy_url }}/static/citations.html'
-  when: galaxy_citations is defined
+  when: galaxy_citations|default(None) != None
 
 - name: Run common_startup.sh to initialise sample files and eggs/wheels
   command:
@@ -165,7 +165,7 @@
   copy:
     src='{{ galaxy_tool_conf_file }}'
     dest='{{ galaxy_root}}/config/tool_conf.xml'
-  when: galaxy_tool_conf_file is defined
+  when: galaxy_tool_conf_file|default(None) != None
 
 # Import the code for the JSE-drop job runner plugin
 - name: Import the JSE-drop job runner plugin files

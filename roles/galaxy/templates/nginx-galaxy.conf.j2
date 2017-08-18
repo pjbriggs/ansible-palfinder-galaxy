@@ -41,14 +41,16 @@ server {
     client_max_body_size 10G;
     uwsgi_read_timeout 180;
     # Additional locations (may be none)
-{% for loc in galaxy_nginx_extra_locations %}
+{% if galaxy_nginx_extra_locations is not none %}
+    {% for loc in galaxy_nginx_extra_locations %}
     location {{ loc.location }} {
         alias {{ loc.alias }};
-{% if loc.add_header is defined %}
+        {% if loc.add_header is defined %}
         add_header {{ loc.add_header }};
-{% endif %}
+        {% endif %}
     }
-{% endfor %}
+    {% endfor %}
+{% endif %}
     # Galaxy reporting interface
     location ^~ /reports/ {
         proxy_pass  http://reports;
