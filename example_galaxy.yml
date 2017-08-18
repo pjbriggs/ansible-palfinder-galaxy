@@ -1,0 +1,64 @@
+---
+- hosts: palfinder
+
+  vars:
+  - galaxy_name: "testing"
+  - galaxy_version: "release_17.05"
+  - galaxy_install_dir: "/home/galaxy"
+  - galaxy_python_dir: "/home/galaxy/python"
+  - galaxy_server_name: "palfinder"
+  # Galaxy configuration
+  - enable_require_login: no
+  - enable_user_activation: no
+  - enable_quotas: no
+  - enable_ftp_upload: no
+  - master_api_key: "fQn6FrGs3WB0fxFN"
+  - galaxy_id_secret: "OcHHq3A6GRgYu3wWHickrJyHfsgMvG6W"
+  #- galaxy_proxy_prefix: "/galaxy"
+  # uWSGI and handler configuration
+  - galaxy_uwsgi_processes: 2
+  - galaxy_handler_processes: 1
+  # Job configuration
+  - enable_jse_drop: no
+  # Users
+  - galaxy_admin_user: "admin@galaxy.org"
+  - galaxy_users:
+      - email: "{{ galaxy_admin_user }}"
+        password: "galaxyadmin"
+  # Audit report
+  - enable_reports: no
+  # Postfix/email configuration
+  - enable_smtp: no
+  # SSL configuration
+  - enable_https: no
+    
+  ##vars_files:
+  ##- palfinder_passwds.yml
+
+  roles:
+  # Dependencies
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - python27
+  - nginx
+  - postgresql
+  - supervisord
+  - lets-encrypt-client
+  # Install Galaxy-specific Python 2.7
+  - role: python27
+    install_dir: "{{ galaxy_python_dir }}"
+    become: yes
+    become_user: "{{ galaxy_user }}"
+  # Install and configure Galaxy
+  - galaxy
+  # Install utilities
+  - galaxy-utils
+  # Restart with master API key enabled (needed
+  # to create user accounts)
+  - role: restart-galaxy
+    enable_master_api_key: yes
+  - galaxy-create-users
+  # Restart with master API key disabled
+  - role: restart-galaxy
+    enable_master_api_key: no
