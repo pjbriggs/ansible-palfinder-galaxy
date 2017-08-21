@@ -13,7 +13,7 @@
 
 - name: Set Galaxy URL
   set_fact:
-    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}" 
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
 - name: Clone Galaxy source
   git:
@@ -57,7 +57,7 @@
     section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'brand', value: '{{ galaxy_name }}' }
-  - { option: 'logo_url', value: 'http://{{ galaxy_server_name }}' }
+  - { option: 'logo_url', value: '{{ galaxy_url }}' }
   - { option: 'allow_user_dataset_purge', value: 'True' }
   - { option: 'allow_user_impersonation', value: 'True' }
   - { option: 'allow_user_deletion', value: 'True' }
