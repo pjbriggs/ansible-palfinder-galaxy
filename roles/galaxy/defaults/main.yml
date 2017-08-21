@@ -25,7 +25,7 @@ galaxy_id_secret:
 # Proxy prefix
 # Leave blank for no prefix, other must start
 # with a forward slash e.g. "/galaxy"
-galaxy_proxy_prefix: ""
+galaxy_proxy_prefix:
 
 # Welcome page template and static content
 galaxy_welcome_template: "welcome.html.j2"
