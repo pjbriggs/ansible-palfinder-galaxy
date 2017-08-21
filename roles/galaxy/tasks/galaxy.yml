@@ -20,6 +20,7 @@
     repo='{{ galaxy_repo }}'
     version='{{ galaxy_version }}'
     dest={{ galaxy_root }}
+    force=yes
 
 - name: Create welcome page
   template:
