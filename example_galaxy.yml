@@ -6,7 +6,7 @@
   - galaxy_version: "release_17.05"
   - galaxy_install_dir: "/home/galaxy"
   - galaxy_python_dir: "/home/galaxy/python"
-  - galaxy_server_name: "palfinder"
+  - galaxy_server_name: "192.168.60.4"
   # Galaxy configuration
   - enable_require_login: no
   - enable_user_activation: no
