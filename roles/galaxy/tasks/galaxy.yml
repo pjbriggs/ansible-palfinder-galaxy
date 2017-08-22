@@ -67,6 +67,7 @@
   - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
   - { option: 'welcome_url', value: '/static/welcome.html' }
   - { option: 'show_welcome_with_login', value: 'True' }
+  - { option: 'cleanup_job', value: '{{ galaxy_cleanup_job }}' }
 
 # Set proxy prefix options
 - name: Set proxy prefix options

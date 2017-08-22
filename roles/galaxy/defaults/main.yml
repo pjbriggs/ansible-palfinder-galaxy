@@ -72,6 +72,11 @@ enable_quotas: no
 # Tool conf XML file
 galaxy_tool_conf_file:
 
+# How to handle clean up of artefacts left on the
+# filesystem after job completion
+# Should be 'always', 'onsuccess', or 'never'
+galaxy_cleanup_job: "always"
+
 # Job runners
 enable_drmaa: no
 enable_jse_drop: no
