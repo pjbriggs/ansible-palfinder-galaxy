@@ -164,6 +164,16 @@
     value='{{ galaxy_url }}/static/citations.html'
   when: galaxy_citations|default(None) != None
 
+- name: Add message of the day
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'message_box_visible', value: 'True' }
+  - { option: 'message_box_content', value: '{{ galaxy_message }}' }
+  - { option: 'message_box_class', value: 'info' }
+  when: galaxy_message|default(None) != None
+
 - name: Run common_startup.sh to initialise sample files and eggs/wheels
   command:
     chdir='{{ galaxy_root }}'
