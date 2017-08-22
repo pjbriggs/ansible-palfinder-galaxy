@@ -49,7 +49,6 @@
   command:
     chdir='{{ galaxy_root }}/config'
     cp galaxy.ini.sample galaxy.ini
-    creates='{{ galaxy_root }}/config/galaxy.ini'
 
 # Set general configuration options
 - name: General Galaxy configuration
