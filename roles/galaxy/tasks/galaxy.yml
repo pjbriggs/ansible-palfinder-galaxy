@@ -46,9 +46,11 @@
     creates='{{ galaxy_root }}/.venv'
 
 - name: Create Galaxy configuration file
-  command:
-    chdir='{{ galaxy_root }}/config'
-    cp galaxy.ini.sample galaxy.ini
+  copy:
+    src='{{ galaxy_root }}/config/galaxy.ini.sample'
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    remote_src=yes
+    backup=yes
 
 # Set general configuration options
 - name: General Galaxy configuration
