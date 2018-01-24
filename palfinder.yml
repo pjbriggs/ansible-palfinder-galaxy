@@ -84,7 +84,7 @@
   - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
 
   vars_files:
-  - palfinder_passwds.yml
+  - instances/palfinder/palfinder_passwds.yml
 
   roles:
   # Dependencies
