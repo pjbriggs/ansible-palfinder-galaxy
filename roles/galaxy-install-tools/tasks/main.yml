@@ -9,3 +9,4 @@
   command:
     "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }}"
   with_items: "{{ galaxy_tools }}"
+  when: galaxy_tools|default(None) != None
