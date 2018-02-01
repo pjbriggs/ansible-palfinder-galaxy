@@ -5,6 +5,9 @@
 # of this location
 galaxy_utils_dir: "/usr/local"
 
+# Datasets to install
+galaxy_library_datasets:
+
 # Admin user account
 galaxy_admin_user: "admin@galaxy.org"
 galaxy_admin_passwd: "galaxyadmin"
