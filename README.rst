@@ -164,10 +164,16 @@ under the ``inventories`` subdirectory. These inventories are
 intended to be used as an alternative to the central inventory file
 (typically ``/etc/ansible/hosts``).
 
+The following inventories are available:
+
+ - palfinder-production.yml: use for the production instance of the
+   Palfinder service
+ - palfinder-vagrant.yml: use for local testing with Vagrant
+
 To explicitly specify which inventory to target for a playbook run,
 use the ``-i`` option i.e.::
 
-    ansible-playbook palfinder.yml -i inventories/inventory-prod ...
+    ansible-playbook palfinder.yml -i inventories/palfinder-prod.yml
    
 Running the playbook
 --------------------
@@ -183,7 +189,19 @@ Testing using Vagrant
 The repo includes a ``Vagrantfile`` which can be used to create a
 virtual machine for testing the deployment.
 
-**This is a work-in-progress!**
+Example set up::
+
+    vagrant up
+    vagrant ssh
+    [vagrant@palfinder ~]$ sudo service iptables stop
+    [vagrant@palfinder ~]$ sudo mkdir -p /mnt/rvmi
+    [vagrant@palfinder ~]$ sudo chmod ugo+rwX /mnt/rvmi/
+
+Use the Vagrant-specific Palfinder inventory file to test locally
+(note that this is not as fully-featured as the production version).
+
+Point your browser at http://http://192.168.60.4/ to access the
+local version once it has been deployed.
 
 Notes on the deployment
 -----------------------

@@ -1,0 +1,34 @@
+palfinder:
+  hosts:
+    130.88.97.220
+  vars:
+    # Server configuration
+    galaxy_server_name: "palfinder.ls.manchester.ac.uk"
+    enable_user_activation: yes
+    # Job configuration
+    enable_jse_drop: yes
+    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"
+    galaxy_default_runner: "jse_drop_default"
+    galaxy_job_destinations:
+      - id: "jse_drop_default"
+        runner: "jse_drop"
+      - id: "jse_drop_8_cores"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-pe smp.pe 8"
+        jse_drop_slots: "8"
+    galaxy_tool_destinations:
+      - id: "trimmomatic"
+        destination: "jse_drop_8_cores"
+    # Postfix/email configuration
+    enable_smtp: yes
+    # SSL configuration
+    enable_https: yes
+    # Demo data
+    demo_data_dir: "{{ galaxy_install_dir }}/demo-data"
+    galaxy_library_datasets:
+      - file: "{{ demo_data_dir }}/miseq_R1.fq"
+        type: "fastqsanger"
+        library: "Example data/Fastqs"
+      - file: "{{ demo_data_dir }}/miseq_R2.fq"
+        type: "fastqsanger"
+        library: "Example data/Fastqs"
