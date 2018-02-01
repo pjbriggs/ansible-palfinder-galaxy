@@ -82,6 +82,9 @@
   - enable_https: yes
   - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
   - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
+  # Palfinder-specific settings
+  # Message of the day to display on the front page
+  - palfinder_motd:
 
   vars_files:
   - instances/palfinder/palfinder_passwds.yml
