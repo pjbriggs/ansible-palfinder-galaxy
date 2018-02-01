@@ -99,7 +99,8 @@
   - postgresql
   - proftpd
   - supervisord
-  - postfix-null-client
+  - role: postfix-null-client
+    when: enable_smtp
   - lets-encrypt-client
   # Install Galaxy-specific Python 2.7
   - role: python27
