@@ -24,18 +24,27 @@
     dest='/usr/local/bin/certbot-auto'
     mode=0755
 
-- name: Set up automatic renewal of certificates
+- name: Set up automatic SSL certificate renewal
+  cron:
+    user="root"
+    name="Renew SSL certificate from Lets Encrypt"
+    job='/usr/local/bin/certbot-auto renew --deploy-hook "service nginx reload" >> /var/log/le-renew'
+    hour=2 minute=30 weekday=1
+    state=present
+
+- name: Remove cron job to set up automatic certifcate renewal
   cron:
     user="root"
     name="Check SSL certificate renewal"
     job="/usr/local/bin/certbot-auto renew >> /var/log/le-renew"
     hour=2 minute=30 weekday=1
-    state=present
+    state=absent
 
-- name: Restart nginx after certificate renewal
+# Make sure this rule is removed
+- name: Remove cron job to restart nginx after certificate renewal
   cron:
     user="root"
     name="Restart nginx after SSL certificate renewal"
     job="service nginx restart >> /var/log/le-renew"
     hour=2 minute=35 weekday=1
-    state=present
+    state=absent
