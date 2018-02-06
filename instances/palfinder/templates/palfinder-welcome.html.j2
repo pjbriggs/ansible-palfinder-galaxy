@@ -10,6 +10,12 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <div class="document">
       <h1>Palfinder Galaxy Service</h1>
 
+{% if palfinder_motd is defined and palfinder_motd %}
+      <div class="infomessagelarge">
+        {{ palfinder_motd }}
+      </div>
+{% endif %}
+
       <h2>About this service</h2>
       <p>Palfinder Galaxy is a service is provided by the Bioinformatics
 	Core Facility and Research Computing teams at the University of

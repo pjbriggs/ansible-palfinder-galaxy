@@ -22,10 +22,20 @@ galaxy_db_password: "{{ galaxy_db_user }}"
 galaxy_server_name: "galaxy.example.org"
 galaxy_id_secret:
 
+# Proxy prefix
+# Leave blank for no prefix, other must start
+# with a forward slash e.g. "/galaxy"
+galaxy_proxy_prefix:
+
 # Welcome page template and static content
 galaxy_welcome_template: "welcome.html.j2"
 galaxy_terms:
 galaxy_citations:
+
+# Message of the day
+# This message will be displayed under the masthead
+# on the Galaxy site
+galaxy_message:
 
 # HTTPS parameters
 enable_https: no
@@ -66,6 +76,11 @@ enable_quotas: no
 
 # Tool conf XML file
 galaxy_tool_conf_file:
+
+# How to handle clean up of artefacts left on the
+# filesystem after job completion
+# Should be 'always', 'onsuccess', or 'never'
+galaxy_cleanup_job: "always"
 
 # Job runners
 enable_drmaa: no

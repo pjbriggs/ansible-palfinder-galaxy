@@ -2,14 +2,12 @@
 - hosts: palfinder
 
   vars:
+  # Galaxy configuration
   - galaxy_name: "palfinder"
   - galaxy_version: "v16.01"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
-  - galaxy_server_name: "palfinder.ls.manchester.ac.uk"
-  # Galaxy configuration
   - enable_require_login: yes
-  - enable_user_activation: yes
   - enable_quotas: yes
   - enable_ftp_upload: yes
   # Welcome page etc
@@ -28,20 +26,6 @@
   # uWSGI and handler configuration
   - galaxy_uwsgi_processes: 8
   - galaxy_handler_processes: 1
-  # Job configuration
-  - enable_jse_drop: yes
-  - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"
-  - galaxy_default_runner: "jse_drop_default"
-  - galaxy_job_destinations:
-      - id: "jse_drop_default"
-        runner: "jse_drop"
-      - id: "jse_drop_8_cores"
-        runner: "jse_drop"
-        jse_drop_qsub_options: "-pe smp.pe 8"
-        jse_drop_slots: "8"
-  - galaxy_tool_destinations:
-      - id: "trimmomatic"
-        destination: "jse_drop_8_cores"
   # Users
   - galaxy_admin_user: "admin@galaxy.org"
   - galaxy_users:
@@ -56,15 +40,6 @@
         owner: "pjbriggs"
       - tool: "pal_finder"
         owner: "pjbriggs"
-  # Demo data
-  - demo_data_dir: "{{ galaxy_install_dir }}/demo-data"
-  - galaxy_library_datasets:
-      - file: "{{ demo_data_dir }}/miseq_R1.fq"
-        type: "fastqsanger"
-        library: "Example data/Fastqs"
-      - file: "{{ demo_data_dir }}/miseq_R2.fq"
-        type: "fastqsanger"
-        library: "Example data/Fastqs"
   # Default quota
   - default_quota_gb: 20
   # Automatic dataset deletion
@@ -73,18 +48,23 @@
   - enable_reports: yes
   - email_audit_report_to: "peter.briggs@manchester.ac.uk"
   # Postfix/email configuration
-  - enable_smtp: yes
+  # Enable/disable in inventory file (enable_smtp)
+  # If enabled then will use the settings below
   - postfix_host_name: "{{ galaxy_server_name }}"
   - postfix_relay_host: "[smtp.manchester.ac.uk]"
   - galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
   - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
   # SSL configuration
-  - enable_https: yes
+  # Enable/disable in inventory file (enable_https)
+  # If enabled then will use the settings below
   - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
   - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
+  # Palfinder-specific settings
+  # Message of the day to display on the front page
+  - palfinder_motd:
 
   vars_files:
-  - palfinder_passwds.yml
+  - instances/palfinder/palfinder_passwds.yml
 
   roles:
   # Dependencies
@@ -96,7 +76,8 @@
   - postgresql
   - proftpd
   - supervisord
-  - postfix-null-client
+  - role: postfix-null-client
+    when: enable_smtp
   - lets-encrypt-client
   # Install Galaxy-specific Python 2.7
   - role: python27

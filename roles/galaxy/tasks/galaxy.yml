@@ -13,13 +13,14 @@
 
 - name: Set Galaxy URL
   set_fact:
-    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}" 
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
 - name: Clone Galaxy source
   git:
     repo='{{ galaxy_repo }}'
     version='{{ galaxy_version }}'
     dest={{ galaxy_root }}
+    force=yes
 
 - name: Create welcome page
   template:
@@ -30,13 +31,13 @@
   copy:
     src='{{ galaxy_terms }}'
     dest='{{ galaxy_root }}/static/terms.html'
-  when: galaxy_terms is defined
+  when: galaxy_terms|default(None) != None
 
 - name: Import citations page
   copy:
     src='{{ galaxy_citations }}'
     dest='{{ galaxy_root }}/static/citations.html'
-  when: galaxy_citations is defined
+  when: galaxy_citations|default(None) != None
 
 - name: Make virtualenv in Galaxy root
   command:
@@ -45,10 +46,11 @@
     creates='{{ galaxy_root }}/.venv'
 
 - name: Create Galaxy configuration file
-  command:
-    chdir='{{ galaxy_root }}/config'
-    cp galaxy.ini.sample galaxy.ini
-    creates='{{ galaxy_root }}/config/galaxy.ini'
+  copy:
+    src='{{ galaxy_root }}/config/galaxy.ini.sample'
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    remote_src=yes
+    backup=yes
 
 # Set general configuration options
 - name: General Galaxy configuration
@@ -57,7 +59,7 @@
     section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
   - { option: 'brand', value: '{{ galaxy_name }}' }
-  - { option: 'logo_url', value: 'http://{{ galaxy_server_name }}' }
+  - { option: 'logo_url', value: '{{ galaxy_url }}' }
   - { option: 'allow_user_dataset_purge', value: 'True' }
   - { option: 'allow_user_impersonation', value: 'True' }
   - { option: 'allow_user_deletion', value: 'True' }
@@ -67,6 +69,20 @@
   - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
   - { option: 'welcome_url', value: '/static/welcome.html' }
   - { option: 'show_welcome_with_login', value: 'True' }
+  - { option: 'cleanup_job', value: '{{ galaxy_cleanup_job }}' }
+
+# Set proxy prefix options
+- name: Set proxy prefix options
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='{{ item.section }}'
+    option='{{ item.option }}'
+    value='{{ item.value }}'
+  with_items:
+  - { section: 'filter:proxy-prefix', option: 'prefix', value: '{{ galaxy_proxy_prefix }}' }
+  - { section: 'app:main', option: 'filter-with', value: 'proxy-prefix' }
+  - { section: 'app:main', option: 'cookie_path', value: '{{ galaxy_proxy_prefix }}' }
+  when: galaxy_proxy_prefix|default(None) != None
 
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
 - name: Configure Galaxy database connection
@@ -140,7 +156,7 @@
     section='app:main'
     option='terms_url'
     value='{{ galaxy_url }}/static/terms.html'
-  when: galaxy_terms is defined
+  when: galaxy_terms|default(None) != None
 
 - name: Configure citations page
   ini_file:
@@ -148,12 +164,22 @@
     section='app:main'
     option='citation_url'
     value='{{ galaxy_url }}/static/citations.html'
-  when: galaxy_citations is defined
+  when: galaxy_citations|default(None) != None
+
+- name: Add message of the day
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'message_box_visible', value: 'True' }
+  - { option: 'message_box_content', value: '{{ galaxy_message }}' }
+  - { option: 'message_box_class', value: 'info' }
+  when: galaxy_message|default(None) != None
 
 - name: Run common_startup.sh to initialise sample files and eggs/wheels
   command:
     chdir='{{ galaxy_root }}'
-    scripts/common_startup.sh
+    ./scripts/common_startup.sh
 
 - name: Run create_db.py to initialise the database
   command:
@@ -165,7 +191,7 @@
   copy:
     src='{{ galaxy_tool_conf_file }}'
     dest='{{ galaxy_root}}/config/tool_conf.xml'
-  when: galaxy_tool_conf_file is defined
+  when: galaxy_tool_conf_file|default(None) != None
 
 # Import the code for the JSE-drop job runner plugin
 - name: Import the JSE-drop job runner plugin files

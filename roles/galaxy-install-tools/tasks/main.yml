@@ -3,9 +3,10 @@
 
 - name: Set Galaxy URL
   set_fact:
-    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}"
+    galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
 - name: Install Galaxy tools
   command:
     "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }}"
   with_items: "{{ galaxy_tools }}"
+  when: galaxy_tools|default(None) != None

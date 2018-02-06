@@ -9,7 +9,8 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
   config.ssh.insert_key = false
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider :virtualbox do |v|
-    v.memory = 256
+    v.memory = 4096
+    v.cpus = 4
     v.linked_clone = true
   end
   # Palfinder VM
