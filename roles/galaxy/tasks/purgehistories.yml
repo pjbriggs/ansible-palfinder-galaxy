@@ -1,15 +1,28 @@
+# See https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
 ---
-- name: Set up cron jobs to purge deleted data
+- name: Set up daily cron jobs to purge deleted data
   cron:
     user='{{ galaxy_user }}'
     name='{{ item.name }}'
     job=". {{ galaxy_root }}/.venv/bin/activate && sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
-    weekday=00 hour=03 minute=00
+    hour={{ item.hour }} minute={{ item.minute }}
     state=present
   with_items:
-  - { name: 'Delete userless histories', script: 'delete_userless_histories.sh' }
-  - { name: 'Purge histories', script: 'purge_histories.sh' }
-  - { name: 'Purge libraries', script: 'purge_libraries.sh' }
-  - { name: 'Purge folders', script: 'purge_folders.sh' }
-  - { name: 'Delete datasets', script: 'delete_datasets.sh' }
-  - { name: 'Purge datasets', script: 'purge_datasets.sh' }
+  - { name: 'Delete userless histories',
+      script: 'delete_userless_histories.sh',
+      hour: 03, minute: 00 }
+  - { name: 'Purge histories',
+      script: 'purge_histories.sh',
+      hour: 03, minute: 10 }
+  - { name: 'Purge libraries',
+      script: 'purge_libraries.sh',
+      hour: 03, minute: 20 }
+  - { name: 'Purge folders',
+      script: 'purge_folders.sh',
+      hour: 03, minute: 30 }
+  - { name: 'Delete datasets',
+      script: 'delete_datasets.sh',
+      hour: 03, minute: 40 }
+  - { name: 'Purge datasets',
+      script: 'purge_datasets.sh',
+      hour: 04, minute: 00 }
