@@ -48,3 +48,9 @@
     job="service nginx restart >> /var/log/le-renew"
     hour=2 minute=35 weekday=1
     state=absent
+
+# Add logrotation rule for le-renew
+- name: Rotate certificate renewal logs
+  template:
+    dest=/etc/logrotate.d/lets-encrypt
+    src=logrotate-lets-encrypt.j2
