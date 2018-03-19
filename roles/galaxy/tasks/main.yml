@@ -16,6 +16,9 @@
 - include: reports.yml
   when: enable_reports
 
+- include: jsedrop.yml
+  when: enable_jse_drop
+
 - include: purgehistories.yml
 
 - include: logrotate.yml

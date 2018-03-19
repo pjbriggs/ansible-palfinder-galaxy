@@ -1,0 +1,34 @@
+---
+# Import the code for the JSE-drop job runner plugin
+- name: Import the JSE-drop job runner plugin files
+  copy:
+    dest='{{ galaxy_root }}/lib/galaxy/jobs/runners/{{ item }}'
+    src='{{ item }}'
+  with_items:
+  - jse_drop.py
+  - jse_drop_runner.py
+
+# Create the JSE-drop directory
+- name: Create JSE-drop directory
+  file:
+    path='{{ galaxy_jse_drop_dir }}'
+    state=directory
+
+# Setup cron jobs to clean up JSE-drop directory
+- name: Clean up qsub files from JSE-drop directory
+  cron:
+    user='{{ galaxy_user }}'
+    name='Remove old JSE-drop .qsub files'
+    hour=05
+    minute=00
+    job='find {{ galaxy_jse_drop_dir }} -name "*.qsub" -type f -mtime +28 -exec rm -f {} \;'
+    state=present
+
+- name: Clean up other files from JSE-drop directory
+  cron:
+    user='{{ galaxy_user }}'
+    name='Remove all other old JSE-drop files'
+    hour=05
+    minute=00
+    job='find {{ galaxy_jse_drop_dir }} -name "*" -type f -mtime +28 -exec rm -f {} \;'
+    state=present
