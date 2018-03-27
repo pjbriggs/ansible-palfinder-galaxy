@@ -36,10 +36,13 @@
   - galaxy_tools:
       - tool: "fastqc"
         owner: "devteam"
+        section: ""
       - tool: "trimmomatic"
         owner: "pjbriggs"
+        section: ""
       - tool: "pal_finder"
         owner: "pjbriggs"
+        section: ""
   # Default quota
   - default_quota_gb: 20
   # Automatic dataset deletion
