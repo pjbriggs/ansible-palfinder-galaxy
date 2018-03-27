@@ -41,6 +41,6 @@
     name=postgresql
     state=started
     enabled=yes
-  when: postgresql_initialised | success
+  when: postgresql_initialised is success
   register: postgresql_started
 
