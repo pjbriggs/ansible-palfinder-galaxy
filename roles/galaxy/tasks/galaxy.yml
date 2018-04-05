@@ -75,6 +75,16 @@
   - { option: 'allow_path_paste', value: '{{ galaxy_allow_path_paste }}' }
   - { option: 'cleanup_job', value: '{{ galaxy_cleanup_job }}' }
 
+# Set tool data location options
+- name: Set tool data locations
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'tool_data_path', value: '{{ galaxy_tool_data_path }}' }
+  - { option: 'shed_tool_data_path', value: '{{ galaxy_shed_tool_data_path }}' }
+  - { option: 'galaxy_data_manager_data_path', value: '{{ galaxy_data_manager_data_path }}' }
+
 # Set conda options
 - name: Set conda options
   ini_file:

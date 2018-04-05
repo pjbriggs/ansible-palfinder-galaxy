@@ -71,6 +71,11 @@ galaxy_job_working_dir: "{{ galaxy_database_dir }}/jobs_directory"
 galaxy_file_path: "{{ galaxy_database_dir }}/files"
 galaxy_new_file_path: "{{ galaxy_database_dir }}/tmp"
 
+# Tool data locations
+galaxy_tool_data_path: "{{ galaxy_root }}/tool-data"
+galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"
+galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
+
 # Conda options
 galaxy_conda_auto_install: yes
 
