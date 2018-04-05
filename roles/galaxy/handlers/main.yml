@@ -5,5 +5,5 @@
 - name: Restart Supervisord
   service: name=supervisord state=reloaded
 
-- name: Reload Galaxy reports
-  service: name=galaxy_reports state=reloaded
+- name: Restart Galaxy reports
+  service: name=galaxy_reports state=restarted
