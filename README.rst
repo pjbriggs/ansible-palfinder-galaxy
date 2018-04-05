@@ -186,16 +186,13 @@ the ``ansible-playbook`` command line, for example::
 Testing using Vagrant
 ---------------------
 
-The repo includes a ``Vagrantfile`` which can be used to create a
-virtual machine for testing the deployment.
+The repo includes a ``Vagrantfile`` which can be used to create
+virtual machines for testing the deployment.
 
 Example set up::
 
-    vagrant up
-    vagrant ssh
-    [vagrant@palfinder ~]$ sudo service iptables stop
-    [vagrant@palfinder ~]$ sudo mkdir -p /mnt/rvmi
-    [vagrant@palfinder ~]$ sudo chmod ugo+rwX /mnt/rvmi/
+    vagrant up palfinder
+    vagrant ssh palfinder
 
 Use the Vagrant-specific Palfinder inventory file to test locally
 (note that this is not as fully-featured as the production version).
