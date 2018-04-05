@@ -10,8 +10,9 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
-- include: static.yml
-  when: galaxy_extra_static_content|default(None) != None
+- include: uwsgi.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
 
 - include: reports.yml
   when: enable_reports
@@ -26,10 +27,9 @@
 - include: ftpupload.yml
   when: enable_ftp_upload
 
-- include: uwsgi.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
-
 - include: supervisor.yml
 
 - include: nginxproxy.yml
+
+- include: static.yml
+  when: galaxy_extra_static_content|default(None) != None
