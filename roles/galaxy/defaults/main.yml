@@ -64,6 +64,20 @@ galaxy_install_dir: "/home/galaxy/galaxies"
 galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
 galaxy_root: "{{ galaxy_dir }}/galaxy"
 galaxy_tool_dependency_dir: '{{ galaxy_dir }}/tool_dependencies'
+galaxy_database_dir: '{{ galaxy_root }}/database'
+
+# Files and working directories
+galaxy_job_working_dir: "{{ galaxy_database_dir }}/jobs_directory"
+galaxy_file_path: "{{ galaxy_database_dir }}/files"
+galaxy_new_file_path: "{{ galaxy_database_dir }}/tmp"
+
+# Tool data locations
+galaxy_tool_data_path: "{{ galaxy_root }}/tool-data"
+galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"
+galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
+
+# Conda options
+galaxy_conda_auto_install: yes
 
 # User account creation
 enable_user_activation: no
@@ -81,6 +95,9 @@ galaxy_tool_conf_file:
 # filesystem after job completion
 # Should be 'always', 'onsuccess', or 'never'
 galaxy_cleanup_job: "always"
+
+# Allow admins to paste filesystem paths during upload
+galaxy_allow_path_paste: no
 
 # Job runners
 enable_drmaa: no

@@ -64,12 +64,34 @@
   - { option: 'allow_user_impersonation', value: 'True' }
   - { option: 'allow_user_deletion', value: 'True' }
   - { option: 'allow_library_path_paste', value: 'True' }
+  - { option: 'file_path', value: '{{ galaxy_file_path }}' }
+  - { option: 'new_file_path', value: '{{ galaxy_new_file_path }}' }
+  - { option: 'job_working_dir', value: '{{ galaxy_job_working_dir }}' }
   - { option: 'tool_dependency_dir', value: '{{ galaxy_tool_dependency_dir }}' }
   - { option: 'id_secret', value: '{{ galaxy_id_secret }}' }
   - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
   - { option: 'welcome_url', value: '/static/welcome.html' }
   - { option: 'show_welcome_with_login', value: 'True' }
+  - { option: 'allow_path_paste', value: '{{ galaxy_allow_path_paste }}' }
   - { option: 'cleanup_job', value: '{{ galaxy_cleanup_job }}' }
+
+# Set tool data location options
+- name: Set tool data locations
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'tool_data_path', value: '{{ galaxy_tool_data_path }}' }
+  - { option: 'shed_tool_data_path', value: '{{ galaxy_shed_tool_data_path }}' }
+  - { option: 'galaxy_data_manager_data_path', value: '{{ galaxy_data_manager_data_path }}' }
+
+# Set conda options
+- name: Set conda options
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'conda_auto_install', value: '{{ galaxy_conda_auto_install }}' }
 
 # Set proxy prefix options
 - name: Set proxy prefix options
