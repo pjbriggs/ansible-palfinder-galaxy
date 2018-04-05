@@ -7,6 +7,6 @@
 
 - name: Install Galaxy tools
   command:
-    "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }}"
+    "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}'"
   with_items: "{{ galaxy_tools }}"
   when: galaxy_tools|default(None) != None
