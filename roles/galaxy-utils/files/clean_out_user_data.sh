@@ -19,6 +19,11 @@
 # up scripts from Galaxy should be sufficient to garbage collect the
 # associated data files (see https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/)
 
+if [ $# -lt 4 ] ; then
+    echo "Usage: $(basename $0) GALAXY_DB GALAXY_DB_USER DB_PASSWD EMAIL"
+    exit
+fi
+
 echo "# $(basename $0)"
 echo "# Started $(date 2>&1)"
 
