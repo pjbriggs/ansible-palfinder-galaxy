@@ -17,5 +17,10 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
   config.vm.define "palfinder" do |palfinder|
     palfinder.vm.hostname = "palfinder"
     palfinder.vm.network :private_network, ip: "192.168.60.4"
+    palfinder.vm.provision "shell", inline: <<-SHELL
+    service iptables stop
+    mkdir -p /mnt/rvmi
+    chmod ugo+rwX /mnt/rvmi/
+  SHELL
   end
 end
