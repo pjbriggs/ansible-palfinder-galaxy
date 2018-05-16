@@ -1,16 +1,6 @@
 # Install and configure uWSGI and set up handlers
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#uWSGI
 ---
-- name: Install uWSGI and PasteDeploy
-  pip:
-    name='{{ item }}'
-    executable='{{ galaxy_root }}/.venv/bin/pip'
-    extra_args='--no-binary :all:'
-    state=present
-  with_items:
-  - uwsgi
-  - uwsgitop
-  - PasteDeploy
 
 - name: Configure Galaxy uWSGI settings
   ini_file:
