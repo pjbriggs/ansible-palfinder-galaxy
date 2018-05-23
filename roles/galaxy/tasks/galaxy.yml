@@ -1,7 +1,7 @@
 # Install and configure Galaxy
 ---
 
-- name: Create Galaxy directories
+- name: Create top-level Galaxy directories
   file:
     path='{{ item }}'
     state=directory
@@ -21,6 +21,13 @@
     version='{{ galaxy_version }}'
     dest={{ galaxy_root }}
     force=yes
+
+- name: Create additional Galaxy directories
+  file:
+    path='{{ item }}'
+    state=directory
+  with_items:
+  - '{{ galaxy_file_path }}'
 
 - name: Create welcome page
   template:
