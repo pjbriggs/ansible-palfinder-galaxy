@@ -44,7 +44,7 @@
         owner: "pjbriggs"
         section: ""
   # Default quota
-  - default_quota_gb: 30
+  - default_quota_gb: 50
   # Automatic dataset deletion
   - delete_datasets_after: "30 days"
   # Audit report
