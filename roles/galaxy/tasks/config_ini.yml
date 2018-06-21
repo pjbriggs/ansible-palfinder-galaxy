@@ -1,0 +1,204 @@
+# Configure galaxy.ini file
+---
+- name: Create Galaxy configuration file
+  copy:
+    src='{{ galaxy_root }}/config/galaxy.ini.sample'
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    remote_src=yes
+    backup=yes
+
+# Set general configuration options
+- name: General Galaxy configuration
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'brand', value: '{{ galaxy_name }}' }
+  - { option: 'logo_url', value: '{{ galaxy_url }}' }
+  - { option: 'allow_user_dataset_purge', value: 'True' }
+  - { option: 'allow_user_impersonation', value: 'True' }
+  - { option: 'allow_user_deletion', value: 'True' }
+  - { option: 'allow_library_path_paste', value: 'True' }
+  - { option: 'file_path', value: '{{ galaxy_file_path }}' }
+  - { option: 'new_file_path', value: '{{ galaxy_new_file_path }}' }
+  - { option: 'job_working_dir', value: '{{ galaxy_job_working_dir }}' }
+  - { option: 'tool_dependency_dir', value: '{{ galaxy_tool_dependency_dir }}' }
+  - { option: 'id_secret', value: '{{ galaxy_id_secret }}' }
+  - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
+  - { option: 'welcome_url', value: '/static/welcome.html' }
+  - { option: 'show_welcome_with_login', value: 'True' }
+  - { option: 'allow_path_paste', value: '{{ galaxy_allow_path_paste }}' }
+  - { option: 'cleanup_job', value: '{{ galaxy_cleanup_job }}' }
+
+# Set tool data location options
+- name: Set tool data locations
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'tool_data_path', value: '{{ galaxy_tool_data_path }}' }
+  - { option: 'shed_tool_data_path', value: '{{ galaxy_shed_tool_data_path }}' }
+  - { option: 'galaxy_data_manager_data_path', value: '{{ galaxy_data_manager_data_path }}' }
+
+# Set conda options
+- name: Set conda options
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'conda_auto_install', value: '{{ galaxy_conda_auto_install }}' }
+
+# Set proxy prefix options
+- name: Set proxy prefix options
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='{{ item.section }}'
+    option='{{ item.option }}'
+    value='{{ item.value }}'
+  with_items:
+  - { section: 'filter:proxy-prefix', option: 'prefix', value: '{{ galaxy_proxy_prefix }}' }
+  - { section: 'app:main', option: 'filter-with', value: 'proxy-prefix' }
+  - { section: 'app:main', option: 'cookie_path', value: '{{ galaxy_proxy_prefix }}' }
+  when: galaxy_proxy_prefix|default(None) != None
+
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
+- name: Configure Galaxy database connection
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='database_connection'
+    value='postgres://{{ galaxy_db_user }}:{{ galaxy_db_password }}@localhost:5432/{{ galaxy_db }}'
+
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
+- name: Disable Galaxy configuration developer settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'debug', value: 'False' }
+  - { option: 'use_interactive', value: 'False' }
+
+- name: Configure use of quotas
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'enable_quotas', value: '{{ enable_quotas }}' }
+
+- name: Configure Galaxy user activation
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'user_activation_on', value: '{{ enable_user_activation }}' }
+  - { option: 'activation_grace_period', value: '0' }
+
+- name: Configure whether to require login
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option={{ item.option }} value={{ item.value }}
+  with_items:
+  - { option: 'require_login', value: '{{ enable_require_login }}' }
+
+- name: Configure Galaxy FTP upload settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'ftp_upload_dir', value: '{{ galaxy_ftp_upload_dir }}' }
+  - { option: 'ftp_upload_site', value: '{{ galaxy_ftp_upload_site }}' }
+  when: enable_ftp_upload
+
+- name: Configure Galaxy mail settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'smtp_server', value: 'localhost:25' }
+  - { option: 'mailing_join_addr', value: '' }
+  - { option: 'error_email_to', value: '{{ galaxy_incoming_email_addr }}' }
+  - { option: 'email_from', value: '{{ galaxy_outgoing_email_addr }}' }
+  - { option: 'instance_resource_url', value: 'None' }
+  when: enable_smtp
+
+- name: Configure terms and conditions page
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='terms_url'
+    value='{{ galaxy_url }}/static/terms.html'
+  when: galaxy_terms|default(None) != None
+
+- name: Configure citations page
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main'
+    option='citation_url'
+    value='{{ galaxy_url }}/static/citations.html'
+  when: galaxy_citations|default(None) != None
+
+- name: Add message of the day
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'message_box_visible', value: 'True' }
+  - { option: 'message_box_content', value: '{{ galaxy_message }}' }
+  - { option: 'message_box_class', value: 'info' }
+  when: galaxy_message|default(None) != None
+
+# Configure uWSGI and set up handlers
+# See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#uWSGI
+- name: Configure Galaxy uWSGI settings
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='uwsgi' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'processes', value: '{{ galaxy_uwsgi_processes }}' }
+  - { option: 'stats', value: '127.0.0.1:9191' }
+  - { option: 'socket', value: '127.0.0.1:4001' }
+  - { option: 'pythonpath', value: 'lib' }
+  - { option: 'threads', value: '4' }
+  - { option: 'logto', value: '{{ galaxy_log_dir }}/uwsgi.log' }
+  - { option: 'master', value: 'True' }
+
+- name: Configure Galaxy uWSGI settings in app-main section
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'static_enabled', value: 'False' }
+  - { option: 'track_jobs_in_database', value: 'True' }- name: Check handler number
+  debug:
+    msg="Setting up handler number {{ handler_number }}"
+
+- name: Set handler port
+  set_fact:
+    handler_port: "{{ handler_number | int + 8090 }}"
+
+- name: Configure Galaxy uWSGI settings in uwsgi section
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='uwsgi' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'processes', value: '{{ galaxy_uwsgi_processes }}' }
+  - { option: 'stats', value: '127.0.0.1:9191' }
+  - { option: 'socket', value: '127.0.0.1:4001' }
+  - { option: 'pythonpath', value: 'lib' }
+  - { option: 'threads', value: '4' }
+  - { option: 'logto', value: '{{ galaxy_log_dir }}/uwsgi.log' }
+  - { option: 'master', value: 'True' }
+
+- name: Configure Galaxy uWSGI settings in app-main
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'static_enabled', value: 'False' }
+  - { option: 'track_jobs_in_database', value: 'True' }
+
+- name: Configure Galaxy handler processes
+  include: handlers_ini.yml
+  with_sequence: start=0 count={{ galaxy_handler_processes }}
+  loop_control:
+    loop_var: handler_number
