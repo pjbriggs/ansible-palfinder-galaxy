@@ -65,24 +65,26 @@ server {
         uwsgi_param UWSGI_SCHEME $scheme;
         include uwsgi_params;
     }
-    # serve static content for visualization plugins
-    location ~ ^{{ galaxy_proxy_prefix }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
-        alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
-    }
     # Serve static content
     location {{ galaxy_proxy_prefix }}/static {
         alias {{ galaxy_root }}/static;
+        expires 24h;
     }
     location {{ galaxy_proxy_prefix }}/static/style {
         alias {{ galaxy_root }}/static/style/blue;
-    }
-    location {{ galaxy_proxy_prefix }}/static/scripts {
-        alias {{ galaxy_root }}/static/scripts/packed;
+        expires 24h;
     }
     location {{ galaxy_proxy_prefix }}/favicon.ico {
         alias {{ galaxy_root }}/static/favicon.ico;
+        expires 24h;
     }
     location {{ galaxy_proxy_prefix }}/robots.txt {
         alias {{ galaxy_root }}/static/robots.txt;
+        expires 24h;
+    }
+    # serve static content for visualization plugins
+    location ~ ^{{ galaxy_proxy_prefix }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+        alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
+        expires 24h;
     }
 }
