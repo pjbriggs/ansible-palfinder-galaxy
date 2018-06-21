@@ -67,7 +67,7 @@
   - palfinder_motd:
 
   vars_files:
-  - instances/palfinder/palfinder_passwds.yml
+  - instances/palfinder/{{ palfinder_secrets }}
 
   roles:
   # Dependencies
