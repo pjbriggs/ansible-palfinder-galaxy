@@ -5,6 +5,8 @@ palfinder:
     # Ansible-specific settings
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    # Secrets
+    palfinder_secrets: palfinder_vagrant.yml
     # Server configuration
     galaxy_server_name: 192.168.60.4
     enable_user_activation: no
