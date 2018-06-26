@@ -48,7 +48,12 @@ uwsgi:
 
   # The entry point which returns the web application (e.g. Galaxy,
   # Reports, etc.) that you are loading.
+{% if galaxy_proxy_prefix|default(None) != None %}
+  mount: {{ galaxy_proxy_prefix }}=galaxy.webapps.galaxy.buildapp:uwsgi_app()
+  manage-script-name: true
+{% else %}
   module: galaxy.webapps.galaxy.buildapp:uwsgi_app()
+{% endif %}
 
   # It is usually a good idea to set this to ``true`` if processes is
   # greater than 1.

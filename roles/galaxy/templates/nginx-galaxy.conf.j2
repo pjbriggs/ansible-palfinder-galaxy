@@ -87,4 +87,8 @@ server {
         alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
         expires 24h;
     }
+{% if galaxy_proxy_prefix|default(None) != None %}
+    # redirect /prefix -> /prefix/
+    rewrite ^{{ galaxy_proxy_prefix }}$ {{ galaxy_proxy_prefix }}/ last;
+{% endif %}
 }
