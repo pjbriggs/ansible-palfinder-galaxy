@@ -23,7 +23,7 @@ galaxy_server_name: "galaxy.example.org"
 galaxy_id_secret:
 
 # Proxy prefix
-# Leave blank for no prefix, other must start
+# Leave blank for no prefix, otherwise must start
 # with a forward slash e.g. "/galaxy"
 galaxy_proxy_prefix:
 
