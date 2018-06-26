@@ -22,19 +22,24 @@
   become: yes
   become_user: '{{ galaxy_user }}'
 
-# Set up as a service
-- name: Create init.d script for Galaxy reports
-  template:
-    dest=/etc/init.d/galaxy_reports
-    src=galaxy_reports.init.sh.j2
-    mode=0755
-  notify: Restart Galaxy reports
+# Remove old init.d script
+- name: Check for init.d script for reports
+  stat:
+    path: '/etc/init.d/galaxy_reports'
+  register: reports_init_script
 
-- name: Start Galaxy reports service
+- name: Stop Galaxy reports service
   service:
     name=galaxy_reports
-    enabled=on
-    state=started
+    enabled=false
+    state=stopped
+  when: reports_init_script.stat.exists == True
+
+- name: Remove init.d script for reports
+  file:
+    path='/etc/init.d/galaxy_reports'
+    state=absent
+  when: reports_init_script.stat.exists == True
 
 # Set up Nginx proxy password protection
 - name: Set up Galaxy reports access

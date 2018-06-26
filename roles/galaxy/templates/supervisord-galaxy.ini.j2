@@ -13,5 +13,19 @@ numprocs        = 1
 stopsignal      = INT
 environment     = VIRTUAL_ENV="{{ galaxy_root }}/.venv",PATH="{{ galaxy_root }}/.venv/bin:%(ENV_PATH)s"
 
+{% if enable_reports %}
+[program:galaxy_reports]
+command         = {{ galaxy_root }}/.venv/bin/uwsgi --yaml {{ galaxy_root }}/config/reports.yml --logto {{ galaxy_dir }}/logs/reports_webapp.log
+directory       = {{ galaxy_root }}
+umask           = 022
+autostart       = true
+autorestart     = true
+startsecs       = 10
+user            = {{ galaxy_user }}
+numprocs        = 1
+stopsignal      = INT
+environment     = VIRTUAL_ENV="{{ galaxy_root }}/.venv",PATH="{{ galaxy_root }}/.venv/bin:%(ENV_PATH)s"
+{% endif %}
+
 [group:galaxy]
-programs = galaxy_uwsgi
+programs = galaxy_uwsgi,galaxy_reports
