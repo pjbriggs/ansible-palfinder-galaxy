@@ -1,0 +1,12 @@
+# Enable Galaxy's reporting interface
+---
+
+- name: Remove existing Galaxy reports.ini configuration file
+  file:
+    path='{{ galaxy_root }}/config/reports.ini'
+    state=absent
+
+- name: Configure Galaxy reports.yml file
+  template:
+    dest='{{ galaxy_root }}/config/reports.yml'
+    src=galaxy-reports.yml.j2
