@@ -324,7 +324,7 @@ galaxy:
   # Galaxy server process should be able to check for repository
   # updates.  The setting for hours_between_check should be an integer
   # between 1 and 24.
-  #enable_tool_shed_check: false
+  enable_tool_shed_check: {{ enable_tool_shed_check }}
 
   # Enable automatic polling of relative tool sheds to see if any
   # updates are available for installed repositories.  Ideally only one

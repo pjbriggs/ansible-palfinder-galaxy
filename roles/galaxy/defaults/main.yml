@@ -76,6 +76,9 @@ galaxy_tool_data_path: "{{ galaxy_root }}/tool-data"
 galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"
 galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
 
+# Toolshed check
+enable_tool_shed_check: no
+
 # Conda options
 galaxy_conda_auto_install: yes
 
