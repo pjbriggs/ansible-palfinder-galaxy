@@ -3,7 +3,10 @@ uwsgi:
   # The address and port on which to listen.  By default, only listen to
   # localhost (reports will not be accessible over the network).  Use
   # ':9001' to listen on all available network interfaces.
-  http: 127.0.0.1:9001
+  #http: 127.0.0.1:9001
+
+  # Socket to communicate with uwsgi using
+  socket: 127.0.0.1:9001
 
   # By default uWSGI allocates a very small buffer (4096 bytes) for the
   # headers of each request. If you start receiving "invalid request
