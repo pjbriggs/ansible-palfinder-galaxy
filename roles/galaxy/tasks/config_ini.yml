@@ -86,11 +86,12 @@
   with_items:
   - { option: 'enable_quotas', value: '{{ enable_quotas }}' }
 
-- name: Configure Galaxy user activation
+- name: Configure Galaxy user creation and activation
   ini_file:
     dest='{{ galaxy_root }}/config/galaxy.ini'
     section='app:main' option='{{ item.option }}' value='{{ item.value }}'
   with_items:
+  - { option: 'allow_user_creation', value: '{{ enable_allow_user_creation }}' }
   - { option: 'user_activation_on', value: '{{ enable_user_activation }}' }
   - { option: 'activation_grace_period', value: '0' }
 

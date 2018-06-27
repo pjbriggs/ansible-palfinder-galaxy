@@ -79,7 +79,8 @@ galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
 # Conda options
 galaxy_conda_auto_install: yes
 
-# User account creation
+# User account creation and activation
+enable_allow_user_creation: yes
 enable_user_activation: no
 
 # User login
