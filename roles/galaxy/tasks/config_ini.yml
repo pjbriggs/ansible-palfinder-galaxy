@@ -49,6 +49,14 @@
   with_items:
   - { option: 'conda_auto_install', value: '{{ galaxy_conda_auto_install }}' }
 
+# Set dependency caching options
+- name: Set dependency caching options
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='{{ item.option }}' value='{{ item.value }}'
+  with_items:
+  - { option: 'use_cached_depedency_manager', value: '{{ galaxy_use_cached_depedency_manager }}' }
+
 # Set proxy prefix options
 - name: Set proxy prefix options
   ini_file:

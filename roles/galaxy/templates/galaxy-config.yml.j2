@@ -266,7 +266,7 @@ galaxy:
   # in a folder. This option is beta and should only be used if you
   # experience long waiting times before a job is actually submitted to
   # your cluster.
-  #use_cached_dependency_manager: false
+  use_cached_dependency_manager: {{ galaxy_use_cached_depedency_manager }}
 
   # By default the tool_dependency_cache_dir is the _cache directory of
   # the tool dependency directory
