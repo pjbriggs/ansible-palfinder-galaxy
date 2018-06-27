@@ -114,13 +114,23 @@ galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
 galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
 
 # Job destinations
+# Define entries as a dictionary with:
+# - id     (destination ID)
+# - runner (target runner)
 galaxy_job_destinations:
 
 # Tool destinations
+# Define entries as a dictionary with:
+# - id          (tool ID/name)
+# - destination (target destination)
 galaxy_tool_destinations:
 
 # HTML sanitization whitelist
 galaxy_sanitize_whitelist_file: "config/sanitize_whitelist.txt"
+# List of paths for whitelisted tools e.g.
+# galaxy_sanitize_whitelist_tools:
+# - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+# - ...
 galaxy_sanitize_whitelist_tools:
 
 # uWSGI configuration
