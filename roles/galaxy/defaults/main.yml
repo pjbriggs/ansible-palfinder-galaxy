@@ -115,6 +115,10 @@ galaxy_job_destinations:
 # Tool destinations
 galaxy_tool_destinations:
 
+# HTML sanitization whitelist
+galaxy_sanitize_whitelist_file: "config/sanitize_whitelist.txt"
+galaxy_sanitize_whitelist_tools:
+
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
 

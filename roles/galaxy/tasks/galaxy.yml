@@ -93,3 +93,13 @@
   template:
     dest='{{ galaxy_root }}/config/job_conf.xml'
     src=job_conf.xml.j2
+
+# Sanitization whitelist
+- name: Add tools to sanitization whitelist
+  lineinfile:
+    path='{{ galaxy_root }}/{{ galaxy_sanitize_whitelist_file }}'
+    state=present
+    create=yes
+    line="{{ item }}"
+  with_items: "{{ galaxy_sanitize_whitelist_tools }}"
+  when: galaxy_sanitize_whitelist_tools|default(None) != None

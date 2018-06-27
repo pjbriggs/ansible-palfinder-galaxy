@@ -29,6 +29,7 @@
   - { option: 'show_welcome_with_login', value: 'True' }
   - { option: 'allow_path_paste', value: '{{ galaxy_allow_path_paste }}' }
   - { option: 'cleanup_job', value: '{{ galaxy_cleanup_job }}' }
+  - { option: 'sanitize_whitelist_file', value: '{{ galaxy_sanitize_whitelist_file }}' }
 
 # Set tool data location options
 - name: Set tool data locations
