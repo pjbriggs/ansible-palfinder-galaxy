@@ -2,7 +2,7 @@
 # See https://docs.galaxyproject.org/en/master/admin/scaling.html#supervisord
 
 [program:galaxy_uwsgi]
-command         = {{ galaxy_root }}/.venv/bin/uwsgi --yaml {{ galaxy_root }}/config/galaxy.yml --logto {{ galaxy_dir }}/logs/galaxy_uwsgi.log
+command         = {{ galaxy_root }}/.venv/bin/uwsgi --yaml {{ galaxy_root }}/config/galaxy.yml --logto {{ galaxy_log_dir }}/galaxy_uwsgi.log
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
@@ -15,7 +15,7 @@ environment     = VIRTUAL_ENV="{{ galaxy_root }}/.venv",PATH="{{ galaxy_root }}/
 
 {% if enable_reports %}
 [program:galaxy_reports]
-command         = {{ galaxy_root }}/.venv/bin/uwsgi --yaml {{ galaxy_root }}/config/reports.yml --logto {{ galaxy_dir }}/logs/reports_webapp.log
+command         = {{ galaxy_root }}/.venv/bin/uwsgi --yaml {{ galaxy_root }}/config/reports.yml --logto {{ galaxy_log_dir }}/reports_webapp.log
 directory       = {{ galaxy_root }}
 umask           = 022
 autostart       = true
