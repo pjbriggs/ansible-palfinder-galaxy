@@ -158,6 +158,12 @@
   - { option: 'message_box_class', value: 'info' }
   when: galaxy_message|default(None) != None
 
+# GDPR compliance
+- name: Set GDPR compliance mode
+  ini_file:
+    dest='{{ galaxy_root }}/config/galaxy.ini'
+    section='app:main' option='enable_beta_gdpr' value='{{ enable_beta_gdpr }}'
+
 # Configure uWSGI and set up handlers
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#uWSGI
 - name: Configure Galaxy uWSGI settings
