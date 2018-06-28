@@ -36,6 +36,11 @@
   - { option: 'cookie_path', value: '/reports' }
   notify: Restart Galaxy reports
 
+- name: Set GDPR compliance mode
+  ini_file:
+    dest='{{ galaxy_root }}/config/reports.ini'
+    section='app:main' option='enable_beta_gdpr' value='{{ enable_beta_gdpr }}'
+
 - name: Configure Galaxy reports proxy settings
   ini_file:
     dest='{{ galaxy_root }}/config/reports.ini'
