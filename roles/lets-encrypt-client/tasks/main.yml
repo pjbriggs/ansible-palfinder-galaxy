@@ -24,12 +24,17 @@
     dest='/usr/local/bin/certbot-auto'
     mode=0755
 
+- name: Get random minute in the hour for certificate renewal
+  set_fact:
+    random_minute: "{{ 59 | random }}"
+  run_once: yes
+
 - name: Set up automatic SSL certificate renewal
   cron:
     user="root"
     name="Renew SSL certificate from Lets Encrypt"
-    job='export PATH={{ galaxy_python_dir }}/bin:$PATH && /usr/local/bin/certbot-auto renew --deploy-hook "service nginx reload" >> /var/log/le-renew'
-    hour=2 minute=30 weekday=1
+    job='export PATH={{ galaxy_python_dir }}/bin:$PATH && /usr/local/bin/certbot-auto renew --deploy-hook "/sbin/service nginx reload" >> /var/log/le-renew'
+    hour=2 minute="{{ random_minute }}" weekday=1
     state=present
 
 - name: Remove cron job to set up automatic certifcate renewal
