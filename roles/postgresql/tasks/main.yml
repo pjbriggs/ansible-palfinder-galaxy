@@ -22,7 +22,7 @@
 - name: Update PostgreSQL authentication for postgres user
   lineinfile:
     dest=/var/lib/pgsql/data/pg_hba.conf
-    line='local	all	    postgres			      ident'
+    line='local\tall\t    postgres\t\t\t      ident'
     insertafter='^# "local" is for Unix domain socket connections only'
     backup=yes
   notify:
