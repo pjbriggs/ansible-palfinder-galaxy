@@ -123,11 +123,70 @@ class GalaxyDatabase(object):
         self._cur.execute(sql)
         return self._cur.fetchall()
 
+    def tool_stats(self,interval=None,state=None):
+        # Get stats on tools that have been used
+        sql = "SELECT tool_id, COUNT(*) AS jobs_per_tool FROM job"
+        where = []
+        if interval is not None:
+            where.append("update_time >= (NOW() - INTERVAL '%s')"
+                         % interval)
+        if state is not None:
+            where.append("state = '%s'" % state)
+        if where:
+            sql += ' WHERE ' + ' AND '.join(where)
+        sql += " GROUP BY tool_id ORDER BY jobs_per_tool DESC"
+        logging.debug(sql)
+        self._cur.execute(sql)
+        return self._cur.fetchall()
+
+    def user_stats(self,interval=None):
+        # Get stats on jobs per user
+        sql = "SELECT email,COUNT(*) AS jobs_per_user FROM job " \
+              "INNER JOIN galaxy_user ON job.user_id=galaxy_user.id"
+        where = []
+        if interval is not None:
+            where.append("job.update_time >= (NOW() - INTERVAL '%s')"
+                         % interval)
+        if where:
+            sql += ' WHERE ' + ' AND '.join(where)
+        sql += " GROUP BY email ORDER BY jobs_per_user DESC"
+        logging.debug(sql)
+        self._cur.execute(sql)
+        return self._cur.fetchall()
+
+    def inactive_users(self,interval):
+        # Get users who haven't logged in recently
+        sql = "SELECT email FROM galaxy_user " \
+              "WHERE update_time >= (NOW() - INTERVAL '%s')" \
+              % interval
+        logging.debug(sql)
+        self._cur.execute(sql)
+        return self._cur.fetchall()
+
 def split_db_connection(database_connection):
     user = database_connection.split(':')[1].strip('/')
     passwd = database_connection.split(':')[2].split('@')[0]
     name = database_connection.split('/')[-1]
     return (name,user,passwd)
+
+def split_tool_id(tool_id):
+    # e.g centaurus.itservices.manchester.ac.uk/toolshed/repos/pjbriggs/motif_tools/fasta_scan_iupac_each/1.0.0
+    fields = str(tool_id).split('/')
+    if len(fields) == 1:
+        return (tool_id,)
+    toolshed = fields[0:-4]
+    user = fields[-4]
+    repo = fields[-3]
+    name = fields[-2]
+    version = fields[-1]
+    return (name,version,toolshed,repo,user)
+
+def pretty_print_tool_id(tool_id):
+    tool_id = split_tool_id(tool_id)
+    try:
+        return "%s (%s)" % (tool_id[0],tool_id[1])
+    except IndexError:
+        return tool_id[0]
 
 def send_report(sender,recipients,subject,message,
                 smtp_host='localhost',
@@ -164,26 +223,34 @@ if __name__ == "__main__":
             logging.critical("Config file '%s': not found" %
                              opts.galaxy_config)
             sys.exit(1)
-        galaxy = GalaxyDatabase(opts.galaxy_config)
-        brand = galaxy.config.brand
-        if send_email:
-            smtp_server = galaxy.config.smtp_server
-            email_from = galaxy.config.email_from
-            if smtp_server is None or email_from is None:
-                logging.warning("Email settings not found in config file, "
-                                "email disabled")
-                send_email = False
     else:
         logging.critical("Need to supply galaxy config file")
         sys.exit(1)
+    galaxy = GalaxyDatabase(opts.galaxy_config)
+    galaxy_name = galaxy.config.brand
+    if galaxy_name is None:
+        galaxy_name = "Galaxy"
+    else:
+        galaxy_name = galaxy_name.title()
+    if send_email:
+        smtp_server = galaxy.config.smtp_server
+        email_from = galaxy.config.email_from
+        if smtp_server is None or email_from is None:
+            logging.warning("Email settings not found in config file, "
+                            "email disabled")
+            send_email = False
     # Report user info
     print "%s: generating audit report" % time.strftime("%d/%m/%Y %H:%M:%S")
     interval = opts.interval
     report = []
-    report.append("Summary for %s" % time.strftime("%d/%m/%Y"))
+    title = "%s: summary report %s" % (galaxy_name,
+                                       time.strftime("%d/%m/%Y"))
+    report.append(title)
+    report.append("="*len(title))
     report.append('')
     report.append("In last %s:" % interval)
     report.append("- New users    : %d" % len(galaxy.users(interval)))
+    report.append("- Active users : %d" % len(galaxy.user_stats(interval)))
     report.append("- Jobs run     : %d" % len(galaxy.jobs(interval)))
     report.append("- Jobs in error: %d" % len(galaxy.jobs(interval,'error')))
     report.append('')
@@ -192,13 +259,36 @@ if __name__ == "__main__":
     report.append("- Unactivated accts: %d" % len(galaxy.users(active=False)))
     report.append("- Total jobs run   : %d" % len(galaxy.jobs()))
     report.append('')
+    user_stats = galaxy.user_stats(interval)
+    if user_stats:
+        report.append('Active Users:')
+        longest_name = max([len(user[0]) for user in user_stats])
+        for user in user_stats:
+            report.append("- %s%s | % 6d" % (user[0],
+                                             ' '*(longest_name-len(user[0])),
+                                             user[1]))
+    else:
+        report.append('No active users')
+    report.append('')
+    tool_stats = galaxy.tool_stats(interval)
+    if tool_stats:
+        report.append('Jobs run per tool:')
+        longest_name = max([len(pretty_print_tool_id(tool[0]))
+                            for tool in tool_stats])
+        for tool in tool_stats:
+            tool_name = pretty_print_tool_id(tool[0])
+            report.append("- %s%s | % 6d" % (tool_name,
+                                             ' '*(longest_name-len(tool_name)),
+                                             tool[1]))
+    else:
+        report.append('No tools run')
     if send_email:
         # Extract SMTP server information
         smtp_host = smtp_server.split(':')[0]
         # Send email
         send_report(email_from,
                     args,
-                    "%s Galaxy: report %s" % (brand.title(),
+                    "%s Galaxy: report %s" % (galaxy_name,
                                               time.strftime("%d/%m/%Y")),
                     '\n'.join(report),
                     smtp_host=smtp_host)
