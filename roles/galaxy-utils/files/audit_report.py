@@ -11,6 +11,7 @@ import psycopg2
 import logging
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import time
 
 class GalaxyConfig(object):
@@ -188,22 +189,126 @@ def pretty_print_tool_id(tool_id):
     except IndexError:
         return tool_id[0]
 
-def send_report(sender,recipients,subject,message,
+class Report(object):
+    def __init__(self,title):
+        self._title = str(title)
+        self._content = []
+    def append(self,content):
+        self._content.append(content)
+    def write(self):
+        report = []
+        report.append(title)
+        report.append('='*len(title))
+        for content in self._content:
+            try:
+                content = content.write()
+            except AttributeError:
+                pass
+            report.append(content)
+        return '\n'.join(report)
+    def html(self):
+        report = []
+        report.append("<html>"
+                      "<head>"
+                      "<title>%s</title>"
+                      "<body>" % title)
+        report.append("<h1>%s</h1>" % title)
+        for content in self._content:
+            if not content:
+                continue
+            try:
+                report.append(content.html())
+            except AttributeError:
+                report.append("<p>%s</p>" % content)
+        report.append("</body>"
+                      "</html>")
+        return ''.join(report)
+
+class ReportTable(object):
+    def __init__(self):
+        self._table = []
+    def append(self,row):
+        self._table.append([str(item) for item in row])
+    def write(self):
+        ncolumns = max([len(row)
+                        for row in self._table])
+        widths = []
+        for row in self._table:
+            for i,item in enumerate(row):
+                try:
+                    widths[i] = max(widths[i],len(item))
+                except IndexError:
+                    widths.append(len(item))
+        table = []
+        for row in self._table:
+            tbl_row = []
+            for i,item in enumerate(row):
+                tbl_row.append("%s%s" % (item,
+                                         ' '*(widths[i]-len(item))))
+            table.append("- %s" % ' : '.join(tbl_row))
+        return '\n'.join(table)
+    def html(self):
+        ncolumns = max([len(row)
+                        for row in self._table])
+        table = ["<table>",]
+        for row in self._table:
+            tbl_row = ["<tr>",]
+            for i in range(ncolumns):
+                try:
+                    tbl_row.append("<td>%s</td>" % row[i])
+                except IndexError:
+                    tbl_row.append("<td>&nbsp;</td>")
+            tbl_row.append("</tr>")
+            table.append(''.join(tbl_row))
+        table.append("</table>")
+        return ''.join(table)
+
+def send_report(sender,recipients,subject,message,html=None,
                 smtp_host='localhost',
                 smtp_port=None):
     # Send report
     # See http://stackoverflow.com/questions/6270782/how-to-send-an-email-with-python
-    msg = MIMEText(message)
-    msg['Subject'] = subject
-    msg['From'] = sender
-    msg['To'] = ','.join(recipients)
-    try:
-        s = smtplib.SMTP(smtp_host)
-        s.sendmail(sender,recipients,msg.as_string())
-        s.quit()
-        logging.debug("Successfully sent email")
-    except smtplib.SMTPException as ex:
-        logging.error("Error: unable to send email:  %s" %ex)
+    # For multi-part/HTML messages:
+    # https://stackoverflow.com/a/882770/579925
+    if html is None:
+        # Plain text message
+        print "Sending message as plain text"
+        msg = MIMEText(message)
+        msg['Subject'] = subject
+        msg['From'] = sender
+        msg['To'] = ','.join(recipients)
+        try:
+            s = smtplib.SMTP(smtp_host)
+            s.sendmail(sender,recipients,msg.as_string())
+            s.quit()
+            logging.debug("Successfully sent email")
+        except smtplib.SMTPException as ex:
+            logging.error("Error: unable to send email:  %s" %ex)
+    else:
+        # HTML/multipart message
+        print "Sending message as HTML"
+        # Create message container with MIME type 'multipart/alternative'
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = sender
+        msg['To'] = ','.join(recipients)
+        # Record the MIME types for message parts
+        # (text/plain and text/html)
+        part1 = MIMEText(message,'plain')
+        part2 = MIMEText(html,'html')
+        # Attach parts to the message container
+        # Last part of a multipart message is preferred so
+        # make this the HTML version
+        msg.attach(part1)
+        msg.attach(part2)
+        # Send the message
+        try:
+            s = smtplib.SMTP(smtp_host)
+            s.sendmail(sender,recipients,msg.as_string())
+            s.quit()
+            logging.debug("Successfully sent email")
+        except smtplib.SMTPException as ex:
+            logging.error("Error: unable to send email:  %s" %ex)
 
 if __name__ == "__main__":
     # Process command line
@@ -242,44 +347,43 @@ if __name__ == "__main__":
     # Report user info
     print "%s: generating audit report" % time.strftime("%d/%m/%Y %H:%M:%S")
     interval = opts.interval
-    report = []
     title = "%s: summary report %s" % (galaxy_name,
                                        time.strftime("%d/%m/%Y"))
-    report.append(title)
-    report.append("="*len(title))
+    report = Report(title)
     report.append('')
     report.append("In last %s:" % interval)
-    report.append("- New users    : %d" % len(galaxy.users(interval)))
-    report.append("- Active users : %d" % len(galaxy.user_stats(interval)))
-    report.append("- Jobs run     : %d" % len(galaxy.jobs(interval)))
-    report.append("- Jobs in error: %d" % len(galaxy.jobs(interval,'error')))
+    tbl = ReportTable()
+    tbl.append(("New users",len(galaxy.users(interval))))
+    tbl.append(("Active users",len(galaxy.user_stats(interval))))
+    tbl.append(("Jobs run",len(galaxy.jobs(interval))))
+    tbl.append(("Jobs in error",len(galaxy.jobs(interval,'error'))))
+    report.append(tbl)
     report.append('')
     report.append("All time:")
-    report.append("- Registered users : %d" % len(galaxy.users()))
-    report.append("- Unactivated accts: %d" % len(galaxy.users(active=False)))
-    report.append("- Total jobs run   : %d" % len(galaxy.jobs()))
+    tbl = ReportTable()
+    tbl.append(("Registered users",len(galaxy.users())))
+    tbl.append(("Unactivated accts",len(galaxy.users(active=False))))
+    tbl.append(("Total jobs run",len(galaxy.jobs())))
+    report.append(tbl)
     report.append('')
     user_stats = galaxy.user_stats(interval)
     if user_stats:
         report.append('Active Users:')
-        longest_name = max([len(user[0]) for user in user_stats])
+        tbl = ReportTable()
         for user in user_stats:
-            report.append("- %s%s | % 6d" % (user[0],
-                                             ' '*(longest_name-len(user[0])),
-                                             user[1]))
+            tbl.append(user)
+        report.append(tbl)
     else:
         report.append('No active users')
     report.append('')
     tool_stats = galaxy.tool_stats(interval)
     if tool_stats:
         report.append('Jobs run per tool:')
-        longest_name = max([len(pretty_print_tool_id(tool[0]))
-                            for tool in tool_stats])
+        tbl = ReportTable()
         for tool in tool_stats:
             tool_name = pretty_print_tool_id(tool[0])
-            report.append("- %s%s | % 6d" % (tool_name,
-                                             ' '*(longest_name-len(tool_name)),
-                                             tool[1]))
+            tbl.append((tool_name,tool[1]))
+        report.append(tbl)
     else:
         report.append('No tools run')
     if send_email:
@@ -290,9 +394,10 @@ if __name__ == "__main__":
                     args,
                     "%s Galaxy: report %s" % (galaxy_name,
                                               time.strftime("%d/%m/%Y")),
-                    '\n'.join(report),
+                    report.write(),
+                    html=report.html(),
                     smtp_host=smtp_host)
     else:
-        # Report job info
-        print '\n'.join(report)
+        # Report job info (plain text)
+        print report.write()
     galaxy.close()
