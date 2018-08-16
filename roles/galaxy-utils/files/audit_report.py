@@ -68,6 +68,10 @@ class GalaxyConfig(object):
     def email_from(self):
         return self.galaxy_setting('email_from')
 
+    @property
+    def enable_beta_gdpr(self):
+        return self.galaxy_setting('enable_beta_gdpr')
+
 class GalaxyDatabase(object):
     def __init__(self,galaxy_conf_file,pg_host=None):
         # Get configuration
@@ -385,10 +389,18 @@ if __name__ == "__main__":
     report.append('')
     user_stats = galaxy.user_stats(interval)
     if user_stats:
-        report.append('Active Users:')
+        redact_user_emails = galaxy.config.enable_beta_gdpr
+        if redact_user_emails:
+            report.append('Active Users (email addresses redacted):')
+        else:
+            report.append('Active Users:')
         tbl = ReportTable()
         for user in user_stats:
-            tbl.append(user)
+            if redact_user_emails:
+                row = ("XXXXX@XXXXXXXX",user[1])
+            else:
+                row = user
+            tbl.append(row)
         report.append(tbl)
     else:
         report.append('No active users')
