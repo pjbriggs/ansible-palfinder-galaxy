@@ -257,7 +257,7 @@ class ReportTable(object):
     def html(self):
         ncolumns = max([len(row)
                         for row in self._table])
-        table = ["<table>",]
+        table = ["<table border=\"1\">",]
         for row in self._table:
             tbl_row = ["<tr>",]
             for i in range(ncolumns):
@@ -268,7 +268,7 @@ class ReportTable(object):
             tbl_row.append("</tr>")
             table.append(''.join(tbl_row))
         table.append("</table>")
-        return ''.join(table)
+        return '\n'.join(table)
 
 def send_report(sender,recipients,subject,message,html=None,
                 smtp_host='localhost',
