@@ -69,16 +69,23 @@ class GalaxyConfig(object):
         return self.galaxy_setting('email_from')
 
 class GalaxyDatabase(object):
-    def __init__(self,galaxy_conf_file):
+    def __init__(self,galaxy_conf_file,pg_host=None):
         # Get configuration
         self._config = GalaxyConfig(galaxy_conf_file)
         # Connect to database
         name,user,passwd = split_db_connection(
             self._config.database_connection)
-        self._conn = psycopg2.connect(
-            database=name,
-            user=user,
-            password=passwd)
+        args = { 'database': name,
+                 'user': user,
+                 'password': passwd }
+        if pg_host is not None:
+            args['host'] = pg_host
+        try:
+            self._conn = psycopg2.connect(**args)
+        except psycopg2.OperationalError as ex:
+            logging.critical("Error from psycopg2: %s"
+                             % ex)
+            raise ex
         self._cur = self._conn.cursor()
 
     def close(self):
@@ -319,6 +326,11 @@ if __name__ == "__main__":
                  help="report changes in time INTERVAL (e.g. '1 week')")
     p.add_option('-n',action="store_true",dest="no_email",
                  help="don't send email (i.e. for testing)")
+    p.add_option('--host',action="store",dest="pg_host",default=None,
+                 help="explicitly specify the 'host' for PostgreSQL "
+                 "database connection (e.g. '/var/run'); use if "
+                 "database connection fails because of incorrect "
+                 "Unix domain socket path reported by psycopg2")
     opts,args = p.parse_args()
     # Send email report?
     send_email = (not opts.no_email)
@@ -331,7 +343,12 @@ if __name__ == "__main__":
     else:
         logging.critical("Need to supply galaxy config file")
         sys.exit(1)
-    galaxy = GalaxyDatabase(opts.galaxy_config)
+    try:
+        galaxy = GalaxyDatabase(opts.galaxy_config,
+                                pg_host=opts.pg_host)
+    except Exception as ex:
+        logging.fatal("Failed to connect to database: %s" % ex)
+        sys.exit(1)
     galaxy_name = galaxy.config.brand
     if galaxy_name is None:
         galaxy_name = "Galaxy"
