@@ -27,7 +27,7 @@
     line: "  #master_api_key: changethis"
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: not enable_master_api_key and galaxy_ini.stat.exists == True
+  when: not enable_master_api_key and galaxy_yml.stat.exists == True
 
 - name: Add master API key to INI config file
   ini_file:
