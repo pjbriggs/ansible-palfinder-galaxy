@@ -80,4 +80,4 @@
   - role: restart-galaxy
     enable_master_api_key: no
   # Additional set up
-  - galaxy-audit-report
+  #- galaxy-audit-report
