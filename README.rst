@@ -1,8 +1,13 @@
 ansible-palfinder-galaxy
 ========================
 
-``ansible`` playbook and roles for deploying a Galaxy instance for running
-the ``pal_finder`` pipeline on a Scientific Linux 6.7 machine.
+``ansible`` playbook and roles for deploying BCF Galaxy instances
+on Scientific Linux 6.7 virtual machines at the University of
+Manchester:
+
+ * ``pal_finder``: a public instance for running Pal_finder
+ * ``cetus``: a local instance for teaching clinical
+   bioinformatics
 
 Roles
 -----

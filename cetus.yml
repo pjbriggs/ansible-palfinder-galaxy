@@ -1,0 +1,83 @@
+---
+- hosts: cetus
+
+  vars:
+  # Host configuration
+  - galaxy_user: "cetus-galaxy"
+  - galaxy_group: "galaxy"
+  # Galaxy configuration
+  - galaxy_name: "cetus"
+  - galaxy_version: "release_17.09"
+  - galaxy_install_dir: "/mnt/rvmi"
+  - galaxy_dir: "/mnt/rvmi/cetus"
+  - galaxy_python_dir: "/mnt/rvmi/cetus/python"
+  - enable_require_login: yes
+  - enable_quotas: yes
+  - enable_ftp_upload: no
+  # Welcome page etc
+  - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
+  # uWSGI and handler configuration
+  # Set number of uWSGI & handler processes in inventory file
+  # Users
+  - galaxy_admin_user: "admin@galaxy.org"
+  - galaxy_users:
+      - email: "{{ galaxy_admin_user }}"
+        password: "{{ galaxy_admin_passwd }}"
+  ### Default quota
+  ##- default_quota_gb: 50
+  ## Audit report
+  - enable_reports: no
+  - email_audit_report_to: "peter.briggs@manchester.ac.uk"
+  # Postfix/email configuration
+  # Enable/disable in inventory file (enable_smtp)
+  # If enabled then will use the settings below
+  - postfix_host_name: "{{ galaxy_server_name }}"
+  - postfix_relay_host: "[smtp.manchester.ac.uk]"
+  - galaxy_outgoing_email_addr: "Cetus Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+  - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+  # SSL configuration
+  # Enable/disable in inventory file (enable_https)
+  # If enabled then will use the settings below
+  ###- ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
+  ###- ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
+  # Cetus-specific settings
+  # Message of the day to display on the front page
+  - cetus_motd:
+
+  vars_files:
+  - instances/cetus/{{ cetus_secrets }}
+
+  roles:
+  # Dependencies
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - python27
+  - nginx
+  - postgresql
+  - proftpd
+  - supervisord
+  - role: postfix-null-client
+    when: enable_smtp
+  - lets-encrypt-client
+  # Install Galaxy-specific Python 2.7
+  - role: python27
+    install_dir: "{{ galaxy_python_dir }}"
+    become: yes
+    become_user: "{{ galaxy_user }}"
+  # Install and configure Galaxy
+  - galaxy
+  # Install utilities
+  - galaxy-utils
+  # Restart with master API key enabled (needed
+  # to create user accounts)
+  - role: restart-galaxy
+    enable_master_api_key: yes
+  - galaxy-create-users
+  ##- galaxy-install-tools
+  - galaxy-set-default-quota
+  # Restart with master API key disabled
+  - role: restart-galaxy
+    enable_master_api_key: no
+  # Additional set up
+  - galaxy-audit-report

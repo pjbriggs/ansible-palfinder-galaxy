@@ -1,0 +1,21 @@
+cetus:
+  hosts:
+    192.168.60.5
+  vars:
+    # Ansible-specific settings
+    ansible_ssh_user: vagrant
+    ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    # Secrets
+    cetus_secrets: cetus_vagrant.yml
+    # Server configuration
+    galaxy_server_name: 192.168.60.5
+    enable_user_activation: no
+    # Job configuration
+    enable_jse_drop: no
+    # Postfix/email configuration
+    enable_smtp: no
+    # SSL configuration
+    enable_https: no
+    # uWSGI and handler configuration
+    galaxy_uwsgi_processes: 1
+    galaxy_handler_processes: 1

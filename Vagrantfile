@@ -23,4 +23,14 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     chmod ugo+rwX /mnt/rvmi/
   SHELL
   end
+  # Cetus Teaching VM
+  config.vm.define "cetus" do |cetus|
+    cetus.vm.hostname = "cetus"
+    cetus.vm.network :private_network, ip: "192.168.60.5"
+    cetus.vm.provision "shell", inline: <<-SHELL
+    service iptables stop
+    mkdir -p /mnt/rvmi
+    chmod ugo+rwX /mnt/rvmi/
+  SHELL
+  end
 end
