@@ -3,6 +3,11 @@
 
 VAGRANT_API_VERSION = "2"
 
+# If using Vagrant < 2 then need to update the default
+# location for downloading boxes
+# See https://stackoverflow.com/a/48844332/579925
+Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
+
 Vagrant.configure(VAGRANT_API_VERSION) do |config|
   # General Vagrant VM configuration
   config.vm.box = "ringo/scientific-linux-6.5"
