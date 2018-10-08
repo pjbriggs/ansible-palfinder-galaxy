@@ -30,7 +30,8 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     cetus.vm.provision "shell", inline: <<-SHELL
     service iptables stop
     mkdir -p /mnt/rvmi
-    chmod ugo+rwX /mnt/rvmi/
+    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy/
+    chmod ugo+rwX /mnt/rvmi/ /mnt/bmh01-rvmi/bcf-galaxy/
   SHELL
   end
 end
