@@ -22,6 +22,7 @@
   - allow_user_creation: no
   - allow_user_deletion: no
   - enable_require_login: yes
+  - enable_user_activation: no
   - enable_quotas: yes
   - enable_ftp_upload: no
   # Welcome page etc
@@ -37,21 +38,6 @@
         password: "{{ galaxy_admin_passwd }}"
   ### Default quota
   ##- default_quota_gb: 50
-  ## Audit report
-  - enable_reports: no
-  - email_audit_report_to: "peter.briggs@manchester.ac.uk"
-  # Postfix/email configuration
-  # Enable/disable in inventory file (enable_smtp)
-  # If enabled then will use the settings below
-  - postfix_host_name: "{{ galaxy_server_name }}"
-  - postfix_relay_host: "[smtp.manchester.ac.uk]"
-  - galaxy_outgoing_email_addr: "Cetus Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
-  - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
-  # SSL configuration
-  # Enable/disable in inventory file (enable_https)
-  # If enabled then will use the settings below
-  ###- ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
-  ###- ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
   # Cetus-specific settings
   # Message of the day to display on the front page
   - cetus_motd:
