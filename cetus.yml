@@ -10,9 +10,9 @@
   # Galaxy configuration
   - galaxy_name: "cetus"
   - galaxy_version: "release_17.09"
-  - galaxy_install_dir: "/mnt/rvmi"
-  - galaxy_dir: "/mnt/rvmi/cetus"
-  - galaxy_python_dir: "/mnt/rvmi/cetus/python"
+  - galaxy_install_dir: "/mnt/rvmi/cetus/galaxy"
+  - galaxy_dir: "/mnt/rvmi/cetus/galaxy/teaching"
+  - galaxy_python_dir: "/mnt/rvmi/cetus/galaxy/python"
   - enable_require_login: yes
   - enable_quotas: yes
   - enable_ftp_upload: no
