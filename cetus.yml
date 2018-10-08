@@ -12,7 +12,15 @@
   - galaxy_version: "release_17.09"
   - galaxy_install_dir: "/mnt/rvmi/cetus/galaxy"
   - galaxy_dir: "/mnt/rvmi/cetus/galaxy/teaching"
+  # Database and reference data
+  - galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/database/files"
+  - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/job_working_directory"
+  - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/teaching/tool-data"
+  # Galaxy-specific Python installation
   - galaxy_python_dir: "/mnt/rvmi/cetus/galaxy/python"
+  # Account management
+  - allow_user_creation: no
+  - allow_user_deletion: no
   - enable_require_login: yes
   - enable_quotas: yes
   - enable_ftp_upload: no
@@ -20,6 +28,8 @@
   - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
+  # Running jobs
+  - galaxy_new_file_path: "/mnt/rvmi/cetus/galaxy/tmp"
   # Users
   - galaxy_admin_user: "admin@galaxy.org"
   - galaxy_users:
