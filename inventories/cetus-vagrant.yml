@@ -17,7 +17,7 @@ cetus:
     # Postfix/email configuration
     enable_smtp: no
     # Audit report
-    - enable_reports: no
-    - email_audit_report_to: None
+    enable_reports: no
+    email_audit_report_to: None
     # SSL configuration
     enable_https: no
