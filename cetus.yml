@@ -4,7 +4,9 @@
   vars:
   # Host configuration
   - galaxy_user: "cetus-galaxy"
+  - galaxy_uid: 22224
   - galaxy_group: "galaxy"
+  - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "cetus"
   - galaxy_version: "release_17.09"
