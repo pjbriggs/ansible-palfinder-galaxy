@@ -5,5 +5,5 @@
   register: epel_status
 
 - name: Install EPEL repo 
-  yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm state=present
+  yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm state=present
   when: epel_status.stat.exists == false
