@@ -15,7 +15,7 @@
   # Database and reference data
   - galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/database/files"
   - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/job_working_directory"
-  - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/teaching/tool-data"
+  - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/tool-data"
   # Galaxy-specific Python installation
   - galaxy_python_dir: "/mnt/rvmi/cetus/galaxy/python"
   # Account management
