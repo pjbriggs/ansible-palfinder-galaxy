@@ -10,10 +10,6 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
-- include: uwsgi.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
-
 - include: reports.yml
   when: enable_reports
 

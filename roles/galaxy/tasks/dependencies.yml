@@ -10,4 +10,5 @@
   - libtool-ltdl-devel
   - java-1.8.0-openjdk
   - samtools
+  - python2-pyyaml
   register: installed_dependencies

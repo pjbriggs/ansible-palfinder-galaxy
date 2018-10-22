@@ -49,11 +49,14 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	for detailed instructions and information.</p>
 
       <h2>Data upload</h2>
-      <p>Small files can be uploaded directly via your web browser; for
-	large files please upload to the FTP server via
-      <a href="ftp://{{ galaxy_server_name }}">ftp://{{ galaxy_server_name }}</a>
-      using your email address and Galaxy password to log in. (Uploaded files
-      will then be available for import via the <em>Upload</em> tool.)</p>
+      <p>Files can be uploaded directly via your web browser -
+	<b>in principle this should now work for any size of file.</b></p>
+      <p>However an alternative upload method of upload using an FTP server
+	also continues to be available via
+      <a href="ftp://{{ galaxy_server_name }}">ftp://{{ galaxy_server_name }}</a></p>
+      <p>(This requires your registered email address and Galaxy password to
+        log in. Uploaded files will then be available for import via the
+        <em>Upload</em> tool.)</p>
 
       <h2>Limitations</h2>
       <p>Accounts have a quota of <b>{{ default_quota_gb }} GB</b>.</p>

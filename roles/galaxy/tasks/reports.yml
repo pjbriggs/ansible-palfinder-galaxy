@@ -1,88 +1,45 @@
 # Enable Galaxy's reporting interface
 ---
-- name: Check if reports.ini.sample exists
+- name: Check for sample reports.yml configuration file
+  stat:
+    path: '{{ galaxy_root }}/config/reports.yml.sample'
+  register: reports_yml
+
+- name: Create reports.yml configuration file
+  include: reports_yaml.yml
+  when: reports_yml.stat.exists == True
+  become: yes
+  become_user: '{{ galaxy_user }}'
+
+- name: Check for sample reports.ini configuration file
   stat:
     path: '{{ galaxy_root }}/config/reports.ini.sample'
   register: reports_ini
 
-- name: Copy sample Galaxy reports.ini configuration file
-  command:
-    chdir='{{ galaxy_root }}/config'
-    cp reports.ini.sample reports.ini
-    creates='{{ galaxy_root }}/config/reports.ini'
-  become: yes
-  become_user: '{{ galaxy_user }}'
+- name: Create reports.ini configuration file
+  include_tasks: reports_ini.yml
   when: reports_ini.stat.exists == True
-
-- name: Remove existing Galaxy reports.ini configuration file
-  file:
-    path='{{ galaxy_root }}/config/reports.ini'
-    state=absent
   become: yes
   become_user: '{{ galaxy_user }}'
-  when: reports_ini.stat.exists == False
 
-- name: Touch empty Galaxy reports.ini configuration file
-  file:
-    path='{{ galaxy_root }}/config/reports.ini'
-    state=touch
-  become: yes
-  become_user: '{{ galaxy_user }}'
-  when: reports_ini.stat.exists == False
+# Remove old init.d script
+- name: Check for init.d script for reports
+  stat:
+    path: '/etc/init.d/galaxy_reports'
+  register: reports_init_script
 
-- name: Configure Galaxy reports server settings
-  ini_file:
-    dest='{{ galaxy_root }}/config/reports.ini'
-    section='server:main' option={{ item.option }} value={{ item.value }}
-  with_items:
-  - { option: 'use', value: 'egg:Paste#http' }
-  - { option: 'port', value: '9001' }
-  - { option: 'host', value: '127.0.0.1' }
-  - { option: 'use_threadpool', value: 'true' }
-  - { option: 'threadpool_workers', value: '10' }
-  become: yes
-  become_user: '{{ galaxy_user }}'
-  notify: Restart Galaxy reports
-
-- name: Configure Galaxy reports app settings
-  ini_file:
-    dest='{{ galaxy_root }}/config/reports.ini'
-    section='app:main' option={{ item.option }} value={{ item.value }}
-  with_items:
-  - { option: 'paste.app_factory', value: 'galaxy.webapps.reports.buildapp:app_factory' }
-  - { option: 'database_connection', value: 'postgres://{{ galaxy_db_user }}:{{ galaxy_db_password }}@localhost:5432/{{ galaxy_db }}' }
-  - { option: 'file_path', value: '{{ galaxy_file_path }}' }
-  - { option: 'filter-with', value: 'proxy-prefix' }
-  - { option: 'cookie_path', value: '/reports' }
-  become: yes
-  become_user: '{{ galaxy_user }}'
-  notify: Restart Galaxy reports
-
-- name: Configure Galaxy reports proxy settings
-  ini_file:
-    dest='{{ galaxy_root }}/config/reports.ini'
-    section='filter:proxy-prefix'
-    option={{ item.option }} value={{ item.value }}
-  with_items:
-  - { option: 'use', value: 'egg:PasteDeploy#prefix' }
-  - { option: 'prefix', value: '/reports' }
-  become: yes
-  become_user: '{{ galaxy_user }}'
-  notify: Restart Galaxy reports
-
-# Set up as a service
-- name: Create init.d script for Galaxy reports
-  template:
-    dest=/etc/init.d/galaxy_reports
-    src=galaxy_reports.init.sh.j2
-    mode=0755
-  notify: Restart Galaxy reports
-
-- name: Start Galaxy reports service
+- name: Stop Galaxy reports service
   service:
     name=galaxy_reports
-    enabled=on
-    state=started
+    enabled=false
+    state=stopped
+  when: reports_init_script.stat.exists == True
+
+- name: Remove init.d script for reports
+  file:
+    path='/etc/init.d/galaxy_reports'
+    state=absent
+  when: reports_init_script.stat.exists == True
 
 # Set up Nginx proxy password protection
 - name: Set up Galaxy reports access

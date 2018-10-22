@@ -1,7 +1,7 @@
 ---
 # Name for Galaxy instance
 galaxy_name: "palfinder"
-galaxy_version: 'release_17.09'
+galaxy_version: 'release_18.05'
 
 # User running Galaxy service
 galaxy_user: "galaxy"
@@ -23,7 +23,7 @@ galaxy_server_name: "galaxy.example.org"
 galaxy_id_secret:
 
 # Proxy prefix
-# Leave blank for no prefix, other must start
+# Leave blank for no prefix, otherwise must start
 # with a forward slash e.g. "/galaxy"
 galaxy_proxy_prefix:
 
@@ -76,10 +76,18 @@ galaxy_tool_data_path: "{{ galaxy_root }}/tool-data"
 galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"
 galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
 
+# Toolshed check
+enable_tool_shed_check: no
+
 # Conda options
 galaxy_conda_auto_install: yes
 
-# User account creation
+# Dependency caching options
+galaxy_use_cached_depedency_manager: no
+
+# User account creation and activation
+allow_user_creation: yes
+allow_user_deletion: yes
 enable_user_activation: no
 
 # User login
@@ -110,10 +118,24 @@ galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
 galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
 
 # Job destinations
+# Define entries as a dictionary with:
+# - id     (destination ID)
+# - runner (target runner)
 galaxy_job_destinations:
 
 # Tool destinations
+# Define entries as a dictionary with:
+# - id          (tool ID/name)
+# - destination (target destination)
 galaxy_tool_destinations:
+
+# HTML sanitization whitelist
+galaxy_sanitize_whitelist_file: "config/sanitize_whitelist.txt"
+# List of paths for whitelisted tools e.g.
+# galaxy_sanitize_whitelist_tools:
+# - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+# - ...
+galaxy_sanitize_whitelist_tools:
 
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
@@ -141,3 +163,6 @@ enable_reports: no
 galaxy_reports_htpasswd: "/etc/nginx/galaxy-reports.htpasswd"
 galaxy_reports_user: "galaxyreports"
 galaxy_reports_password: "{{ galaxy_reports_user }}"
+
+# GDPR Compliance mode
+enable_beta_gdpr: no

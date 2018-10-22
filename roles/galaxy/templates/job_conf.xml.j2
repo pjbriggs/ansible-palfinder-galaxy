@@ -15,18 +15,15 @@
         </plugin>
 {% endif %}
     </plugins>
-    <handlers default="handlers">
-{% for handler_number in range(galaxy_handler_processes) %}
-	<handler id="handler{{ handler_number }}" tags="handlers"/>
-{% endfor %}
-    </handlers>
+    <!-- Remove "handlers" section removed for Galaxy 18.05 -->
     <destinations default="{{ galaxy_default_runner }}">
         <!-- Destinations define details about remote resources and how jobs
              should be executed on those remote resources.
          -->
         <destination id="local" runner="local">
-	  <!-- Needed for 16.01
-	       See https://docs.galaxyproject.org/en/master/admin/framework_dependencies.html#galaxy-job-handlers
+	  <!-- Need to explicitly specify the virtualenv for production
+	       setting, see
+	       https://docs.galaxyproject.org/en/master/admin/framework_dependencies.html#galaxy-job-handlers
 	  -->
           <env file="{{ galaxy_root }}/.venv/bin/activate" />
 	</destination>

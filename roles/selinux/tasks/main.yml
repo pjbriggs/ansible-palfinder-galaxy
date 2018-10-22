@@ -1,0 +1,19 @@
+---
+# Install SELinux packages, if SELinux is turned on
+- name: Get status of SELinux
+  command: getenforce
+  register: sestatus
+  changed_when: false
+
+- name: Install dependencies for managing SELinux
+  yum: name={{item}} state=present
+  with_items:
+  - policycoreutils-python
+  when: "'Disabled' not in sestatus.stdout"
+
+- name: Allow logrotate to operate on NFS
+  seboolean:
+    name={{ item }} state=yes persistent=yes
+  with_items:
+  - logrotate_use_nfs
+  when: "'Disabled' not in sestatus.stdout"

@@ -4,12 +4,15 @@
   vars:
   # Galaxy configuration
   - galaxy_name: "palfinder"
-  - galaxy_version: "release_17.09"
+  - galaxy_version: "release_18.05"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
   - enable_require_login: yes
   - enable_quotas: yes
   - enable_ftp_upload: yes
+  - enable_reports: yes
+  # GDPR compliance
+  - enable_beta_gdpr: yes
   # Welcome page etc
   - galaxy_welcome_template: "instances/palfinder/templates/palfinder-welcome.html.j2"
   - galaxy_terms: "instances/palfinder/files/palfinder-terms.html"
@@ -43,6 +46,11 @@
       - tool: "pal_finder"
         owner: "pjbriggs"
         section: ""
+  - enable_tool_shed_check: yes
+  # Add tools to whitelist for rendering HTML correctly
+  - galaxy_sanitize_whitelist_tools:
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.71"
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
   # Default quota
   - default_quota_gb: 50
   # Automatic dataset deletion
@@ -74,6 +82,7 @@
   - galaxy-user
   - epel-repo
   - nfslock
+  - selinux
   - python27
   - nginx
   - postgresql

@@ -9,9 +9,6 @@
 # once (this is unsafe)
 proxy_next_upstream off;
 
-upstream reports {
-    server localhost:9001;
-}
 {% if enable_https %}
 server {
     listen 80;
@@ -50,39 +47,46 @@ server {
     }
     {% endfor %}
 {% endif %}
+{% if enable_reports %}
     # Galaxy reporting interface
     location ^~ {{ galaxy_proxy_prefix }}/reports/ {
-        proxy_pass  http://reports;
-        proxy_set_header   X-Forwarded-Host $host;
-        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-        proxy_set_header   X-URL-SCHEME https;
+        uwsgi_pass 127.0.0.1:9001;
+        uwsgi_param UWSGI_SCHEME $scheme;
+        include uwsgi_params;
         auth_basic "Restricted";
         auth_basic_user_file {{ galaxy_reports_htpasswd }};
     }
+{% endif %}
     # Galaxy server
     location {{ galaxy_proxy_prefix }}/ {
         uwsgi_pass 127.0.0.1:4001;
         uwsgi_param UWSGI_SCHEME $scheme;
         include uwsgi_params;
     }
-    # serve static content for visualization plugins
-    location ~ ^{{ galaxy_proxy_prefix }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
-        alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
-    }
     # Serve static content
     location {{ galaxy_proxy_prefix }}/static {
         alias {{ galaxy_root }}/static;
+        expires 24h;
     }
     location {{ galaxy_proxy_prefix }}/static/style {
         alias {{ galaxy_root }}/static/style/blue;
-    }
-    location {{ galaxy_proxy_prefix }}/static/scripts {
-        alias {{ galaxy_root }}/static/scripts/packed;
+        expires 24h;
     }
     location {{ galaxy_proxy_prefix }}/favicon.ico {
         alias {{ galaxy_root }}/static/favicon.ico;
+        expires 24h;
     }
     location {{ galaxy_proxy_prefix }}/robots.txt {
         alias {{ galaxy_root }}/static/robots.txt;
+        expires 24h;
     }
+    # serve static content for visualization plugins
+    location ~ ^{{ galaxy_proxy_prefix }}/plugins/visualizations/(?<vis_name>.+?)/static/(?<static_file>.*?)$ {
+        alias {{ galaxy_root }}/config/plugins/visualizations/$vis_name/static/$static_file;
+        expires 24h;
+    }
+{% if galaxy_proxy_prefix|default(None) != None %}
+    # redirect /prefix -> /prefix/
+    rewrite ^{{ galaxy_proxy_prefix }}$ {{ galaxy_proxy_prefix }}/ last;
+{% endif %}
 }
