@@ -21,7 +21,7 @@
   - { option: 'allow_library_path_paste', value: 'True' }
   - { option: 'file_path', value: '{{ galaxy_file_path }}' }
   - { option: 'new_file_path', value: '{{ galaxy_new_file_path }}' }
-  - { option: 'job_working_dir', value: '{{ galaxy_job_working_dir }}' }
+  - { option: 'job_working_directory', value: '{{ galaxy_job_working_dir }}' }
   - { option: 'tool_dependency_dir', value: '{{ galaxy_tool_dependency_dir }}' }
   - { option: 'id_secret', value: '{{ galaxy_id_secret }}' }
   - { option: 'admin_users', value: '{{ galaxy_admin_user }}' }
