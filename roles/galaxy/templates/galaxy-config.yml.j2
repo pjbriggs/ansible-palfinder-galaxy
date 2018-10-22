@@ -1277,10 +1277,10 @@ galaxy:
 
   # Allow unregistered users to create new accounts (otherwise, they
   # will have to be created by an admin).
-  allow_user_creation: {{ enable_allow_user_creation }}
+  allow_user_creation: {{ allow_user_creation }}
 
   # Allow administrators to delete accounts.
-  allow_user_deletion: true
+  allow_user_deletion: {{ allow_user_deletion }}
 
   # Allow administrators to log in as other users (useful for debugging)
   allow_user_impersonation: true

@@ -86,7 +86,8 @@ galaxy_conda_auto_install: yes
 galaxy_use_cached_depedency_manager: no
 
 # User account creation and activation
-enable_allow_user_creation: yes
+allow_user_creation: yes
+allow_user_deletion: yes
 enable_user_activation: no
 
 # User login
