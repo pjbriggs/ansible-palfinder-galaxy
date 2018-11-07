@@ -9,7 +9,7 @@ palfinder:
     palfinder_secrets: palfinder_passwds.yml
     # Job configuration
     enable_jse_drop: yes
-    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-dpsf"
+    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
     galaxy_default_runner: "jse_drop_default"
     galaxy_job_destinations:
       - id: "jse_drop_default"
