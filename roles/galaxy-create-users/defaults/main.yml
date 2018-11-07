@@ -6,7 +6,13 @@
 galaxy_utils_dir: "/usr/local"
 
 # User accounts to be created
-galaxy_users:
+# If defined then should be a list e.g.
+# galaxy_users:
+#      - email: "{{ galaxy_admin_user }}"
+#        password: "{{ galaxy_admin_passwd }}"
+#      - email: ...
+#      - password: ...etc
+galaxy_users: null
 
 # Postgresql database
 galaxy_db: "galaxy_{{ galaxy_name }}"
@@ -15,6 +21,9 @@ galaxy_db_password: "{{ galaxy_db_user }}"
 
 # Is https enabled
 enable_https: no
+
+# Galaxy proxy prefix
+galaxy_proxy_prefix:
 
 # Is user activation enable?
 enable_user_activation: no
