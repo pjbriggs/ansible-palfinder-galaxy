@@ -11,4 +11,4 @@ galaxy_db_user: "{{ galaxy_user }}"
 galaxy_db_password: "{{ galaxy_db_user }}"
 
 # Default quota size (Gb)
-default_quota_gb: 25
+default_quota_gb: null
