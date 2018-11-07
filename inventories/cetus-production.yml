@@ -10,19 +10,38 @@ cetus:
     galaxy_uwsgi_processes: 1
     galaxy_handler_processes: 1
     # Job configuration
-    enable_jse_drop: no
-    #galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-dpsf"
-    #galaxy_default_runner: "jse_drop_default"
-    #galaxy_job_destinations:
-    #  - id: "jse_drop_default"
-    #    runner: "jse_drop"
-    #  - id: "jse_drop_8_cores"
-    #    runner: "jse_drop"
-    #    jse_drop_qsub_options: "-pe smp.pe 8"
-    #    jse_drop_slots: "8"
-    #galaxy_tool_destinations:
-    #  - id: "trimmomatic"
-    #    destination: "jse_drop_8_cores"
+    enable_jse_drop: yes
+    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
+    galaxy_default_runner: "jse_drop_serial"
+    galaxy_job_destinations:
+      - id: "jse_drop_serial"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n"
+      - id: "jse_drop_smp_4"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 4"
+        jse_drop_slots: "4"
+      - id: "jse_drop_smp_6"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 6"
+        jse_drop_slots: "6"
+      - id: "jse_drop_smp_8"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 8"
+        jse_drop_slots: "8"
+      - id: "jse_drop_smp_12"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
+        jse_drop_slots: "12"
+    galaxy_tool_destinations:
+      - id: "bowtie_wrapper"
+        destination: "jse_drop_smp_4"
+      - id: "bowtie2"
+        destination: "jse_drop_smp_4"
+      - id: "tophat"
+        destination: "jse_drop_smp_12"
+      - id: "trimmomatic"
+        destination: "jse_drop_smp_6"
     # Postfix/email configuration
     enable_smtp: yes
     postfix_host_name: "{{ galaxy_server_name }}"
