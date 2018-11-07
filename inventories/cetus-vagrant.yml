@@ -21,3 +21,18 @@ cetus:
     email_audit_report_to: None
     # SSL configuration
     enable_https: no
+    # Users
+    galaxy_admin_user: "cetusadmin@galaxy.org"
+    galaxy_users:
+      - email: "{{ galaxy_admin_user }}"
+        password: "{{ galaxy_admin_passwd }}"
+    # Default quota
+    default_quota_gb: 5
+    # Tools and toolshed
+    galaxy_tools:
+      - tool: "fastqc"
+        owner: "devteam"
+        section: "NGS: QC and manipulation"
+    # Whitelisted tools for rendering HTML correctly
+    galaxy_sanitize_whitelist_tools:
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.70"
