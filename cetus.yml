@@ -23,7 +23,9 @@
   - allow_user_deletion: no
   - enable_require_login: yes
   - enable_user_activation: no
+  # Quotas
   - enable_quotas: yes
+  # FTP upload
   - enable_ftp_upload: no
   # Reporting interface
   - enable_reports: yes
