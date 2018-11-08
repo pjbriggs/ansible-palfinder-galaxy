@@ -27,6 +27,7 @@
   - enable_ftp_upload: no
   # Welcome page etc
   - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
+  - galaxy_base_css: "instances/cetus/files/cetus-base.css"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
   # Running jobs
