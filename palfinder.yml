@@ -56,7 +56,6 @@
   # Automatic dataset deletion
   - delete_datasets_after: "30 days"
   # Audit report
-  - enable_reports: yes
   - email_audit_report_to: "peter.briggs@manchester.ac.uk"
   # Postfix/email configuration
   # Enable/disable in inventory file (enable_smtp)
