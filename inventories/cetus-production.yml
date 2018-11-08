@@ -49,7 +49,6 @@ cetus:
     galaxy_outgoing_email_addr: "Cetus Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
     galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
     # Audit report
-    enable_reports: no
     email_audit_report_to: "peter.briggs@manchester.ac.uk"
     # SSL configuration
     enable_https: yes

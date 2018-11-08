@@ -25,6 +25,8 @@
   - enable_user_activation: no
   - enable_quotas: yes
   - enable_ftp_upload: no
+  # Reporting interface
+  - enable_reports: yes
   # Welcome page etc
   - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
   - galaxy_base_css: "instances/cetus/files/cetus-base.css"
