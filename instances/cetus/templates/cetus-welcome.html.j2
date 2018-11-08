@@ -8,7 +8,12 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 </head>
 <body>
     <div class="document">
-      <h1>Welcome to Cetus: FBMH Teaching Galaxy</h1>
+        <div class="donemessagelarge">
+	  <h1>Welcome to Cetus: FBMH Teaching Galaxy</h1>
+	  <p>Galaxy instance for MSc Bioinformatics teaching at the
+	    University of Manchester</p>
+	</div>
+	<hr />
 
 {% if cetus_motd is defined and cetus_motd %}
       <div class="infomessagelarge">
@@ -22,7 +27,7 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	Manchester, hosted at the Faculty of Biology, Medicine and
 	Health (FBMH) and provided by the Bioinformatics Core
 	Facility with support from the Research IT Services team.</p>
-      <p>Cetus is running Galaxy version '{{ galaxy_version }}'</p>
+      <p><b>Cetus is running Galaxy version '{{ galaxy_version }}'</b></p>
       <hr />
 
       <h2>Acceptable Use</h2>
