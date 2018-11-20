@@ -32,6 +32,9 @@ galaxy_welcome_template: "welcome.html.j2"
 galaxy_terms:
 galaxy_citations:
 
+# CSS styles
+galaxy_base_css: null
+
 # Message of the day
 # This message will be displayed under the masthead
 # on the Galaxy site

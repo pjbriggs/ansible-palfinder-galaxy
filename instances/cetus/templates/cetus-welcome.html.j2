@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.or
+g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style/base.css" type="text/css" />
+</head>
+<body>
+    <div class="document">
+        <div class="donemessagelarge">
+	  <h1>Welcome to Cetus: FBMH Teaching Galaxy</h1>
+	  <p>Galaxy instance for MSc Bioinformatics teaching at the
+	    University of Manchester</p>
+	</div>
+	<hr />
+
+{% if cetus_motd is defined and cetus_motd %}
+      <div class="infomessagelarge">
+        {{ cetus_motd }}
+      </div>
+      <hr />
+{% endif %}
+
+      <h2>About this service</h2>
+      <p>Cetus is a teaching Galaxy instance for the University of
+	Manchester, hosted at the Faculty of Biology, Medicine and
+	Health (FBMH) and provided by the Bioinformatics Core
+	Facility with support from the Research IT Services team.</p>
+      <p><b>Cetus is running Galaxy version '{{ galaxy_version }}'</b></p>
+      <hr />
+
+      <h2>Acceptable Use</h2>
+      <p>Cetus uses computation and storage hardware provided and
+	maintained by the
+	<a href="http://ri.itservices.manchester.ac.uk/">IT Services
+	  Research Infrastructure Team</a>, and usage of the service
+	is subject to the University's policy on Acceptable Use of IT
+	Facilities and Services.</p>
+      <p><b>Each user is responsible for ensuring that their usage of
+	  the service conforms to this policy, and is accountable for
+	  all actions undertaken using the credentials (i.e. username
+	  and password) that have been provided</b>.</p>
+      <p>For more information on the University's acceptable use policy
+	see <a href="http://documents.manchester.ac.uk/DocuInfo.aspx?DocID=16277">here</a>.</p>
+      <hr/>
+      <h2>Contact</h2>
+      <p>Please report problems to <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
+    </div>
+</body>
+</html>

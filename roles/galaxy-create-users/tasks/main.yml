@@ -9,11 +9,12 @@
   command:
     "{{ galaxy_utils_dir }}/bin/create_user.sh '{{ item.email }}' '{{ item.password }}' '{{ master_api_key }}' '{{ galaxy_url }}'"
   with_items: "{{ galaxy_users }}"
+  when: galaxy_users|default(None) != None
 
 # Activate the admin user account
 - name: Activate Galaxy user accounts
   command:
     "{{ galaxy_utils_dir }}/bin/activate_user.sh '{{ galaxy_db }}' '{{ galaxy_db_user }}' '{{ galaxy_db_password }}' '{{ item.email }}'"
   with_items: "{{ galaxy_users }}"
-  when: enable_user_activation
+  when: galaxy_users|default(None) != None and enable_user_activation
 

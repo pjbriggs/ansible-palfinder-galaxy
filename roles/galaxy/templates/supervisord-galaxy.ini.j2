@@ -28,4 +28,4 @@ environment     = VIRTUAL_ENV="{{ galaxy_root }}/.venv",PATH="{{ galaxy_root }}/
 {% endif %}
 
 [group:galaxy]
-programs = galaxy_uwsgi,galaxy_reports
+programs = galaxy_uwsgi{% if enable_reports %},galaxy_reports{% endif %}

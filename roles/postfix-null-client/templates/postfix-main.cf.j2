@@ -2,5 +2,7 @@
 # password resets etc
 myhostname= {{ postfix_host_name }}
 relayhost = {{ postfix_relay_host }}
+{% if ipv6_supported.stdout == "no" %}
 inet_interfaces = localhost
+{% endif %}
 mydestination = $myhostname, localhost.$mydomain, localhost

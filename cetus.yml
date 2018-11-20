@@ -1,0 +1,81 @@
+---
+- hosts: cetus
+
+  vars:
+  # Host configuration
+  - galaxy_user: "cetus-galaxy"
+  - galaxy_uid: 22224
+  - galaxy_group: "galaxy"
+  - galaxy_gid: 400
+  # Galaxy configuration
+  - galaxy_name: "cetus"
+  - galaxy_version: "release_18.05"
+  - galaxy_install_dir: "/mnt/rvmi/cetus/galaxy"
+  - galaxy_dir: "/mnt/rvmi/cetus/galaxy/teaching"
+  # Database and reference data
+  - galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/database/files"
+  - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/job_working_directory"
+  - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/tool-data"
+  # Galaxy-specific Python installation
+  - galaxy_python_dir: "/mnt/rvmi/cetus/galaxy/python"
+  # Account management
+  - allow_user_creation: no
+  - allow_user_deletion: no
+  - enable_require_login: yes
+  - enable_user_activation: no
+  # Quotas
+  - enable_quotas: yes
+  # FTP upload
+  - enable_ftp_upload: no
+  # Reporting interface
+  - enable_reports: yes
+  # Welcome page etc
+  - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
+  - galaxy_base_css: "instances/cetus/files/cetus-base.css"
+  # uWSGI and handler configuration
+  # Set number of uWSGI & handler processes in inventory file
+  # Running jobs
+  - galaxy_new_file_path: "/mnt/rvmi/cetus/galaxy/tmp"
+  # Check toolshed for updates
+  - enable_tool_shed_check: yes
+  # Cetus-specific settings
+  # Message of the day to display on the front page
+  - cetus_motd:
+
+  vars_files:
+  - instances/cetus/{{ cetus_secrets }}
+
+  roles:
+  # Dependencies
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - python27
+  - nginx
+  - postgresql
+  - proftpd
+  - supervisord
+  - role: postfix-null-client
+    when: enable_smtp
+  - lets-encrypt-client
+  # Install Galaxy-specific Python 2.7
+  - role: python27
+    install_dir: "{{ galaxy_python_dir }}"
+    become: yes
+    become_user: "{{ galaxy_user }}"
+  # Install and configure Galaxy
+  - galaxy
+  # Install utilities
+  - galaxy-utils
+  # Restart with master API key enabled (needed
+  # to create user accounts)
+  - role: restart-galaxy
+    enable_master_api_key: yes
+  - galaxy-create-users
+  - galaxy-install-tools
+  - galaxy-set-default-quota
+  # Restart with master API key disabled
+  - role: restart-galaxy
+    enable_master_api_key: no
+  # Additional set up
+  #- galaxy-audit-report

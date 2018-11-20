@@ -11,6 +11,10 @@
   command: mv /etc/postfix/main.cf /etc/postfix/main.cf.bak
   when: backup_postfix_default_conf.stat.exists == False
 
+- name: Check status of IPv6 support
+  shell: 'test -f /proc/net/if_inet6 && echo yes || echo no'
+  register: ipv6_supported
+
 - name: Create null client Postfix config
   template:
     dest=/etc/postfix/main.cf

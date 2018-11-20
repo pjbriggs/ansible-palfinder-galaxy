@@ -21,5 +21,7 @@
     name=nfslock
     enabled=on
     state=started
-  when: started_rpcbind is success
+  when:
+  - started_rpcbind is success
+  - ansible_distribution_major_version != "7"
   register: started_nfslock

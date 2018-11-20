@@ -1,7 +1,7 @@
 # Install dependencies
 ---
 - name: Install Galaxy dependencies
-  yum: name={{ item }} state=present
+  yum: name={{ item }} state=latest
   with_items:
   - git
   - python-psycopg2
@@ -11,4 +11,7 @@
   - java-1.8.0-openjdk
   - samtools
   - python2-pyyaml
+  - nss
+  - curl
+  - libcurl
   register: installed_dependencies

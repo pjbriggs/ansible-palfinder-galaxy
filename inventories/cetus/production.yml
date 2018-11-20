@@ -1,0 +1,62 @@
+cetus:
+  hosts:
+    130.88.96.175
+  vars:
+    # Server configuration
+    galaxy_server_name: "cetus.ls.manchester.ac.uk"
+    # Secrets
+    cetus_secrets: production.yml
+    # uWSGI and handler configuration
+    galaxy_uwsgi_processes: 1
+    galaxy_handler_processes: 1
+    # Job configuration
+    enable_jse_drop: yes
+    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
+    galaxy_default_runner: "jse_drop_serial"
+    galaxy_job_destinations:
+      - id: "jse_drop_serial"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n"
+      - id: "jse_drop_smp_4"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 4"
+        jse_drop_slots: "4"
+      - id: "jse_drop_smp_6"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 6"
+        jse_drop_slots: "6"
+      - id: "jse_drop_smp_8"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 8"
+        jse_drop_slots: "8"
+      - id: "jse_drop_smp_12"
+        runner: "jse_drop"
+        jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
+        jse_drop_slots: "12"
+    galaxy_tool_destinations:
+      - id: "bowtie_wrapper"
+        destination: "jse_drop_smp_4"
+      - id: "bowtie2"
+        destination: "jse_drop_smp_4"
+      - id: "tophat"
+        destination: "jse_drop_smp_12"
+      - id: "trimmomatic"
+        destination: "jse_drop_smp_6"
+    # Postfix/email configuration
+    enable_smtp: yes
+    postfix_host_name: "{{ galaxy_server_name }}"
+    postfix_relay_host: "[smtp.manchester.ac.uk]"
+    galaxy_outgoing_email_addr: "Cetus Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+    galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+    # Audit report
+    email_audit_report_to: "peter.briggs@manchester.ac.uk"
+    # SSL configuration
+    enable_https: yes
+    ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
+    ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
+    # Users
+    galaxy_admin_user: "peter.briggs@manchester.ac.uk"
+    # Whitelisted tools for rendering HTML correctly
+    galaxy_sanitize_whitelist_tools:
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.70"
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
