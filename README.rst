@@ -165,20 +165,30 @@ Inventory files
 ---------------
 
 Inventory files for various deployment environments are included
-under the ``inventories`` subdirectory. These inventories are
-intended to be used as an alternative to the central inventory file
-(typically ``/etc/ansible/hosts``).
+under the ``inventories`` subdirectory, for each of the Galaxy
+instances defined in this repository:
 
-The following inventories are available:
-
- - palfinder-production.yml: use for the production instance of the
+ - ``inventories/palfinder/``: contains inventory files for the
    Palfinder service
- - palfinder-vagrant.yml: use for local testing with Vagrant
+ - ``inventories/cetus/``: contains inventory files for the Cetus
+   service
+
+Within each subdirectory there should be two inventory files:
+
+ - ``production.yml``: inventory for the production instance of the
+   service
+ - ``vagrant.yml``: inventory for local testing of the service with
+   Vagrant
+
+These inventories are intended to be used as an alternative to the
+central inventory file (typically ``/etc/ansible/hosts``).
 
 To explicitly specify which inventory to target for a playbook run,
-use the ``-i`` option i.e.::
+use the ``-i`` option e.g.::
 
-    ansible-playbook palfinder.yml -i inventories/palfinder-prod.yml
+    ansible-playbook palfinder.yml -i inventories/palfinder/production.yml
+
+will target the production Palfinder service instance.
    
 Running the playbook
 --------------------
@@ -194,16 +204,26 @@ Testing using Vagrant
 The repo includes a ``Vagrantfile`` which can be used to create
 virtual machines for testing the deployment.
 
-Example set up::
+The following servers are defined in the ``Vagrantfile``:
+
+ - ``palfinder``: Scientific Linux 6 VM (uses the address
+   http://192.168.60.4)
+ - ``cetus``: Scientific Linux 7 VM (uses the address
+   http://192.168.60.5)
+
+To create and log into a Vagrant VM instance for testing Palfinder do
+e.g.::
 
     vagrant up palfinder
     vagrant ssh palfinder
 
-Use the Vagrant-specific Palfinder inventory file to test locally
-(note that this is not as fully-featured as the production version).
+Use the Vagrant-specific inventory file to test locally (note that
+these are not as fully-featured as the production versions), e.g.::
 
-Point your browser at http://http://192.168.60.4/ to access the
-local version once it has been deployed.
+    ansible-playbook palfinder.yml -i inventories/palfinder/vagrant.yml
+
+Point your browser at the appropriate address to access the local
+test instance once it has been deployed.
 
 Notes on the deployment
 -----------------------
