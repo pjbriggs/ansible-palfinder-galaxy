@@ -627,7 +627,7 @@ galaxy:
   #enable_old_display_applications: true
 
   # Show a message box under the masthead.
-{% if galaxy_message|default("") != "" %}
+{% if galaxy_message != None and galaxy_message|default("") != "" %}
   message_box_visible: true
   message_box_content: "{{ galaxy_message }}"
   message_box_class: info
