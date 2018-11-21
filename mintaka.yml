@@ -1,0 +1,155 @@
+---
+- hosts: mintaka
+
+  vars:
+  # Host configuration
+  - galaxy_user: "mintaka-galaxy"
+  - galaxy_uid: 22225
+  - galaxy_group: "galaxy"
+  - galaxy_gid: 400
+  # Galaxy configuration
+  - galaxy_name: "mintaka"
+  - galaxy_version: "release_18.05"
+  - galaxy_install_dir: "/mnt/rvmi/mintaka/galaxy"
+  - galaxy_dir: "/mnt/rvmi/mintaka/galaxy/production"
+  # Database and reference data
+  - galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/mintaka/production/database/files"
+  - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/mintaka/production/job_working_directory"
+  - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/mintaka/production/tool-data"
+  # Galaxy-specific Python installation
+  - galaxy_python_dir: "/mnt/rvmi/mintaka/galaxy/python"
+  # Account management
+  - allow_user_creation: yes
+  - allow_user_deletion: yes
+  - enable_require_login: yes
+  # Quotas
+  - enable_quotas: yes
+  - default_quota_gb: 50
+  # FTP upload
+  - enable_ftp_upload: no
+  # Reporting interface
+  - enable_reports: yes
+  # Welcome page etc
+  - galaxy_welcome_template: "instances/mintaka/templates/mintaka-welcome.html.j2"
+  - galaxy_base_css: "instances/mintaka/files/mintaka-base.css"
+  # Tools and toolshed
+  - galaxy_tool_conf_file: "instances/mintaka/files/mintaka-tool_conf.xml"
+  # Missing:
+  # -- Venn diagram
+  # -- Basic manipulations (e.g. join)
+  - galaxy_tools:
+      - tool: "column_maker"
+        owner: "devteam"
+        section: "Text Manipulation"
+      - tool: "subtract"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "join"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "merge"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "intersect"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "get_flanks"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "flanking_features"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "coverage"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "concat"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "complement"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "cluster"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "basecoverage"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "fastqc"
+        owner: "devteam"
+        section: ""
+      - tool: "macs21"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "ceas"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "rnachipintegrator"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "weeder2"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "motif_tools"
+        owner: "pjbriggs"
+        section: ""
+  # Add tools to whitelist for rendering HTML correctly
+  - galaxy_sanitize_whitelist_tools:
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+  # uWSGI and handler configuration
+  # Set number of uWSGI & handler processes in inventory file
+  # Job configuration
+  - enable_jse_drop: no
+  # Running jobs
+  - galaxy_new_file_path: "/mnt/rvmi/mintaka/galaxy/tmp"
+  # Check toolshed for updates
+  - enable_tool_shed_check: yes
+  # Automatic dataset deletion
+  - delete_datasets_after: "30 days"
+  # Email to/from
+  - galaxy_outgoing_email_addr: "Mintaka Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+  - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+  # Mintaka-specific settings
+  # Message of the day to display on the front page
+  - mintaka_motd: |
+       <h2>Mintaka is in beta testing</h2>
+       <p>Please report problems to
+       <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
+  - galaxy_message: "Mintaka is in beta testing mode, please report any problems"
+
+  vars_files:
+  - instances/mintaka/{{ mintaka_secrets }}
+
+  roles:
+  # Dependencies
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - python27
+  - nginx
+  - postgresql
+  - proftpd
+  - supervisord
+  - role: postfix-null-client
+    when: enable_smtp
+  - lets-encrypt-client
+  # Install Galaxy-specific Python 2.7
+  - role: python27
+    install_dir: "{{ galaxy_python_dir }}"
+    become: yes
+    become_user: "{{ galaxy_user }}"
+  # Install and configure Galaxy
+  - galaxy
+  # Install utilities
+  - galaxy-utils
+  # Restart with master API key enabled (needed
+  # to create user accounts)
+  - role: restart-galaxy
+    enable_master_api_key: yes
+  - galaxy-create-users
+  - galaxy-install-tools
+  - galaxy-set-default-quota
+  # Restart with master API key disabled
+  - role: restart-galaxy
+    enable_master_api_key: no
+  # Additional set up
+  - galaxy-audit-report

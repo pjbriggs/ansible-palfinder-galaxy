@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.or
+g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style/base.css" type="text/css" />
+</head>
+<body>
+    <div class="document">
+        <div class="donemessagelarge">
+	  <h1>Welcome to Mintaka: UoM BCF Demonstration Galaxy</h1>
+	  <p>Galaxy instance for demonstrating tools developed by the
+	    Bioinformatics Core Facility (BCF) at the University of
+	    Manchester</p>
+	</div>
+	<hr />
+
+{% if mintaka_motd is defined and mintaka_motd %}
+      <div class="infomessagelarge">
+        {{ mintaka_motd }}
+      </div>
+      <hr />
+{% endif %}
+
+      <h2>About this service</h2>
+      <p>Mintaka is a Galaxy instance which hosts tools developed by
+	Bioinformatics Core Facility (BCF) at the University of
+	Manchester.</p>
+      <p>It is hosted at the Faculty of Biology, Medicine and
+	Health (FBMH) and provided by the BCF with support from the
+	<a href="http://ri.itservices.manchester.ac.uk/">IT Services
+	  Research Infrastructure Team</a>.</p>
+      <p><b>Mintaka is running Galaxy version '{{ galaxy_version }}'</b></p>
+      <hr />
+      <h2>Contact</h2>
+      <p>Please report problems to <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
+    </div>
+</body>
+</html>

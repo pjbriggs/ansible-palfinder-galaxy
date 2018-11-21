@@ -40,4 +40,16 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     chmod ugo+rwX /mnt/rvmi/ /mnt/bmh01-rvmi/bcf-galaxy/
   SHELL
   end
+  # Mintaka BCF Tools VM
+  config.vm.define "mintaka" do |mintaka|
+    mintaka.vm.box = "ringo/scientific-linux-7.1"
+    mintaka.vm.hostname = "mintaka"
+    mintaka.vm.network :private_network, ip: "192.168.60.6"
+    mintaka.vm.provision "shell", inline: <<-SHELL
+    service firewalld stop
+    mkdir -p /mnt/rvmi
+    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy/
+    chmod ugo+rwX /mnt/rvmi/ /mnt/bmh01-rvmi/bcf-galaxy/
+  SHELL
+  end
 end

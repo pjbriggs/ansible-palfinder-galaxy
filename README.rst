@@ -8,6 +8,8 @@ Manchester:
  * ``pal_finder``: a public instance for running Pal_finder
  * ``cetus``: a local instance for teaching clinical
    bioinformatics
+ * ``mintaka``: a public instance for running some of the BCF
+   tools
 
 Roles
 -----
@@ -148,10 +150,13 @@ Playbooks
 ---------
 
  - ``palfinder.yml``: playbook for setting up the Palfinder Galaxy
-   instance.
+   instance
+ - ``cetus.yml``: playbook for setting up the Cetus Galaxy instance
+ - ``mintaka.yml``: playbook for setting up the Mintaka Galaxy
+   instance
 
-Nb this playbook includes the passwords for the various accounts in
-the ``palfinder_passwds.yml`` file, which has been encrypted using
+Nb the playbooks include the passwords for the various accounts in
+the ``palfinder_passwds.yml`` file, which have been encrypted using
 ``ansible-vault`` - use::
 
     ansible-vault edit palfinder_passwds.yml
@@ -172,6 +177,8 @@ instances defined in this repository:
    Palfinder service
  - ``inventories/cetus/``: contains inventory files for the Cetus
    service
+ - ``inventories/mintaka/``: contains inventory files for the
+   Mintaka service
 
 Within each subdirectory there should be two inventory files:
 
