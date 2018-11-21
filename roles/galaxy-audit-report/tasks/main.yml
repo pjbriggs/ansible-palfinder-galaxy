@@ -19,7 +19,10 @@
     job="{{ galaxy_utils_dir }}/bin/audit_report.py -c {{ galaxy_root }}/config/galaxy.yml -i '7 days' {{ email_audit_report_to }} 2>&1 >> {{ galaxy_dir }}/logs/audit_report.log"
     hour=22 minute=35 weekday=0
     state=present
-  when: email_audit_report_to != None and galaxy_yml.stat.exists == True
+  when:
+    - enable_smtp
+    - defined(email_audit_report_to) and email_audit_report_to != None
+    - galaxy_yml.stat.exists == True
 
 - name: Set up cron jobs to email audit reports (INI config)
   cron:
@@ -28,4 +31,7 @@
     job="{{ galaxy_utils_dir }}/bin/audit_report.py -c {{ galaxy_root }}/config/galaxy.ini -i '7 days' {{ email_audit_report_to }} 2>&1 >> {{ galaxy_dir }}/logs/audit_report.log"
     hour=22 minute=35 weekday=0
     state=present
-  when: email_audit_report_to != None and galaxy_ini.stat.exists == True
+  when:
+    - enable_smtp
+    - defined(email_audit_report_to) and email_audit_report_to != None
+    - galaxy_ini.stat.exists == True
