@@ -7,3 +7,10 @@ galaxy_utils_dir: "/usr/local"
 
 # Is https enabled
 enable_https: no
+
+# Reference data for tool .loc files
+# Define additional entries for .loc files as a
+# dictionary with:
+# - loc_file (name of the .loc file, relative to tool-data)
+# - data     (data to add)
+galaxy_loc_file_data:

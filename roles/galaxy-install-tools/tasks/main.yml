@@ -10,3 +10,12 @@
     "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}'"
   with_items: "{{ galaxy_tools }}"
   when: galaxy_tools|default(None) != None
+
+- name: Update tool data in loc files
+  lineinfile:
+    path='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
+    state=present
+    create=no
+    line="{{ item.data }}"
+  with_items: "{{ galaxy_loc_file_data }}"
+  when: galaxy_loc_file_data|default(None) != None
