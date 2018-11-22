@@ -130,8 +130,7 @@
         data: "knownCanonical_10102011_mm9_updated\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_10102011_mm9_updated.tsv"
       # Weeder2 species files
       - loc_file: "weeder2.loc"
-        data:
-          - "AF\tAspergillus fumigatus (AF)\t/mnt/data-sets/bcf/softwareData/Weeder2"
+        data: "AF\tAspergillus fumigatus (AF)\t/mnt/data-sets/bcf/softwareData/Weeder2"
   # Add tools to whitelist for rendering HTML correctly
   - galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
