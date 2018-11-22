@@ -110,6 +110,21 @@ galaxy_cleanup_job: "always"
 # Allow admins to paste filesystem paths during upload
 galaxy_allow_path_paste: no
 
+# Tool data tables
+# Define table entries as a dictionary with:
+# - description (free text, inserted into comment)
+# - name        (table name)
+# - columns     (table columns as comma-separated values)
+# - file_path   (path to .loc file relative to galaxy_root)
+galaxy_tool_data_tables:
+
+# Reference data for .loc files
+# Define additional entries for .loc files as a
+# dictionary with:
+# - loc_file (name of the .loc file, relative to tool-data)
+# - data     (data to add)
+galaxy_loc_file_data:
+
 # Job runners
 enable_drmaa: no
 enable_jse_drop: no

@@ -103,6 +103,22 @@
     dest='{{ galaxy_root }}/config/job_conf.xml'
     src=job_conf.xml.j2
 
+# Create/update tool_data_table_conf.xml file
+- name: Update tool_data_table_conf XML file
+  template:
+    dest='{{ galaxy_root }}/config/tool_data_table_conf.xml'
+    src=tool_data_table_conf.xml.j2
+
+# Update the .loc files
+- name: Update loc files
+  lineinfile:
+    path='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
+    state=present
+    create=no
+    line="{{ item.data }}"
+  with_items: "{{ galaxy_loc_file_data }}"
+  when: galaxy_loc_file_data|default(None) != None
+
 # Sanitization whitelist
 - name: Add tools to sanitization whitelist
   lineinfile:
