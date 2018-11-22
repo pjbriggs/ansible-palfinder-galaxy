@@ -92,6 +92,46 @@
       - tool: "motif_tools"
         owner: "pjbriggs"
         section: ""
+  # Tool data tables
+  - galaxy_tool_data_tables:
+      - description: "Annotation databases for CEAS"
+        name: "ceas_annotations"
+        columns: "value, dbkey, name, path"
+        file_path: "tool-data/ceas.loc"
+      - description: "RnaChipIntegrator canonical genes"
+        name: "rnachipintegrator_canonical_genes"
+        columns: "value, dbkey, name, path"
+        file_path: "tool-data/rnachipintegrator_canonical_genes.loc"
+      - description: "Weeder2 species files"
+        name: "weeder2"
+        columns: "value, name, path"
+        file_path: "tool-data/weeder2.loc"
+  # Reference data for .loc files
+  - galaxy_loc_file_data:
+      # CEAS annotations
+      - loc_file: "ceas.loc"
+        data: "hg18.refGene\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/ceas/hg18.refGene"
+      - loc_file: "ceas.loc"
+        data: "hg19.refGene\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/ceas/hg19.refGene"
+      - loc_file: "ceas.loc"
+        data: "mm9.refGene\tmm9	Mouse (mm9)\t/mnt/data-sets/bcf/softwareData/ceas/mm9.refGene"
+      - loc_file: "ceas.loc"
+        data: "mm10.refGene\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/ceas/mm10.refGene"
+      - loc_file: "ceas.loc"
+        data: "dm3.refGene\tdm3\tFly (dm3)\t/mnt/data-sets/bcf/softwareData/ceas/dm3.refGene"
+      # RnaChipIntegrator canonical genes
+      - loc_file: "rnachipintegrator_canonical_genes.loc"
+        data: "knownCanonical_30072012_hg19\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_30072012_hg19.tsv"
+      - loc_file: "rnachipintegrator_canonical_genes.loc"
+        data: "knownCanonical_18082011_hg18\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18082011_hg18.tsv"
+      - loc_file: "rnachipintegrator_canonical_genes.loc"
+        data: "knownCanonical_18072013_mm10\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18072013_mm10.tsv"
+      - loc_file: "rnachipintegrator_canonical_genes.loc"
+        data: "knownCanonical_10102011_mm9_updated\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_10102011_mm9_updated.tsv"
+      # Weeder2 species files
+      - loc_file: "weeder2.loc"
+        data:
+          - "AF\tAspergillus fumigatus (AF)\t/mnt/data-sets/bcf/softwareData/Weeder2"
   # Add tools to whitelist for rendering HTML correctly
   - galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
