@@ -134,6 +134,13 @@
   # Add tools to whitelist for rendering HTML correctly
   - galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+  # Chromosome length files (.len)
+  - galaxy_chromosome_len_files:
+      - "data/chrom/hg38.len"
+      - "data/chrom/hg19.len"
+      - "data/chrom/hg18.len"
+      - "data/chrom/mm10.len"
+      - "data/chrom/mm9.len"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
   # Job configuration
