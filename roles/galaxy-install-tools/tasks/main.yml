@@ -1,11 +1,12 @@
 ---
 # Install tools into Galaxy instance
 
+# Tools from toolshed
 - name: Set Galaxy URL
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
-- name: Install Galaxy tools
+- name: Install tools from Galaxy toolshed
   command:
     "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}'"
   with_items: "{{ galaxy_tools }}"
@@ -19,3 +20,27 @@
     line="{{ item.data }}"
   with_items: "{{ galaxy_loc_file_data }}"
   when: galaxy_loc_file_data|default(None) != None
+
+# Local tools
+- name: Create directories for local tool files
+  file:
+    path='{{ galaxy_dir }}/local_tools/{{ item.name }}'
+    state=directory
+    mode='ugo+rX'
+  with_items: "{{ local_galaxy_tools }}"
+  when: local_galaxy_tools|default(None) != None
+
+- name: Install local tool files
+  copy:
+    src='{{ item.1 }}'
+    dest='{{ galaxy_dir }}/local_tools/{{ item.0.name }}/{{ item.1 | basename }}'
+  with_subelements:
+    - '{{ local_galaxy_tools }}'
+    - 'tool_files'
+  when: local_galaxy_tools|default(None) != None
+
+- name: Build tool_conf XML file for local tools
+  template:
+    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+    src=local_tool_conf.xml.j2
+  when: local_galaxy_tools|default(None) != None

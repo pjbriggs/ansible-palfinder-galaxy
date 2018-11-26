@@ -31,6 +31,7 @@
   - { option: 'database_engine_option_server_side_cursors', value: 'True' }
   - { option: 'sanitize_whitelist_file', value: '{{ galaxy_sanitize_whitelist_file }}' }
   - { option: 'enable_tool_shed_check', value: '{{ enable_tool_shed_check }}' }
+  - { option: 'tool_config_file', value: 'config/tool_conf.xml,config/shed_tool_conf.xml,config/local_tool_conf.xml' }
 
 # Set tool data location options
 - name: Set tool data locations

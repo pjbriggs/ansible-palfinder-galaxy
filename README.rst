@@ -142,6 +142,9 @@ Tools:
    the tool panel section to add the tool to; if this is an
    empty string then the tool will appear outside any sections)
    (default: don't install any tools from the tool shed)
+ - ``local_galaxy_tools``: list of tools to be added locally,
+   with each tool defined as a dictionary with the keys ``name``
+   and ``tool_files`` (a list of files).
 
 Tool data tables:
 

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<toolbox tool_path="../local_tools">
+{% if local_galaxy_tools is not none %}
+{% for tool in local_galaxy_tools %}
+{% for tool_file in tool.tool_files %}
+{% if tool_file.endswith(".xml") %}
+  <tool file="{{ tool.name }}/{{ tool_file | basename }}" />
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+</toolbox>
