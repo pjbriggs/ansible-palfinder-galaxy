@@ -37,11 +37,8 @@
   - galaxy_users:
       - email: "{{ galaxy_admin_user }}"
         password: "{{ galaxy_admin_passwd }}"
-  # Tools and toolshed
+  # Tools from Galaxy toolshed
   - galaxy_tool_conf_file: "instances/mintaka/files/mintaka-tool_conf.xml"
-  # Missing:
-  # -- Venn diagram
-  # -- Basic manipulations (e.g. join)
   - galaxy_tools:
       - tool: "column_maker"
         owner: "devteam"
@@ -97,6 +94,12 @@
       - tool: "motif_tools"
         owner: "pjbriggs"
         section: ""
+  # Local tools
+  - local_galaxy_tools:
+      - name: "venn_diagram"
+        tool_files:
+          - "tools/venn_diagram/cistrome_venn_diagram.xml"
+          - "tools/venn_diagram/cistrome_venn_diagram.py"
   # Tool data tables
   - galaxy_tool_data_tables:
       - description: "Annotation databases for CEAS"
