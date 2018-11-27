@@ -122,6 +122,7 @@
     content=""
     dest='{{ galaxy_root }}/tool-data/shared/ucsc/chrom/?.len'
     force=no
+  when: galaxy_chromosome_len_files|default(None) != None
 
 # Install chromosome length (.len) files
 - name: Install chromosome length files
