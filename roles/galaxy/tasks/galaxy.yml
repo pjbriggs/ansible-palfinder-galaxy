@@ -77,6 +77,12 @@
   include_tasks: config_ini.yml
   when: galaxy_ini.stat.exists == True
 
+- name: Make local tool conf XML file
+  copy:
+    content='<?xml version="1.0"?>\n<toolbox tool_path="../local_tools">\n</toolbox>\n'
+    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+    force=no
+
 - name: Run common_startup.sh to initialise sample files and eggs/wheels
   command:
     chdir='{{ galaxy_root }}'
