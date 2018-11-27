@@ -12,15 +12,6 @@
   with_items: "{{ galaxy_tools }}"
   when: galaxy_tools|default(None) != None
 
-- name: Update tool data in loc files
-  lineinfile:
-    path='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
-    state=present
-    create=no
-    line="{{ item.data }}"
-  with_items: "{{ galaxy_loc_file_data }}"
-  when: galaxy_loc_file_data|default(None) != None
-
 # Local tools
 - name: Create directories for local tool files
   file:
@@ -44,3 +35,15 @@
     dest='{{ galaxy_root }}/config/local_tool_conf.xml'
     src=local_tool_conf.xml.j2
   when: local_galaxy_tools|default(None) != None
+
+# Update the reference data
+- name: Update tool data in loc files
+  lineinfile:
+    path='{{ galaxy_root }}/tool-data/{{ item.0.loc_file }}'
+    state=present
+    create=no
+    line="{{ item.1 }}"
+  with_subelements:
+    - '{{ galaxy_loc_file_data }}'
+    - 'data'
+  when: galaxy_loc_file_data|default(None) != None

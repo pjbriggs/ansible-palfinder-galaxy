@@ -157,10 +157,11 @@ Tool data tables:
 Reference data (``.loc`` file contents):
 
  - ``galaxy_loc_file_data``: lines of reference data to add to
-   ``.loc`` files, with each entry defined as a dictionary with
-   the keys ``loc_file`` (target ``.loc`` file) and ``data``
-   (line of data to be inserted into the file) (default: don't
-   add any reference data entries to ``.loc`` files)
+   ``.loc`` files; for each ``.loc`` file the entries are defined
+   as a dictionary with the keys ``loc_file`` (target ``.loc``
+   file) and ``data`` (list of lines of data to be inserted into
+   the file) (default: don't add any reference data entries to
+   ``.loc`` files)
 
 Variables for handling special cases:
 
