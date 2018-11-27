@@ -25,10 +25,13 @@
   # Quotas
   - enable_quotas: yes
   - default_quota_gb: 50
+  - delete_datasets_after: "30 days"
   # FTP upload
   - enable_ftp_upload: no
   # Reporting interface
   - enable_reports: yes
+  # GDPR compliance
+  - enable_beta_gdpr: yes
   # Welcome page etc
   - galaxy_welcome_template: "instances/mintaka/templates/mintaka-welcome.html.j2"
   - galaxy_base_css: "instances/mintaka/files/mintaka-base.css"
