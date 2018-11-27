@@ -9,10 +9,10 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <body>
     <div class="document">
         <div class="donemessagelarge">
-	  <h1>Welcome to Mintaka: UoM BCF Demonstration Galaxy</h1>
-	  <p>Galaxy instance for demonstrating tools developed by the
-	    Bioinformatics Core Facility (BCF) at the University of
-	    Manchester</p>
+	  <h1>Welcome to Mintaka: tools for ChIP-seq workflows</h1>
+	  <p>A Galaxy instance providing tools for ChIP-seq workflows
+	    which have been developed by the Bioinformatics Core Facility
+	    (BCF) at the University of Manchester</p>
 	</div>
 	<hr />
 
@@ -24,15 +24,46 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 {% endif %}
 
       <h2>About this service</h2>
-      <p>Mintaka is a Galaxy instance which hosts tools developed by
-	Bioinformatics Core Facility (BCF) at the University of
-	Manchester.</p>
-      <p>It is hosted at the Faculty of Biology, Medicine and
-	Health (FBMH) and provided by the BCF with support from the
+      <p>"Mintaka" is a Galaxy service which is run by the Bioinformatics
+	Core Facility (BCF) within the Faculty of Biology, Medicine and
+	Health (FBMH) at the University of Manchester with support from
+	the university's
 	<a href="http://ri.itservices.manchester.ac.uk/">IT Services
 	  Research Infrastructure Team</a>.</p>
+      <p>It is a customised pre-configured Galaxy instance for providing
+	access to tools developed by the BCF for ChIP-seq and motif
+	discovery, which are not available in other public Galaxy
+	services.</p>
+      <p>Mintaka does *not* provide a full set of tools for performing a
+	ChIP-seq analysis; it is intended to be used in conjunction with
+	other Galaxy instances (for example Galaxy Main at
+	<a href="https://usegalaxy.org/">https://usegalaxy.org/</a>).
       <p><b>Mintaka is running Galaxy version '{{ galaxy_version }}'</b></p>
-      <hr />
+
+      <h2>What you can do</h2>
+      <p>Users may:</p>
+      <ul>
+	<li>Create an account</li>
+	<li>Upload appropriate data</li>
+	<li>Run tools on their uploaded data</li>
+	<li>Download results files</li>
+      </ul>
+      <p>See below for details of the limitations of this service.</p>
+
+      <h2>Uploading data</h2>
+      <p>Data files can be uploaded directly to the service via a web
+	browser. In principle this should work for any size of file.</p>
+      <p>Alternatively files can be uploaded via an FTP server at
+	ftp://mintaka.ls.manchester.ac.uk (uploaded files will then
+	be available for import via the Upload tool).</p>
+
+      <h2>Limitations</h2>
+      <p>Accounts have a quota of {{ default_quota_gb }} GB.</p>
+      <p>Any data uploaded or generated are automatically deleted after
+	{{ delete_datasets_after }} (to prevent the build up of large
+	volumes of data onto our servers long-term). Please ensure that
+	you download all outputs that you wish to keep.</p>
+
       <h2>Contact</h2>
       <p>Please report problems to <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
     </div>
