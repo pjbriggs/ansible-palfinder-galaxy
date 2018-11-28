@@ -11,11 +11,11 @@
   - galaxy_name: "mintaka"
   - galaxy_version: "release_18.05"
   - galaxy_install_dir: "/mnt/rvmi/mintaka/galaxy"
-  - galaxy_dir: "/mnt/rvmi/mintaka/galaxy/production"
+  - galaxy_dir: "{{ galaxy_install_dir }}/production"
   # Database and reference data
-  - galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/mintaka/production/database/files"
-  - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/mintaka/production/job_working_directory"
-  - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/mintaka/production/tool-data"
+  - galaxy_file_path: "{{ galaxy_dir }}/database/files"
+  - galaxy_job_working_dir: "{{ galaxy_dir }}/job_working_directory"
+  - galaxy_data_manager_data_path: "{{ galaxy_dir }}/tool-data"
   # Galaxy-specific Python installation
   - galaxy_python_dir: "/mnt/rvmi/mintaka/galaxy/python"
   # Account management
