@@ -16,5 +16,7 @@
   command:
     "{{ galaxy_utils_dir }}/bin/activate_user.sh '{{ galaxy_db }}' '{{ galaxy_db_user }}' '{{ galaxy_db_password }}' '{{ item.email }}'"
   with_items: "{{ galaxy_users }}"
+  become: yes
+  become_user: "{{ galaxy_user }}"
   when: galaxy_users|default(None) != None and enable_user_activation
 
