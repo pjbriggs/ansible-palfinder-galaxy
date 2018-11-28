@@ -48,8 +48,7 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     mintaka.vm.provision "shell", inline: <<-SHELL
     service firewalld stop
     mkdir -p /mnt/rvmi
-    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy/
-    chmod ugo+rwX /mnt/rvmi/ /mnt/bmh01-rvmi/bcf-galaxy/
+    chmod ugo+rwX /mnt/rvmi/
   SHELL
   end
 end
