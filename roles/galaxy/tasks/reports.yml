@@ -4,6 +4,8 @@
   stat:
     path: '{{ galaxy_root }}/config/reports.yml.sample'
   register: reports_yml
+  become: yes
+  become_user: '{{ galaxy_user }}'
 
 - name: Create reports.yml configuration file
   include: reports_yaml.yml
@@ -15,6 +17,8 @@
   stat:
     path: '{{ galaxy_root }}/config/reports.ini.sample'
   register: reports_ini
+  become: yes
+  become_user: '{{ galaxy_user }}'
 
 - name: Create reports.ini configuration file
   include_tasks: reports_ini.yml
