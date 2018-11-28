@@ -5,11 +5,15 @@
   stat:
     path: '{{ galaxy_root }}/config/galaxy.yml'
   register: galaxy_yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
 
 - name: Check for INI configuration file
   stat:
     path: '{{ galaxy_root }}/config/galaxy.ini'
   register: galaxy_ini
+  become: yes
+  become_user: "{{ galaxy_user }}"
 
 - name: Add master API key to YAML config file
   lineinfile:
