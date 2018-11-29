@@ -37,6 +37,8 @@
     state=directory
     mode='ugo+rX'
   with_items: "{{ local_galaxy_tools }}"
+  become: yes
+  become_user: "{{ galaxy_user }}"
   when: local_galaxy_tools|default(None) != None
 
 - name: Install local tool files
@@ -46,12 +48,16 @@
   with_subelements:
     - '{{ local_galaxy_tools }}'
     - 'tool_files'
+  become: yes
+  become_user: "{{ galaxy_user }}"
   when: local_galaxy_tools|default(None) != None
 
 - name: Build tool_conf XML file for local tools
   template:
     dest='{{ galaxy_root }}/config/local_tool_conf.xml'
     src=local_tool_conf.xml.j2
+  become: yes
+  become_user: "{{ galaxy_user }}"
   when: local_galaxy_tools|default(None) != None
 
 # Update the reference data
@@ -64,4 +70,6 @@
   with_subelements:
     - '{{ galaxy_loc_file_data }}'
     - 'data'
+  become: yes
+  become_user: "{{ galaxy_user }}"
   when: galaxy_loc_file_data|default(None) != None
