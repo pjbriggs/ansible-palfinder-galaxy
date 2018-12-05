@@ -122,10 +122,11 @@
       # CEAS annotations
       - loc_file: "ceas.loc"
         data:
-          - "hg18.refGene\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/ceas/hg18.refGene"
+          - "hg38.knownGene\thg38\tHuman (hg38)\t/mnt/data-sets/bcf/softwareData/ceas/hg38.knownGene"
           - "hg19.refGene\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/ceas/hg19.refGene"
-          - "mm9.refGene\tmm9	Mouse (mm9)\t/mnt/data-sets/bcf/softwareData/ceas/mm9.refGene"
+          - "hg18.refGene\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/ceas/hg18.refGene"
           - "mm10.refGene\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/ceas/mm10.refGene"
+          - "mm9.refGene\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/ceas/mm9.refGene"
           - "dm3.refGene\tdm3\tFly (dm3)\t/mnt/data-sets/bcf/softwareData/ceas/dm3.refGene"
       # RnaChipIntegrator canonical genes
       - loc_file: "rnachipintegrator_canonical_genes.loc"
