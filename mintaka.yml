@@ -130,6 +130,7 @@
       # RnaChipIntegrator canonical genes
       - loc_file: "rnachipintegrator_canonical_genes.loc"
         data:
+          - "Gencode24_knownCanonical_hg38\thg38\tHuman (hg38)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/Gencode24_knownCanonical_hg38.tsv"
           - "knownCanonical_30072012_hg19\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_30072012_hg19.tsv"
           - "knownCanonical_18082011_hg18\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18082011_hg18.tsv"
           - "knownCanonical_18072013_mm10\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18072013_mm10.tsv"
