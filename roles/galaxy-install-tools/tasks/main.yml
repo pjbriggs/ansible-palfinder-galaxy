@@ -60,6 +60,18 @@
   become_user: "{{ galaxy_user }}"
   when: local_galaxy_tools|default(None) != None
 
+# Create .loc files from samples
+- name: Create loc files from sample versions
+  copy:
+    src='{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
+    dest='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
+    remote_src=True
+  with_items:
+    - '{{ galaxy_loc_file_data }}'
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when: galaxy_loc_file_data|default(None) != None
+
 # Update the reference data
 - name: Update tool data in loc files
   lineinfile:
