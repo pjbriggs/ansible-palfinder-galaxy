@@ -119,6 +119,15 @@
         file_path: "tool-data/weeder2.loc"
   # Reference data for .loc files
   - galaxy_loc_file_data:
+      # Alignment data (.nib/.2bit data)
+      - loc_file: "alignseq.loc"
+        data:
+          - "seq\thg38\t/mnt/data-sets/bcf/genomeIndexes/hg38_analysisSet/2bit/hg38.analysisSet.2bit"
+          - "seq\thg19\t/mnt/data-sets/bcf/genomeIndexes/hg19_GRCh37_random_chrM/seq"
+          - "seq\thg18\t/mnt/data-sets/bcf/genomeIndexes/hg18_random_chrM/seq"
+          - "seq\tmm10\t/mnt/data-sets/bcf/genomeIndexes/mm10_random_chrM_chrUn/seq"
+          - "seq\tmm9\t/mnt/data-sets/bcf/genomeIndexes/mm9_random_chrM_chrUn/seq"
+          - "seq\tdm3\t/mnt/data-sets/bcf/genomeIndexes/dm3_het_chrM_chrU/seq"
       # CEAS annotations
       - loc_file: "ceas.loc"
         data:
