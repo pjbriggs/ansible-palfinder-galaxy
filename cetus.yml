@@ -50,6 +50,7 @@
   - galaxy-user
   - epel-repo
   - nfslock
+  - git
   - python27
   - nginx
   - postgresql

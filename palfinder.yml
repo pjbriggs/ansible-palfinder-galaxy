@@ -81,6 +81,7 @@
   - galaxy-user
   - epel-repo
   - nfslock
+  - git
   - selinux
   - python27
   - nginx
