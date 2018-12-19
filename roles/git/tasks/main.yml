@@ -32,8 +32,12 @@
     name={{ item }}
     state=present
   with_items:
+    - gcc
+    - openssl-devel
     - libcurl-devel
     - expat-devel
+    - tcl
+    - gettext
     - asciidoc
     - xmlto
     - docbook2X
