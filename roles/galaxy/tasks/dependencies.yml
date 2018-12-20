@@ -3,7 +3,6 @@
 - name: Install Galaxy dependencies
   yum: name={{ item }} state=latest
   with_items:
-  - git
   - python-psycopg2
   - libtool
   - libtool-ltdl

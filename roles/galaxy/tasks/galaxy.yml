@@ -17,6 +17,7 @@
 
 - name: Clone Galaxy source
   git:
+    executable='/usr/local/bin/git'
     repo='{{ galaxy_repo }}'
     version='{{ galaxy_version }}'
     dest={{ galaxy_root }}
@@ -80,6 +81,8 @@
   command:
     chdir='{{ galaxy_root }}'
     ./scripts/common_startup.sh
+  environment:
+    PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
 
 - name: Run create_db.py to initialise the database
   command:

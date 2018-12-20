@@ -1,0 +1,73 @@
+---
+# Install git on remote server
+#
+# NOTE: we need a newer version of git than is available
+# via yum on Scientific Linux 6, hence installing it this way
+# rather than pulling in from yum
+- name: Uninstall yum version of git
+  yum:
+    name=git
+    state=absent
+
+- name: Determine the user home directory
+  shell:
+    "echo $HOME"
+  register: user_home
+  changed_when: False
+
+- name: Determine the build directory
+  set_fact:
+    build_dir: "{{ user_home.stdout }}/build"
+
+- name: Print the location of the build directory
+  debug: msg="Build directory {{ build_dir }}"
+
+- name: Create build directory
+  file:
+    path='{{ build_dir }}'
+    state=directory
+
+- name: Install build dependencies
+  yum:
+    name={{ item }}
+    state=present
+  with_items:
+    - gcc
+    - openssl-devel
+    - libcurl-devel
+    - expat-devel
+    - tcl
+    - gettext
+    - asciidoc
+    - xmlto
+    - docbook2X
+
+# Need to make link to docbook2x-text to build
+# git documentation, see
+# https://groups.google.com/d/msg/git-users/DMaDpy8Bpww/jqXULjp8ry8J
+- name: Make symlink to db2x_docbook2texi
+  file:
+    state=link
+    src='/usr/bin/db2x_docbook2texi'
+    dest='/usr/bin/docbook2x-texi'
+
+- name: Download git source
+  get_url:
+    url='https://github.com/git/git/archive/v{{ git_version }}.tar.gz'
+    checksum='{{ git_checksum }}'
+    dest='{{ build_dir }}'
+
+- name: Unpack git source
+  unarchive:
+    src='{{ build_dir }}/git-{{ git_version }}.tar.gz'
+    dest='{{ build_dir }}'
+    copy=no
+    owner=root
+    group=root
+    creates='{{ build_dir }}/git-{{ git_version }}'
+
+- name: Install git
+  command:
+    chdir='{{ build_dir }}/git-{{ git_version }}'
+    make prefix={{ git_install_dir }} install install-doc install-html install-info
+    creates={{ git_install_dir }}/bin/git
