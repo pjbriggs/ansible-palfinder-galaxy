@@ -71,8 +71,10 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
       <p>Accounts have a quota of {{ default_quota_gb }} GB.</p>
       <p>Any data uploaded or generated are automatically deleted after
 	{{ delete_datasets_after }} (to prevent the build up of large
-	volumes of data onto our servers long-term). Please ensure that
-	you download all outputs that you wish to keep.</p>
+	volumes of data onto our servers long-term).
+      <p>As space is limited you are advised to run fastQC and MACS, and
+	then delete the BAM files. Please ensure that you download all
+	outputs that you wish to keep.</p>
 
       <h2>Contact</h2>
       <p>Please report problems to <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
