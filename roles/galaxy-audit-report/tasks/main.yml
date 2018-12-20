@@ -21,7 +21,7 @@
     state=present
   when:
     - enable_smtp
-    - defined(email_audit_report_to) and email_audit_report_to != None
+    - email_audit_report_to is defined and email_audit_report_to != None
     - galaxy_yml.stat.exists == True
 
 - name: Set up cron jobs to email audit reports (INI config)
@@ -33,5 +33,5 @@
     state=present
   when:
     - enable_smtp
-    - defined(email_audit_report_to) and email_audit_report_to != None
+    - email_audit_report_to is defined and email_audit_report_to != None
     - galaxy_ini.stat.exists == True
