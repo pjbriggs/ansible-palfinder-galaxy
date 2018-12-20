@@ -34,21 +34,31 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	access to tools developed by the BCF for ChIP-seq and motif
 	discovery, which are not available in other public Galaxy
 	services.</p>
-      <p>Mintaka does *not* provide a full set of tools for performing a
-	ChIP-seq analysis; it is intended to be used in conjunction with
-	other Galaxy instances (for example Galaxy Main at
-	<a href="https://usegalaxy.org/">https://usegalaxy.org/</a>).
       <p><b>Mintaka is running Galaxy version '{{ galaxy_version }}'</b></p>
 
       <h2>What you can do</h2>
-      <p>Users may:</p>
+      <p>Mintaka does *not* provide a full set of tools for performing a
+	ChIP-seq analysis; it is intended to be used in conjunction with
+	other Galaxy instances (for example Galaxy Main at
+	<a href="https://usegalaxy.org/">https://usegalaxy.org/</a>).</p>
+      <p>It is expected that you already have mapped reads, preferably in
+	the BAM format (the compressed and indexed version of the SAM file
+	output be most read aligners).</p>
+      <p>A suggested workflow could consist of:</p>
       <ul>
-	<li>Create an account</li>
-	<li>Upload appropriate data</li>
-	<li>Run tools on their uploaded data</li>
-	<li>Download results files</li>
+	<li>FastQC (quality assessment of mapped reads)</li>
+	<li>MACS2 (peak calling)</li>
+	<li>Filtering of binding regions (by 'fold enrichment' using
+	  Galaxy tools)</li>
+	<li>RnaChipintegrator (identify the closest genes to each binding
+	  region)</li>
+	<li>CEAS (relative location of binding region summits to genes)</li>
+	<li>fetching the sequence for binding region summits</li>
+	<li>Weeder2 (motif discovery)</li>
       </ul>
-      <p>See below for details of the limitations of this service.</p>
+      <p>The ChIP-seq pipeline using these tools has been described on our
+	<a target="_blank" href="https://www.youtube.com/user/ManchesterBCF/videos">YouTube channel</a>:</p>
+      <iframe width="560" height="315" align="center" src="https://www.youtube.com/embed/xHgtRltBgY8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
       <h2>Uploading data</h2>
       <p>Data files can be uploaded directly to the service via a web
