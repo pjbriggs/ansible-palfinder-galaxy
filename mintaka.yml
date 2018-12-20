@@ -9,7 +9,7 @@
   - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "mintaka"
-  - galaxy_version: "release_18.05"
+  - galaxy_version: "release_18.09"
   - galaxy_install_dir: "/mnt/rvmi/mintaka/galaxy"
   - galaxy_dir: "{{ galaxy_install_dir }}/production"
   # Database and reference data
