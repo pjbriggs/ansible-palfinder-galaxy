@@ -42,7 +42,8 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	  Rather than offering a complete set of tools for performing
 	  a full ChIP-seq analysis, Mintaka is intended to be used in
 	  conjunction with other more general Galaxy services (for
-	  example <a href="https://usegalaxy.org/">usegalaxy.org</a>).</p>
+	  example
+	  <a target="_blank" href="https://usegalaxy.org/">usegalaxy.org</a>).</p>
 	<p>It is expected that you would already have mapped reads
 	  (preferably in the BAM format i.e. the compressed and indexed
 	  version of the SAM file output by most read aligners), either
@@ -60,7 +61,7 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	      to genes</b> using CEAS</li>
 	  <li><b>Fetching the sequence for binding region summits</b></li>
 	  <li><b>Performing motif discovery</b> using Weeder2</li>
-      </ul>
+	</ul>
       <p>The ChIP-seq pipeline using these tools has been described on our
 	<a target="_blank" href="https://www.youtube.com/user/ManchesterBCF/videos">YouTube channel</a>:</p>
       <p><iframe width="560" height="315" align="center" src="https://www.youtube.com/embed/videoseries?list=PLLwM58CflFb-8YrwzXIpJIWRJiX6izIEX" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
@@ -78,11 +79,11 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
       <h2>Quotas and data removal</h2>
       <p>User accounts on this service have a quota of limit of
 	<b>{{ default_quota_gb }} GB per user</b>. You are advised to run
-	fastQC and MACS, and then delete the input BAM files.</p>
+	FastQC and MACS, and then delete the input BAM files.</p>
       <p>As space on our servers is limited, this service also operates
 	an automatic data deletion policy: any data uploaded or generated
-	are automatically deleted after	<b>{{ delete_datasets_after }}</b>.
-	Please ensure that you download all outputs that you wish to keep</p>
+	are deleted after <b>{{ delete_datasets_after }}</b>.
+	Please ensure that you download all outputs that you wish to keep.</p>
 
       <h2>Acknowledging use of the service</h2>
       <p>The Mintaka Galaxy service is run by the Bioinformatics Core
