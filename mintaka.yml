@@ -34,6 +34,8 @@
   - enable_beta_gdpr: yes
   # Welcome page etc
   - galaxy_welcome_template: "instances/mintaka/templates/mintaka-welcome.html.j2"
+  - galaxy_terms: "instances/mintaka/files/mintaka-terms.html"
+  - galaxy_citations: "instances/mintaka/files/mintaka-citations.html"
   - galaxy_base_css: "instances/mintaka/files/mintaka-base.css"
   # Users
   - galaxy_admin_user: "admin@galaxy.org"

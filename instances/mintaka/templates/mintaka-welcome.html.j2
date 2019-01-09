@@ -9,8 +9,8 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <body>
     <div class="document">
         <div class="donemessagelarge">
-	  <h1>Welcome to Mintaka: tools for ChIP-seq workflows</h1>
-	  <p>A Galaxy instance providing tools for ChIP-seq workflows
+	  <h1>Welcome to Mintaka: tools for ChIP-seq analysis</h1>
+	  <p>A Galaxy instance providing tools for ChIP-seq analysis
 	    which have been developed by the Bioinformatics Core Facility
 	    (BCF) at the University of Manchester</p>
 	</div>
@@ -24,41 +24,49 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 {% endif %}
 
       <h2>About this service</h2>
-      <p>"Mintaka" is a Galaxy service which is run by the Bioinformatics
-	Core Facility (BCF) within the Faculty of Biology, Medicine and
-	Health (FBMH) at the University of Manchester with support from
-	the university's
-	<a href="http://ri.itservices.manchester.ac.uk/">IT Services
-	  Research Infrastructure Team</a>.</p>
-      <p>It is a customised pre-configured Galaxy instance for providing
-	access to tools developed by the BCF for ChIP-seq and motif
-	discovery, which are not available in other public Galaxy
-	services.</p>
-      <p><b>Mintaka is running Galaxy version '{{ galaxy_version }}'</b></p>
+      <p>"Mintaka" is a customised and pre-configured Galaxy instance
+	providing access to tools for ChIP-seq and motif discovery, which
+	have been developed by the Bioinformatics Core Facility (BCF)
+	within the Faculty of Biology, Medicine and Health (FBMH) at
+	the University of Manchester.</p>
+      <p>The service is free to use, although it requires that you first
+	register and create an account in order to do so. By registering
+	and using this service you agree to be bound by its
+	<a href="terms.html">terms and conditions</a></b>.</p>
+      <p>Mintaka is running Galaxy version '{{ galaxy_version }}'</p>
 
       <h2>What you can do</h2>
-      <p>Mintaka does *not* provide a full set of tools for performing a
-	ChIP-seq analysis; it is intended to be used in conjunction with
-	other Galaxy instances (for example Galaxy Main at
-	<a href="https://usegalaxy.org/">https://usegalaxy.org/</a>).</p>
-      <p>It is expected that you already have mapped reads, preferably in
-	the BAM format (the compressed and indexed version of the SAM file
-	output be most read aligners).</p>
-      <p>A suggested workflow could consist of:</p>
-      <ul>
-	<li>FastQC (quality assessment of mapped reads)</li>
-	<li>MACS2 (peak calling)</li>
-	<li>Filtering of binding regions (by 'fold enrichment' using
-	  Galaxy tools)</li>
-	<li>RnaChipintegrator (identify the closest genes to each binding
-	  region)</li>
-	<li>CEAS (relative location of binding region summits to genes)</li>
-	<li>fetching the sequence for binding region summits</li>
-	<li>Weeder2 (motif discovery)</li>
+	<p>The Mintaka Galaxy service provides a set of novel tools to
+	  assist with ChIP-seq analysis and motif discovery which are
+	  otherwise not accessible in other public Galaxy instances.
+	  Rather than offering a complete set of tools for performing
+	  a full ChIP-seq analysis, Mintaka is intended to be used in
+	  conjunction with other more general Galaxy services (for
+	  example <a href="https://usegalaxy.org/">usegalaxy.org</a>).</p>
+	<p>It is expected that you would already have mapped reads
+	  (preferably in the BAM format i.e. the compressed and indexed
+	  version of the SAM file output by most read aligners), either
+	  from another Galaxy service or some other source. Once these
+	  have been uploaded to Mintaka, a suggested workflow could
+	  consist of:</p>
+	<ul>
+	  <li><b>Quality assessment of mapped reads</b> using FastQC</li>
+	  <li><b>Peak calling</b> using MACS2</li>
+	  <li><b>Filtering of binding regions</b> by 'fold enrichment'
+	    using Galaxy tools for operating on genomic intervals</li>
+	  <li><b>Identifying the closest genes to each binding region</b>
+	    using RnaChipintegrator</li>
+	  <li><b>Finding the relative location of binding region summits
+	      to genes</b> using CEAS</li>
+	  <li><b>Fetching the sequence for binding region summits</b></li>
+	  <li><b>Performing motif discovery</b> using Weeder2</li>
       </ul>
       <p>The ChIP-seq pipeline using these tools has been described on our
 	<a target="_blank" href="https://www.youtube.com/user/ManchesterBCF/videos">YouTube channel</a>:</p>
-      <iframe width="560" height="315" align="center" src="https://www.youtube.com/embed/xHgtRltBgY8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <p><iframe width="560" height="315" align="center" src="https://www.youtube.com/embed/videoseries?list=PLLwM58CflFb-8YrwzXIpJIWRJiX6izIEX" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+      <p>The full set of videos can be viewed via the playlist
+	<a target="_blank" href="https://www.youtube.com/playlist?list=PLLwM58CflFb-8YrwzXIpJIWRJiX6izIEX" >ChIP-seq analysis using Galaxy</a> (opens in a
+	new window).</p>
 
       <h2>Uploading data</h2>
       <p>Data files can be uploaded directly to the service via a web
@@ -67,14 +75,22 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	ftp://mintaka.ls.manchester.ac.uk (uploaded files will then
 	be available for import via the Upload tool).</p>
 
-      <h2>Limitations</h2>
-      <p>Accounts have a quota of {{ default_quota_gb }} GB.</p>
-      <p>Any data uploaded or generated are automatically deleted after
-	{{ delete_datasets_after }} (to prevent the build up of large
-	volumes of data onto our servers long-term).
-      <p>As space is limited you are advised to run fastQC and MACS, and
-	then delete the BAM files. Please ensure that you download all
-	outputs that you wish to keep.</p>
+      <h2>Quotas and data removal</h2>
+      <p>User accounts on this service have a quota of limit of
+	<b>{{ default_quota_gb }} GB per user</b>. You are advised to run
+	fastQC and MACS, and then delete the input BAM files.</p>
+      <p>As space on our servers is limited, this service also operates
+	an automatic data deletion policy: any data uploaded or generated
+	are automatically deleted after	<b>{{ delete_datasets_after }}</b>.
+	Please ensure that you download all outputs that you wish to keep</p>
+
+      <h2>Acknowledging use of the service</h2>
+      <p>The Mintaka Galaxy service is run by the Bioinformatics Core
+	Facility (BCF) within the Faculty of Biology, Medicine and Health
+	(FBMH) at the University of Manchester, with support from the
+	University's Research IT Services team.</p>
+      <p>Details of how to acknowledge use of the service can be found on
+	the <a href="citations.html">citations page</a>.</p>
 
       <h2>Contact</h2>
       <p>Please report problems to <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
