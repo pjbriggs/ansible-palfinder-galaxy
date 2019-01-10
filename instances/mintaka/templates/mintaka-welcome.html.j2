@@ -72,9 +72,11 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
       <h2>Uploading data</h2>
       <p>Data files can be uploaded directly to the service via a web
 	browser. In principle this should work for any size of file.</p>
+      {% if enable_ftp_upload %}
       <p>Alternatively files can be uploaded via an FTP server at
 	ftp://mintaka.ls.manchester.ac.uk (uploaded files will then
 	be available for import via the Upload tool).</p>
+      {% endif %}
 
       <h2>Quotas and data removal</h2>
       <p>User accounts on this service have a quota of limit of
