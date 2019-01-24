@@ -1,0 +1,219 @@
+---
+- hosts: mintaka
+
+  vars:
+  # Host configuration
+  - galaxy_user: "mintaka-galaxy"
+  - galaxy_uid: 22225
+  - galaxy_group: "galaxy"
+  - galaxy_gid: 400
+  # Galaxy configuration
+  - galaxy_name: "mintaka"
+  - galaxy_version: "release_18.09"
+  - galaxy_install_dir: "/mnt/rvmi/mintaka/galaxy"
+  - galaxy_dir: "{{ galaxy_install_dir }}/production"
+  # Database and reference data
+  - galaxy_file_path: "{{ galaxy_dir }}/database/files"
+  - galaxy_job_working_dir: "{{ galaxy_dir }}/job_working_directory"
+  - galaxy_data_manager_data_path: "{{ galaxy_dir }}/tool-data"
+  # Galaxy-specific Python installation
+  - galaxy_python_dir: "/mnt/rvmi/mintaka/galaxy/python"
+  # Account management
+  - allow_user_creation: yes
+  - allow_user_deletion: yes
+  - enable_require_login: yes
+  # Quotas
+  - enable_quotas: yes
+  - default_quota_gb: 50
+  - delete_datasets_after: "30 days"
+  # FTP upload
+  - enable_ftp_upload: no
+  # Reporting interface
+  - enable_reports: yes
+  # GDPR compliance
+  - enable_beta_gdpr: yes
+  # Welcome page etc
+  - galaxy_welcome_template: "instances/mintaka/templates/mintaka-welcome.html.j2"
+  - galaxy_terms: "instances/mintaka/files/mintaka-terms.html"
+  - galaxy_citations: "instances/mintaka/files/mintaka-citations.html"
+  - galaxy_base_css: "instances/mintaka/files/mintaka-base.css"
+  # Users
+  - galaxy_admin_user: "admin@galaxy.org"
+  - galaxy_users:
+      - email: "{{ galaxy_admin_user }}"
+        password: "{{ galaxy_admin_passwd }}"
+  # Tools from Galaxy toolshed
+  - galaxy_tool_conf_file: "instances/mintaka/files/mintaka-tool_conf.xml"
+  - galaxy_tools:
+      - tool: "column_maker"
+        owner: "devteam"
+        section: "Text Manipulation"
+      - tool: "subtract"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "join"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "merge"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "intersect"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "get_flanks"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "flanking_features"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "coverage"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "concat"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "complement"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "cluster"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "basecoverage"
+        owner: "devteam"
+        section: "Operate on Genomic Intervals"
+      - tool: "fastqc"
+        owner: "devteam"
+        section: ""
+      - tool: "macs21"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "ceas"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "rnachipintegrator"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "weeder2"
+        owner: "pjbriggs"
+        section: ""
+      - tool: "motif_tools"
+        owner: "pjbriggs"
+        section: ""
+  # Local tools
+  - local_galaxy_tools:
+      - name: "venn_diagram"
+        tool_files:
+          - "tools/venn_diagram/cistrome_venn_diagram.xml"
+          - "tools/venn_diagram/cistrome_venn_diagram.py"
+  # Tool data tables
+  - galaxy_tool_data_tables:
+      - description: "Annotation databases for CEAS"
+        name: "ceas_annotations"
+        columns: "value, dbkey, name, path"
+        file_path: "tool-data/ceas.loc"
+      - description: "RnaChipIntegrator canonical genes"
+        name: "rnachipintegrator_canonical_genes"
+        columns: "value, dbkey, name, path"
+        file_path: "tool-data/rnachipintegrator_canonical_genes.loc"
+      - description: "Weeder2 species files"
+        name: "weeder2"
+        columns: "value, name, path"
+        file_path: "tool-data/weeder2.loc"
+  # Reference data for .loc files
+  - galaxy_loc_file_data:
+      # Alignment data (.nib/.2bit data)
+      - loc_file: "alignseq.loc"
+        data:
+          - "seq\thg38\t/mnt/data-sets/bcf/genomeIndexes/hg38_analysisSet/2bit/hg38.analysisSet.2bit"
+          - "seq\thg19\t/mnt/data-sets/bcf/genomeIndexes/hg19_GRCh37_random_chrM/seq"
+          - "seq\thg18\t/mnt/data-sets/bcf/genomeIndexes/hg18_random_chrM/seq"
+          - "seq\tmm10\t/mnt/data-sets/bcf/genomeIndexes/mm10_random_chrM_chrUn/seq"
+          - "seq\tmm9\t/mnt/data-sets/bcf/genomeIndexes/mm9_random_chrM_chrUn/seq"
+          - "seq\tdm3\t/mnt/data-sets/bcf/genomeIndexes/dm3_het_chrM_chrU/seq"
+      # CEAS annotations
+      - loc_file: "ceas.loc"
+        data:
+          - "hg38.knownGene\thg38\tHuman (hg38)\t/mnt/data-sets/bcf/softwareData/ceas/hg38.knownGene"
+          - "hg19.refGene\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/ceas/hg19.refGene"
+          - "hg18.refGene\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/ceas/hg18.refGene"
+          - "mm10.refGene\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/ceas/mm10.refGene"
+          - "mm9.refGene\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/ceas/mm9.refGene"
+          - "dm3.refGene\tdm3\tFly (dm3)\t/mnt/data-sets/bcf/softwareData/ceas/dm3.refGene"
+      # RnaChipIntegrator canonical genes
+      - loc_file: "rnachipintegrator_canonical_genes.loc"
+        data:
+          - "Gencode24_knownCanonical_hg38\thg38\tHuman (hg38)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/Gencode24_knownCanonical_hg38.tsv"
+          - "knownCanonical_30072012_hg19\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_30072012_hg19.tsv"
+          - "knownCanonical_18082011_hg18\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18082011_hg18.tsv"
+          - "knownCanonical_18072013_mm10\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18072013_mm10.tsv"
+          - "knownCanonical_10102011_mm9_updated\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_10102011_mm9_updated.tsv"
+  # Add tools to whitelist for rendering HTML correctly
+  - galaxy_sanitize_whitelist_tools:
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+  # Chromosome length files (.len)
+  - galaxy_chromosome_len_files:
+      - "data/chrom/hg38.len"
+      - "data/chrom/hg19.len"
+      - "data/chrom/hg18.len"
+      - "data/chrom/mm10.len"
+      - "data/chrom/mm9.len"
+  # uWSGI and handler configuration
+  # Set number of uWSGI & handler processes in inventory file
+  # Job configuration
+  - enable_jse_drop: no
+  # Running jobs
+  - galaxy_new_file_path: "/mnt/rvmi/mintaka/galaxy/tmp"
+  # Check toolshed for updates
+  - enable_tool_shed_check: yes
+  # Automatic dataset deletion
+  - delete_datasets_after: "30 days"
+  # Email to/from
+  - galaxy_outgoing_email_addr: "Mintaka Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+  - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+  # Mintaka-specific settings
+  # Message of the day to display on the front page
+  - mintaka_motd: |
+       <h2>Mintaka is in beta testing</h2>
+       <p>Please report problems to
+       <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
+  - galaxy_message: "Mintaka is in beta testing mode, please report any problems"
+
+  vars_files:
+  - instances/mintaka/{{ mintaka_secrets }}
+
+  roles:
+  # Dependencies
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - git
+  - selinux
+  - python27
+  - nginx
+  - postgresql
+  - proftpd
+  - supervisord
+  - role: postfix-null-client
+    when: enable_smtp
+  - lets-encrypt-client
+  # Install Galaxy-specific Python 2.7
+  - role: python27
+    install_dir: "{{ galaxy_python_dir }}"
+    become: yes
+    become_user: "{{ galaxy_user }}"
+  # Install and configure Galaxy
+  - galaxy
+  # Install utilities
+  - galaxy-utils
+  # Restart with master API key enabled (needed
+  # to create user accounts)
+  - role: restart-galaxy
+    enable_master_api_key: yes
+  - galaxy-create-users
+  - galaxy-install-tools
+  - galaxy-set-default-quota
+  # Restart with master API key disabled
+  - role: restart-galaxy
+    enable_master_api_key: no
+  # Additional set up
+  - galaxy-audit-report

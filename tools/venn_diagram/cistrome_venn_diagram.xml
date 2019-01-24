@@ -1,0 +1,124 @@
+<tool name="Venn Diagram" id="cistrome_venn" version="1.0.1">
+  <description>Given 2 or 3 intervals, generate a Venn diagram of their intersections</description>
+  <command interpreter="python">cistrome_venn_diagram.py $bfile1 $bfile2 $bfile3 -H $height -W $width -t "$title" -l "$bf1label" -l "$bf2label" -l "$bf3label" -o $output $proportional
+</command>
+  <inputs> 
+    <param name="title" type="text" label="Diagram title" value="Bed Venn Diagram" size="50" />
+    <param ftype="interval" format="bed" name="bfile1" type="data" label="BED file 1(total number of lines in the 3 files should not exceed 100,000)"/>
+    <param name="bf1label" type="text" label="Bed file 1 label" optional="true"/>
+    <param ftype="interval" format="bed" name="bfile2" type="data" label="BED file 2(total number of lines in the 3 files should not exceed 100,000)"/>
+    <param name="bf2label" type="text" label="Bed file 2 label" optional="true"/>
+    <param ftype="interval" format="bed" name="bfile3" type="data" label="BED file 3(total number of lines in the 3 files should not exceed 100,000)" optional="true"/>
+    <param name="bf3label" type="text" label="Bed file 3 label" optional="true"/>
+    <param name="height" type="integer" label="Pic Height" value="500">
+      <validator type="in_range" max="5000" min="500" message="Pic Height is out of range, Pic Height has to be between 500 to 5000" />
+    </param>  
+    <param name="width" type="integer" label="Pic Width" value="500">
+      <validator type="in_range" max="5000" min="500" message="Pic Width is out of range, Pic Width has to be between 500 to 5000" />
+    </param>
+    <param name="proportional" type="boolean" label="Draw Proportional Diagrams" checked="yes"
+	   truevalue="" falsevalue="-n" />
+  </inputs>
+  <outputs>
+    <data format="png" name="output" />
+  </outputs>
+<tests>
+  <test maxseconds="3600" name="VennDiagram_1">
+    <param name="bfile1" value="bedfile1.bed" />
+    <param name="bf1label" value="BedFile1" />
+    <param name="bfile2" value="bedfile2.bed" />
+    <param name="bf2label" value="BedFile2" />
+    <param name="bfile3" value="bedfile3.bed" />
+    <param name="bf3label" value="BedFile3" />
+    <param name="height" value="500" />
+    <param name="width" value="500" />
+    <param name="title" value="BedVennDiagram" />
+    <param name="proportional" value="" />
+    <output name="output" file="venndiagram_1/venndiagram_1.png" lines_diff = "40" />
+  </test>
+  <test maxseconds="3600" name="VennDiagram_2">
+    <param name="bfile1" value="bedfile1.bed" />
+    <param name="bf1label" value="BedFile1" />
+    <param name="bfile2" value="bedfile2.bed" />
+    <param name="bf2label" value="BedFile2" />
+    <param name="bfile3" value="bedfile3.bed" />
+    <param name="bf3label" value="BedFile3" />
+    <param name="height" value="5000" />
+    <param name="width" value="5000" />
+    <param name="title" value="BedVennDiagram" />
+    <param name="proportional" value="" />
+    <output name="output" file="venndiagram_2/venndiagram_2.png" lines_diff = "40" />
+  </test>
+</tests>
+  <help>
+.. class:: warningmark
+
+**This is a modified version of the Cistrome "Venn Diagram" tool which
+has been customised for users Galaxy at the University of Manchester**
+
+-----
+
+This tool generates a venn diagram of the intersection of multiple intervals 
+files. The original code was written by Jacqueline Wentz and revised by
+Tao Liu. It will calculate how many regions are overlapped between BED
+files and use the Google Chart API to draw the final figure.
+
+.. class:: warningmark
+
+**CAUTION:** If three data sets are used, and their sizes differ a
+lot then the figure may not be correct - however the numbers will be
+right.
+
+**CAUTION:** The maximum number of lines in all the input files should
+not exceed 100,000.
+
+-----
+
+**Parameters**
+
+- **BED file 1 and 2** are the two BED files to be used to calculate
+  the overlap.
+- **BED file 3** is the third BED file to be used. It's optional.
+- **BED file labels** name of the datasets displayed on the diagram
+  leave blank to use the default name
+- **Pic Height** is the height of the final image.
+- **Pic Width** is the width of the final image.
+- **Diagram title** is the title of the final image.
+
+-----
+
+**Outputs**
+
+- **PNG file** is the Venn diagram plot. The numbers of overlapped
+  regions are included in the figure.
+- **LOG file** is the job log. If you see errors, please attach this in
+  the bug report.
+
+-----
+
+**summary**
+
+For the regions in bed file, it will do a cluster first. 
+For example, we have 5 regions
+
+bed A:
+(200, 900)
+(1000, 1200)
+
+bed B:
+(100, 300)
+(700, 1100)
+(1400, 1500)
+
+Since they have overlaps, It will cluster them into 2 regions: 
+(100, 1200) (1400, 1500), and see whether each region 
+(of the 2 regions) is included in bed A or B. So,
+
+(100, 1200) is included in bed A, B
+
+(1400,1500) is included in bed B
+
+Then we draw the venn diagram
+  </help>
+
+</tool>

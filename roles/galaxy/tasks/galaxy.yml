@@ -77,6 +77,12 @@
   include_tasks: config_ini.yml
   when: galaxy_ini.stat.exists == True
 
+- name: Make local tool conf XML file
+  copy:
+    content='<?xml version="1.0"?>\n<toolbox tool_path="../local_tools">\n</toolbox>\n'
+    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+    force=no
+
 - name: Run common_startup.sh to initialise sample files and eggs/wheels
   command:
     chdir='{{ galaxy_root }}'
@@ -102,6 +108,36 @@
   template:
     dest='{{ galaxy_root }}/config/job_conf.xml'
     src=job_conf.xml.j2
+
+# Create/update tool_data_table_conf.xml file
+- name: Update tool_data_table_conf XML file
+  template:
+    dest='{{ galaxy_root }}/config/tool_data_table_conf.xml'
+    src=tool_data_table_conf.xml.j2
+
+# Create directory for chromosome length files
+- name: Create directory for chromosome length files
+  file:
+    path='{{ galaxy_root }}/tool-data/shared/ucsc/chrom'
+    state=directory
+    mode='ugo+rX'
+
+# Create 'unknown' chromosome length files '?.len'
+- name: Create unknown chromosome length file
+  copy:
+    content=""
+    dest='{{ galaxy_root }}/tool-data/shared/ucsc/chrom/?.len'
+    force=no
+  when: galaxy_chromosome_len_files|default(None) != None
+
+# Install chromosome length (.len) files
+- name: Install chromosome length files
+  copy:
+    src='{{ item }}'
+    dest='{{ galaxy_root }}/tool-data/shared/ucsc/chrom/{{ item | basename }}'
+    mode='ugo+r'
+  with_items: "{{ galaxy_chromosome_len_files }}"
+  when: galaxy_chromosome_len_files|default(None) != None
 
 # Sanitization whitelist
 - name: Add tools to sanitization whitelist

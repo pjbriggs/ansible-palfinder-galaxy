@@ -8,6 +8,8 @@ Manchester:
  * ``pal_finder``: a public instance for running Pal_finder
  * ``cetus``: a local instance for teaching clinical
    bioinformatics
+ * ``mintaka``: a public instance for running some of the BCF
+   tools
 
 Roles
 -----
@@ -132,6 +134,35 @@ Other configuration settings:
    to send weekly audit reports to (default: don't send
    reports to anyone)
 
+Tools:
+
+ - ``galaxy_tools``: list of tools to install from the main
+   Galaxy tool shed, with each tool defined as a dictionary
+   with the keys ``tool``, ``owner`` and ``section`` (specifies
+   the tool panel section to add the tool to; if this is an
+   empty string then the tool will appear outside any sections)
+   (default: don't install any tools from the tool shed)
+ - ``local_galaxy_tools``: list of tools to be added locally,
+   with each tool defined as a dictionary with the keys ``name``
+   and ``tool_files`` (a list of files).
+
+Tool data tables:
+
+ - ``galaxy_tool_data_tables``: list of entries to append to
+   the standard ``tool_data_tables_conf.xml`` file, with each
+   entry defined as a dictionary with the keys ``description``,
+   ``name``, ``columns`` and ``file_path`` (default: don't
+   append any entries to ``tool_data_tables_conf.xml``)
+
+Reference data (``.loc`` file contents):
+
+ - ``galaxy_loc_file_data``: lines of reference data to add to
+   ``.loc`` files; for each ``.loc`` file the entries are defined
+   as a dictionary with the keys ``loc_file`` (target ``.loc``
+   file) and ``data`` (list of lines of data to be inserted into
+   the file) (default: don't add any reference data entries to
+   ``.loc`` files)
+
 Variables for handling special cases:
 
  - ``galaxy_python_dir``: location to install Galaxy-specific
@@ -148,10 +179,13 @@ Playbooks
 ---------
 
  - ``palfinder.yml``: playbook for setting up the Palfinder Galaxy
-   instance.
+   instance
+ - ``cetus.yml``: playbook for setting up the Cetus Galaxy instance
+ - ``mintaka.yml``: playbook for setting up the Mintaka Galaxy
+   instance
 
-Nb this playbook includes the passwords for the various accounts in
-the ``palfinder_passwds.yml`` file, which has been encrypted using
+Nb the playbooks include the passwords for the various accounts in
+the ``palfinder_passwds.yml`` file, which have been encrypted using
 ``ansible-vault`` - use::
 
     ansible-vault edit palfinder_passwds.yml
@@ -172,6 +206,8 @@ instances defined in this repository:
    Palfinder service
  - ``inventories/cetus/``: contains inventory files for the Cetus
    service
+ - ``inventories/mintaka/``: contains inventory files for the
+   Mintaka service
 
 Within each subdirectory there should be two inventory files:
 

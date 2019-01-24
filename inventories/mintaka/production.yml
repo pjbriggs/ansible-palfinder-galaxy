@@ -1,0 +1,24 @@
+mintaka:
+  hosts:
+    130.88.96.176
+  vars:
+    # Server configuration
+    galaxy_server_name: "mintaka.ls.manchester.ac.uk"
+    enable_user_activation: yes
+    # Secrets
+    mintaka_secrets: production.yml
+    # uWSGI and handler configuration
+    galaxy_uwsgi_processes: 1
+    galaxy_handler_processes: 1
+    # Postfix/email configuration
+    enable_smtp: yes
+    postfix_host_name: "{{ galaxy_server_name }}"
+    postfix_relay_host: "[smtp.manchester.ac.uk]"
+    galaxy_outgoing_email_addr: "Mintaka Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+    galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+    # Audit report
+    email_audit_report_to: "peter.briggs@manchester.ac.uk"
+    # SSL configuration
+    enable_https: yes
+    ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
+    ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"

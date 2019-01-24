@@ -1,12 +1,87 @@
 ---
 # Install tools into Galaxy instance
 
+# Tools from toolshed
 - name: Set Galaxy URL
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
-- name: Install Galaxy tools
+- name: Check if Galaxy Mercurial is executable
+  stat:
+    path: '{{ galaxy_root }}/.venv/bin/hg'
+  register: galaxy_hg
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
+- name: Add execute permission to Galaxy Mercurial
+  file:
+    path='{{ galaxy_root }}/.venv/bin/hg'
+    state='file'
+    mode='u+rwx,go+rx'
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when:
+    - galaxy_tools|default(None) != None
+    - galaxy_hg.stat.executable == False
+
+- name: Install tools from Galaxy toolshed
   command:
     "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}'"
   with_items: "{{ galaxy_tools }}"
   when: galaxy_tools|default(None) != None
+
+# Local tools
+- name: Create directories for local tool files
+  file:
+    path='{{ galaxy_dir }}/local_tools/{{ item.name }}'
+    state=directory
+    mode='ugo+rX'
+  with_items: "{{ local_galaxy_tools }}"
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when: local_galaxy_tools|default(None) != None
+
+- name: Install local tool files
+  copy:
+    src='{{ item.1 }}'
+    dest='{{ galaxy_dir }}/local_tools/{{ item.0.name }}/{{ item.1 | basename }}'
+  with_subelements:
+    - '{{ local_galaxy_tools }}'
+    - 'tool_files'
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when: local_galaxy_tools|default(None) != None
+
+- name: Build tool_conf XML file for local tools
+  template:
+    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+    src=local_tool_conf.xml.j2
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when: local_galaxy_tools|default(None) != None
+
+# Create .loc files from samples
+- name: Create loc files from sample versions
+  copy:
+    src='{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
+    dest='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
+    remote_src=True
+  with_items:
+    - '{{ galaxy_loc_file_data }}'
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when: galaxy_loc_file_data|default(None) != None
+
+# Update the reference data
+- name: Update tool data in loc files
+  lineinfile:
+    path='{{ galaxy_root }}/tool-data/{{ item.0.loc_file }}'
+    state=present
+    create=no
+    line="{{ item.1 }}"
+  with_subelements:
+    - '{{ galaxy_loc_file_data }}'
+    - 'data'
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when: galaxy_loc_file_data|default(None) != None
