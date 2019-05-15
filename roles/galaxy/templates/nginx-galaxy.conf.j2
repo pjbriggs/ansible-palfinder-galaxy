@@ -35,7 +35,11 @@ server {
     listen 80 default;
 {% endif %}
     client_max_body_size 10G;
-    uwsgi_read_timeout 180;
+    # UWSGI settings
+    uwsgi_temp_path /tmp/uwsgi;
+    uwsgi_max_temp_file_size 1024k;
+    uwsgi_read_timeout 600s;
+    uwsgi_write_timeout 600s;
     # Additional locations (may be none)
 {% if galaxy_nginx_extra_locations is not none %}
     {% for loc in galaxy_nginx_extra_locations %}
