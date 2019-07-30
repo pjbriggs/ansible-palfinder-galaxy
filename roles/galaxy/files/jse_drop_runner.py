@@ -338,7 +338,9 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         trynum = 0
         while trynum < 5:
             try:
-                exit_code = int(jse_drop.qacct(external_job_id)['exit_status'])
+                # 'exit_status' might be a single number or a string of the form e.g.
+                # "255    (killed)"
+                exit_code = int(jse_drop.qacct(external_job_id)['exit_status'].split()[0])
                 break
             except KeyError:
                 trynum += 1
