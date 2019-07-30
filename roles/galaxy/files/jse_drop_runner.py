@@ -64,6 +64,7 @@ The parameters available for the destinations are:
 import logging
 import string
 import time
+import io
 
 from galaxy import model
 from galaxy.jobs.runners import AsynchronousJobRunner
@@ -355,11 +356,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             return
         log.debug("finish_job %s: exit code %s" % (external_job_id,
                                                    exit_code))
-        # Read contents of stdout and stderr
-        with open(jse_drop.stdout_file(external_job_id)) as fp:
-            stdout = fp.read()
-        with open(jse_drop.stderr_file(external_job_id)) as fp:
-            stderr = fp.read()
+        # Read contents of stdout and stderr and attempt to handle encoding
+        # and NULL issues
+        with io.open(jse_drop.stdout_file(external_job_id),'rt') as fp:
+            stdout = fp.read().encode('ascii',errors='ignore').replace('\x00','?')
+        with io.open(jse_drop.stderr_file(external_job_id),'rt') as fp:
+            stderr = fp.read().encode('ascii',errors='ignore').replace('\x00','?')
         # clean up the job files
         cleanup_job = self.app.config.cleanup_job
         if cleanup_job == "always" or (not stderr and cleanup_job == "onsuccess"):
