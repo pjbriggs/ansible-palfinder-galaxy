@@ -254,7 +254,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
     def stop_job(self,job):
         # Attempts to remove a job from the JSE-Drop queue
         # Fetch the job id used by JSE-Drop
-        job_name = job.get_job_runner_external_id()
+        job_name = job.get_job().get_job_runner_external_id()
         # Fetch the drop dir
         try:
             drop_off_dir = self._get_drop_dir()
