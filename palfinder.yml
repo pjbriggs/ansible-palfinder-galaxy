@@ -47,6 +47,10 @@
         owner: "pjbriggs"
         section: ""
   - enable_tool_shed_check: yes
+  # Concurrent jobs
+  - galaxy_registered_user_concurrent_jobs: 2
+  - galaxy_unregistered_user_concurrent_jobs: 0
+  - galaxy_concurrent_jobs: 2
   # Add tools to whitelist for rendering HTML correctly
   - galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.71"
