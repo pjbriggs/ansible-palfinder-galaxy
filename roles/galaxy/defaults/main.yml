@@ -144,6 +144,11 @@ galaxy_job_destinations:
 # - destination (target destination)
 galaxy_tool_destinations:
 
+# Limits for running jobs
+galaxy_registered_user_concurrent_jobs: 2
+galaxy_unregistered_user_concurrent_jobs: 0
+galaxy_concurrent_jobs: 2
+
 # HTML sanitization whitelist
 galaxy_sanitize_whitelist_file: "config/sanitize_whitelist.txt"
 # List of paths for whitelisted tools e.g.
