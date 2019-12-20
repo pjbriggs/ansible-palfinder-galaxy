@@ -1,5 +1,14 @@
 # Install utilities
 ---
+# Need latest setuptools to install nebulizer
+# Error looks like the one reported here:
+# - https://github.com/rm-hull/luma.examples/issues/45
+- name: Install latest setuptools
+  pip:
+    name="setuptools"
+    executable='{{ python_install_dir }}/bin/pip'
+    state=latest
+
 - name: Install dependencies for utilities
   pip:
     name="{{ item }}"
