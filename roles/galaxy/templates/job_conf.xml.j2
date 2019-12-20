@@ -48,9 +48,9 @@
     </tools>
 {% endif %}
     <limits>
-        <limit type="registered_user_concurrent_jobs">2</limit>
-        <limit type="unregistered_user_concurrent_jobs">0</limit>
+        <limit type="registered_user_concurrent_jobs">{{ galaxy_registered_user_concurrent_jobs }}</limit>
+        <limit type="unregistered_user_concurrent_jobs">{{ galaxy_unregistered_user_concurrent_jobs }}</limit>
         <limit type="job_walltime">24:00:00</limit>
-        <limit type="concurrent_jobs" id="local">2</limit>
+        <limit type="concurrent_jobs" id="local">{{ galaxy_concurrent_jobs }}</limit>
     </limits>
 </job_conf>
