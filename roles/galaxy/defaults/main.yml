@@ -144,7 +144,7 @@ galaxy_job_destinations:
 # - destination (target destination)
 galaxy_tool_destinations:
 
-# Limits for running jobs
+# Limits for number of concurrent running jobs
 galaxy_registered_user_concurrent_jobs: 2
 galaxy_unregistered_user_concurrent_jobs: 0
 galaxy_concurrent_jobs: 2
