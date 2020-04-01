@@ -47,7 +47,15 @@
     dest='{{ galaxy_root }}/static/citations.html'
   when: galaxy_citations|default(None) != None
 
-- name: Import base CSS styles file
+- name: "Set up custom colours in SCSS file"
+  replace:
+    path: '{{ galaxy_root }}/client/galaxy/style/scss/theme/blue.scss'
+    regexp: "^\\$({{ item.var }}): (.*);"
+    replace: "${{ item.var }}: {{ item.value }};"
+  with_items: "{{ galaxy_custom_scss }}"
+  when: galaxy_custom_scss|default(None) != None
+
+- name: "DEPRECATED: import base CSS styles file"
   copy:
     src='{{ galaxy_base_css }}'
     dest='{{ galaxy_root }}/static/style/blue/base.css'

@@ -32,7 +32,15 @@ galaxy_welcome_template: "welcome.html.j2"
 galaxy_terms:
 galaxy_citations:
 
-# CSS styles
+# (S)CSS styles/custom colours
+# Define entries as a dictionary with:
+# - var   (SCSS variable e.g. 'brand-primary')
+# - value (Value e.g. 'red', '#660099')
+galaxy_custom_scss: null
+
+# Pre-built base CSS file to import for this
+# instance (overwrites existing CSS file)
+# !!!DEPRECATED: use 'galaxy_custom_scss' instead!!!
 galaxy_base_css: null
 
 # Message of the day
