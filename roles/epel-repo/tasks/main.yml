@@ -8,13 +8,19 @@
   yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm state=present
   when: epel_status.stat.exists == false
 
-# Update 'nss' to make sure that EPEL repo can be accessed
+# Update 'curl' and 'nss' to make sure that EPEL repo can
+# be accessed
 #
 # See:
 # - https://github.com/GovReady/govready/issues/64
 # - https://unix.stackexchange.com/a/163368/14641
-- name: Update nss
+# - https://stackoverflow.com/a/55851121
+- name: "Update curl and nss to work with EPEL"
   yum:
-    name: nss
-    state: latest
+    name: "{{ item }}"
+    state: "latest"
     disablerepo: "epel"
+  with_items:
+  - nss
+  - curl
+  - libcurl
