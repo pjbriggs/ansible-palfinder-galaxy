@@ -10,7 +10,5 @@
   - java-1.8.0-openjdk
   - samtools
   - python2-pyyaml
-  - nss
-  - curl
-  - libcurl
+  - net-tools
   register: installed_dependencies
