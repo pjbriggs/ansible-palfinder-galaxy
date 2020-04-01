@@ -77,30 +77,25 @@
   include_tasks: config_ini.yml
   when: galaxy_ini.stat.exists == True
 
-- name: Make local tool conf XML file
-  copy:
-    content='<?xml version="1.0"?>\n<toolbox tool_path="../local_tools">\n</toolbox>\n'
-    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
-    force=no
-
-- name: Run common_startup.sh to initialise sample files and eggs/wheels
-  command:
-    chdir='{{ galaxy_root }}'
-    ./scripts/common_startup.sh
-  environment:
-    PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
-
-- name: Run create_db.py to initialise the database
-  command:
-    chdir='{{ galaxy_root }}'
-    .venv/bin/python scripts/create_db.py
-
-# Update tool_conf.xml
-- name: Update base tool_conf.xml
+# Import or create tool_conf files
+- name: "Import base tool_conf.xml"
   copy:
     src='{{ galaxy_tool_conf_file }}'
     dest='{{ galaxy_root}}/config/tool_conf.xml'
   when: galaxy_tool_conf_file|default(None) != None
+
+- name: "Create base tool_conf.xml from sample"
+  copy:
+    src='{{ galaxy_root }}/config/tool_conf.xml.sample'
+    dest='{{ galaxy_root}}/config/tool_conf.xml'
+    remote_src=yes
+  when: galaxy_tool_conf_file|default(None) == None
+
+- name: "Create empty local_tool_conf.xml"
+  copy:
+    content='<?xml version="1.0"?>\n<toolbox tool_path="../local_tools">\n</toolbox>\n'
+    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+    force=no
 
 # Create/update the job_conf.xml file
 # See https://wiki.galaxyproject.org/Admin/Config/Jobs
@@ -148,3 +143,16 @@
     line="{{ item }}"
   with_items: "{{ galaxy_sanitize_whitelist_tools }}"
   when: galaxy_sanitize_whitelist_tools|default(None) != None
+
+# Setup/update Galaxy
+- name: "Run common_startup.sh to initialise/update Galaxy installation"
+  command:
+    chdir='{{ galaxy_root }}'
+    ./scripts/common_startup.sh
+  environment:
+    PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
+
+- name: "Run create_db.py to initialise the database"
+  command:
+    chdir='{{ galaxy_root }}'
+    .venv/bin/python scripts/create_db.py
