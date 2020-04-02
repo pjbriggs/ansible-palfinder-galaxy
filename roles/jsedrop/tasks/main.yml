@@ -1,0 +1,28 @@
+---
+# Install jsedrop.py as a service on the remote host
+
+- name: "Install jsedrop.py dependencies"
+  yum:
+    state=present
+    name="{{item}}"
+  with_items:
+  - python3
+
+- name: "Install jsedrop.py"
+  copy:
+    src="jsedrop.py"
+    dest="{{ jsedrop_install_dir }}/jsedrop.py"
+    mode="ugo+x"
+
+- name: "Create service file for jsedrop.service"
+  template:
+    src="jsedrop.service.j2"
+    dest="/lib/systemd/system/jsedrop.service"
+  notify:
+  - "Restart jsedrop.service"
+
+- name: "Start jsedrop.service"
+  service:
+    name="jsedrop"
+    enabled=yes
+    state=started

@@ -1,0 +1,5 @@
+---
+- name: "Restart jsedrop.service"
+  service:
+    name="jsedrop"
+    state=restarted

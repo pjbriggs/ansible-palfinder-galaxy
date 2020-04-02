@@ -1,0 +1,4 @@
+---
+# jsedrop.py installation defaults
+jsedrop_install_dir: "/usr/bin"
+jsedrop_drop_dir: "/usr/share/drop-off"
