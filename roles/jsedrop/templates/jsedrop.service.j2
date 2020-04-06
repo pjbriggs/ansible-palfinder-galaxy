@@ -1,0 +1,12 @@
+[Unit]
+Description=JSE-Drop
+After=multi-user.target
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 {{ jsedrop_install_dir }}/jsedrop.py {{ jsedrop_drop_dir }} --log /var/log/jsedrop.log --run-as-user
+StandardInput=tty-force
+
+[Install]
+WantedBy=multi-user.target

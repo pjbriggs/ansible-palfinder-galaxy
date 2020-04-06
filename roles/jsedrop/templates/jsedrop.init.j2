@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# chkconfig: 345 99 01
+# description: run local JSEDrop service for Galaxy
+
+# JSEDrop files
+JSEDROP_BIN={{ jsedrop_install_dir }}/jsedrop.py
+PIDFILE=/var/run/jsedrop.pid
+LOGFILE=/var/log/jsedrop.log
+
+# If PIDFILE exists, does it point to a jsedrop process?
+
+if [ -f $PIDFILE ]; then
+    pid=`cat $PIDFILE`
+fi
+
+if [ ! -f $JSEDROP_BIN ]; then
+    echo "$0: $JSEDROP_BIN: not found"
+    exit 1
+fi
+
+case $1 in
+
+    start)
+	if [ -n "$pid" ]; then
+            echo "$0: jsedrop [PID $pid] already running"
+            exit
+	fi
+
+        echo "Starting jsedrop..."
+        /usr/bin/python3 $JSEDROP_BIN {{ jsedrop_drop_dir }} --log $LOGFILE --pid_file $PIDFILE --run-as-user &
+	;;
+
+    stop)
+	if [ -n "$pid" ]; then
+            echo "Stopping jsedrop..."
+            kill -TERM $pid
+	else
+            echo "$0: jsedrop not running"
+            exit 1
+	fi
+	;;
+
+    status)
+	if [ -n "$pid" ]; then
+	    echo "jsedrop [PID $pid] running"
+	else
+            echo "jsedrop stopped"
+	fi
+	;;
+
+    *)
+	echo "usage: $0 {start|stop|status}"
+	exit 1
+	;;
+
+esac
+
+exit 0
