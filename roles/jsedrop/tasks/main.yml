@@ -1,12 +1,21 @@
 ---
 # Install jsedrop.py as a service on the remote host
 
-- name: "Install jsedrop.py dependencies"
+- name: "Install jsedrop.py dependencies (SL6)"
+  yum:
+    state=present
+    name="{{item}}"
+  with_items:
+  - python34
+  when: ansible_distribution_major_version == "6"
+
+- name: "Install jsedrop.py dependencies (SL7)"
   yum:
     state=present
     name="{{item}}"
   with_items:
   - python3
+  when: ansible_distribution_major_version == "7"
 
 - name: "Install jsedrop.py"
   copy:
@@ -14,12 +23,20 @@
     dest="{{ jsedrop_install_dir }}/jsedrop.py"
     mode="ugo+x"
 
-- name: "Create service file for jsedrop.service"
+- name: "Create init.d script for jsedrop (SL6)"
+  template:
+    src="jsedrop.init.j2"
+    dest="/etc/init.d/jsedrop"
+    mode='ugo+x'
+  when: ansible_distribution_major_version == "6"
+
+- name: "Create service file for jsedrop.service (SL7)"
   template:
     src="jsedrop.service.j2"
     dest="/lib/systemd/system/jsedrop.service"
   notify:
   - "Restart jsedrop.service"
+  when: ansible_distribution_major_version == "7"
 
 - name: "Start jsedrop.service"
   service:

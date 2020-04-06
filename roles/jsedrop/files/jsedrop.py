@@ -14,6 +14,7 @@ import platform
 import pwd
 import grp
 import atexit
+import signal
 
 DEFAULT_INTERVAL = 30
 
@@ -157,7 +158,7 @@ class JSEDrop(object):
     Class implementing JSE-Drop protocol
     """
     def __init__(self,drop_dir,submission_engine=None,run_as_user=False,
-                 log_file=None):
+                 log_file=None,pid_file=None):
         """
         Arguments:
           drop_dir: drop-off directory to monitor
@@ -169,6 +170,8 @@ class JSEDrop(object):
             process)
           log_file: specify a log file to report JSE-Drop
             messages to (default is to write to stdout)
+          pid_file: specify a file to write the process
+            PID to (default is not to write a PID file)
         """
         # Set up logging
         self._log_file = log_file
@@ -189,8 +192,31 @@ class JSEDrop(object):
         if submission_engine is None:
             submission_engine = PopenBackend()
         self._backend = submission_engine
+        # Write PID file
+        if pid_file:
+            self._pid_file = os.path.abspath(pid_file)
+            try:
+                with open(self._pid_file,"wt") as pid:
+                    pid.write("%s" % os.getpid())
+                self.log("PID written to '%s'" % pid_file)
+            except Exception as ex:
+                self.log("ERROR failed to write PID to "
+                         "'%s': %s" % (pid_file,ex))
+                self.stop()
+                raise ex
+        else:
+            self._pid_file = None
+        # Set up the signal handlers
+        signal.signal(signal.SIGTERM,self._handle_sigterm)
         # Handle exit gracefully
         atexit.register(self.stop)
+
+    def _handle_sigterm(self,signum,frame):
+        """
+        Handle SIGTERM
+        """
+        self.log("Received SIGTERM: stopping")
+        sys.exit()
 
     def _check_drop_dir(self):
         """
@@ -413,6 +439,9 @@ STDERR:
         # Close log file
         if self._log_file is not None:
             self._log.close()
+        # Remove the PID file
+        if self._pid_file is not None:
+            os.remove(self._pid_file)
 
 if __name__ == "__main__":
     
@@ -432,12 +461,19 @@ if __name__ == "__main__":
                    dest="log_file",metavar="FILE",action="store",
                    help="write logging information to FILE (default: "
                    "write to stdout)")
+    p.add_argument("--pid_file",
+                   dest="pid_file",metavar="FILE",action="store",
+                   help="write PID to FILE while running")
     args = p.parse_args()
 
     # Set up JSE-Drop
-    jse_drop = JSEDrop(args.drop_dir,
-                       run_as_user=args.run_as_user,
-                       log_file=args.log_file)
+    try:
+        jse_drop = JSEDrop(args.drop_dir,
+                           run_as_user=args.run_as_user,
+                           log_file=args.log_file,
+                           pid_file=args.pid_file)
+    except Exception as ex:
+        sys.exit(1)
     
     # Start loop
     jse_drop.log("Entering loop, use Crtl-C to exit")
