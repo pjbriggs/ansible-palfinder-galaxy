@@ -65,6 +65,7 @@ import logging
 import string
 import time
 import io
+import os
 
 from galaxy import model
 from galaxy.jobs.runners import AsynchronousJobRunner
@@ -198,6 +199,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Prepare the job wrapper (or abort)
         if not self.prepare_job(job_wrapper):
             return
+        # Set up job state instance
+        ajs = AsynchronousJobState(
+            files_dir=job_wrapper.working_directory,
+            job_wrapper=job_wrapper)
         # Sort out the slots (see e.g. condor.py for example)
         if galaxy_slots:
             galaxy_slots_statement = 'GALAXY_SLOTS="%s"; export GALAXY_SLOTS_CONFIGURED="1"' % galaxy_slots
@@ -207,7 +212,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         script = self.get_job_file(job_wrapper,
                                    galaxy_virtual_env=virtual_env,
                                    slots_statement=galaxy_slots_statement,
-                                   exit_code_path=None)
+                                   exit_code_path=ajs.exit_code_file)
         # Separate leading shell specification from generated script
         shell = '\n'.join(filter(lambda x: x.startswith('#!'),
                                  script.split('\n')))
@@ -241,20 +246,19 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         job_wrapper.set_job_destination(job_destination,
                                         external_job_id)
         # Store state information for job
-        job_state = AsynchronousJobState()
-        job_state.job_wrapper = job_wrapper
-        job_state.job_id = job_name
-        job_state.old_state = True
-        job_state.running = False
-        job_state.job_destination = job_destination
+        ajs.job_wrapper = job_wrapper
+        ajs.job_id = job_name
+        ajs.old_state = True
+        ajs.running = False
+        ajs.job_destination = job_destination
         # Add to the queue of jobs to monitor
-        self.monitor_job(job_state)
+        self.monitor_job(ajs)
         log.info("%s: queued" % job_name)
 
-    def stop_job(self,job):
+    def stop_job(self,job_wrapper):
         # Attempts to remove a job from the JSE-Drop queue
         # Fetch the job id used by JSE-Drop
-        job_name = job.get_job().get_job_runner_external_id()
+        job_name = job_wrapper.get_job().job_runner_external_id
         # Fetch the drop dir
         try:
             drop_off_dir = self._get_drop_dir()
@@ -279,19 +283,19 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         log.debug("recover: drop-off dir = %s" % drop_off_dir)
         jse_drop = JSEDrop(drop_off_dir)
         # Store state information for job
-        job_state = AsynchronousJobState()
-        job_state.job_wrapper = job_wrapper
-        job_state.job_id = job_name
-        job_state.job_destination = job_destination
+        ajs = AsynchronousJobState()
+        ajs.job_wrapper = job_wrapper
+        ajs.job_id = job_name
+        ajs.job_destination = job_destination
         # Sort out the status
         if job.state == model.Job.states.RUNNING:
-            job_state.old_state = True
-            job_state.running = True
+            ajs.old_state = True
+            ajs.running = True
         elif job.get_state() == model.Job.states.QUEUED:
-            job_state.old_state = True
-            job_state.running = False
+            ajs.old_state = True
+            ajs.running = False
         # Add to the queue of jobs to monitor
-        self.monitor_queue.put(job_state)
+        self.monitor_queue.put(ajs)
 
     def check_watched_item(self,job_state):
         # Return updated job state
@@ -303,6 +307,11 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             # Mark as finished
             log.info("%s: finished" % job_name)
             self.mark_as_finished(job_state)
+            # Remove the JSE-drop files
+            cleanup_job = self.app.config.cleanup_job
+            if cleanup_job == "always" or \
+               (not stderr and cleanup_job == "onsuccess"):
+                jse_drop.cleanup(job_name)
             return None
         if jse_drop_status in (JSEDropStatus.FAILED,
                                JSEDropStatus.MISSING):
@@ -332,49 +341,53 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         external_job_id = job_state.job_id
         # Initialise JSE-drop
         drop_off_dir = self._get_drop_dir()
-        log.debug("stop_job: drop-off dir = %s" % drop_off_dir)
+        log.debug("finish_job: drop-off dir = %s" % drop_off_dir)
         jse_drop = JSEDrop(drop_off_dir)
-        # Get stdout, stderr and exit code
-        # Nb qacct info might not be available immediately
-        trynum = 0
-        while trynum < 5:
-            try:
-                # 'exit_status' might be a single number or a string of the form e.g.
-                # "255    (killed)"
-                exit_code = int(jse_drop.qacct(external_job_id)['exit_status'].split()[0])
-                break
-            except KeyError:
-                trynum += 1
-                log.warning("finish_job %s: unable to get exit code, retrying"
-                            % external_job_id)
-                time.sleep(5)
-        else:
-            # Failed to get the exit code so fail the job
-            log.error("finish_job %s: failed to get exit code"
-                      % external_job_id)
-            job_state.job_wrapper.fail("JSE-drop error: unable to get exit code")
-            return
-        log.debug("finish_job %s: exit code %s" % (external_job_id,
-                                                   exit_code))
-        # Read contents of stdout and stderr and attempt to handle encoding
-        # and NULL issues
-        with io.open(jse_drop.stdout_file(external_job_id),'rt') as fp:
-            stdout = fp.read().encode('ascii',errors='ignore').replace('\x00','?')
-        with io.open(jse_drop.stderr_file(external_job_id),'rt') as fp:
-            stderr = fp.read().encode('ascii',errors='ignore').replace('\x00','?')
-        # clean up the job files
+        # Get exit_code, stdout and stderr
+        job_wrapper = job_state.job_wrapper
+        try:
+            job = job_state.job_wrapper.get_job()
+            # Exit code
+            exit_code = job_state.read_exit_code()
+            # Stdout
+            outputs_directory = job_wrapper.working_directory
+            tool_stdout_path = os.path.join(outputs_directory,"tool_stdout")
+            if os.path.exists(tool_stdout_path):
+                log.debug("finish_job %s: reading stdout from %s" %
+                          (external_job_id,tool_stdout_path))
+                with io.open(tool_stdout_path,'rt') as fp:
+                    stdout = fp.read().\
+                             encode('ascii',errors='ignore').\
+                             replace('\x00','?')
+            else:
+                log.debug("finish_job %s: couldn't find %s" %
+                          (external_job_id,tool_stdout_path))
+                stdout = "Unable to acquire tool output"
+            # Stderr
+            tool_stderr_path = os.path.join(outputs_directory,"tool_stderr")
+            if os.path.exists(tool_stderr_path):
+                log.debug("finish_job %s: reading stderr from %s" %
+                          (external_job_id,tool_stderr_path))
+                with io.open(tool_stderr_path,'rt') as fp:
+                    stderr = fp.read().\
+                             encode('ascii',errors='ignore').\
+                             replace('\x00','?')
+            else:
+                log.debug("finish_job %s: couldn't find %s" %
+                          (external_job_id,tool_stderr_path))
+                stderr = "Unable to acquire tool output"
+        except Exception as ex:
+            log.exception("(%s/%s) Job wrapper finish method failed: %s" %
+                          (galaxy_id_tag,external_job_id,ex))
+            job_state.job_wrapper.fail("Unable to finish job", exception=True)
+        # Clean up the job files
         cleanup_job = self.app.config.cleanup_job
         if cleanup_job == "always" or (not stderr and cleanup_job == "onsuccess"):
             job_state.cleanup()
-            # Also remove JSE-drop files
-            try:
-                jse_drop.cleanup(external_job_id)
-            except Exception as ex:
-                log.warning("finish_job %s: unable to clean up JSE-drop files: %s" % (external_job_id,ex))
         # Set the job state
         try:
             job_state.job_wrapper.finish(stdout,stderr,exit_code)
-        except:
-            log.exception("(%s/%s) Job wrapper finish method failed" %
-                          (galaxy_id_tag,external_job_id ))
+        except Exception as ex:
+            log.exception("(%s/%s) Job wrapper finish method failed: %s" %
+                          (galaxy_id_tag,external_job_id,ex))
             job_state.job_wrapper.fail("Unable to finish job", exception=True)
