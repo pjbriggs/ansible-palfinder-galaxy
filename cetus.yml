@@ -64,6 +64,9 @@
   - role: postfix-null-client
     when: enable_smtp
   - lets-encrypt-client
+  - role: jsedrop
+    jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
+    when: enable_local_jse_drop
   # Install Galaxy-specific Python 2.7
   - role: python27
     install_dir: "{{ galaxy_python_dir }}"
