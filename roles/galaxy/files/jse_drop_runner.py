@@ -309,8 +309,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             self.mark_as_finished(job_state)
             # Remove the JSE-drop files
             cleanup_job = self.app.config.cleanup_job
-            if cleanup_job == "always" or \
-               (not stderr and cleanup_job == "onsuccess"):
+            if cleanup_job == "always" or cleanup_job == "onsuccess":
                 jse_drop.cleanup(job_name)
             return None
         if jse_drop_status in (JSEDropStatus.FAILED,
@@ -325,6 +324,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 log.warn("%s: no such job in JSE-drop?" % job_name)
                 message = "%s: no such job in JSE-drop?" % job_name
             self.fail_job(job_state)
+            # Remove the JSE-drop files
+            cleanup_job = self.app.config.cleanup_job
+            if cleanup_job == "always":
+                jse_drop.cleanup(job_name)
             return None
         if jse_drop_status == JSEDropStatus.RUNNING and not job_state.running:
             # Job started running
