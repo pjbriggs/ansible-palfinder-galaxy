@@ -43,8 +43,13 @@
   # Check toolshed for updates
   - enable_tool_shed_check: yes
   # Cetus-specific settings
-  # Message of the day to display on the front page
-  - cetus_motd:
+  # Message of the day to display on the front page and message
+  # to display under masthead
+  # -- for ansible <2.6 "errors=..." option is not supported so
+  #    an empty placeholder file is required to stop the playbook
+  #    failing
+  - cetus_motd: "{{ lookup('file', 'instances/cetus/files/motd', errors='warn') }}"
+  - galaxy_message: "{{ lookup('file', 'instances/cetus/files/message', errors='warn') }}"
 
   vars_files:
   - instances/cetus/{{ cetus_secrets }}

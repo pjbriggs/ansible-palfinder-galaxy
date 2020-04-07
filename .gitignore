@@ -5,3 +5,5 @@
 *.bak
 *.retry
 *.vagrant
+motd
+message
