@@ -9,7 +9,7 @@
   - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "cetus"
-  - galaxy_version: "release_18.09"
+  - galaxy_version: "release_19.05"
   - galaxy_install_dir: "/mnt/rvmi/cetus/galaxy"
   - galaxy_dir: "/mnt/rvmi/cetus/galaxy/teaching"
   # Database and reference data
@@ -31,7 +31,11 @@
   - enable_reports: yes
   # Welcome page etc
   - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
-  - galaxy_base_css: "instances/cetus/files/cetus-base.css"
+  # Custom colours
+  - galaxy_custom_scss:
+      # Colour for navbar/masthead
+      - var: "brand-dark"
+        value: "#660099"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
   # Running jobs
@@ -39,8 +43,13 @@
   # Check toolshed for updates
   - enable_tool_shed_check: yes
   # Cetus-specific settings
-  # Message of the day to display on the front page
-  - cetus_motd:
+  # Message of the day to display on the front page and message
+  # to display under masthead
+  # -- for ansible <2.6 "errors=..." option is not supported so
+  #    an empty placeholder file is required to stop the playbook
+  #    failing
+  - cetus_motd: "{{ lookup('file', 'instances/cetus/files/motd', errors='warn') }}"
+  - galaxy_message: "{{ lookup('file', 'instances/cetus/files/message', errors='warn') }}"
 
   vars_files:
   - instances/cetus/{{ cetus_secrets }}
@@ -60,6 +69,9 @@
   - role: postfix-null-client
     when: enable_smtp
   - lets-encrypt-client
+  - role: jsedrop
+    jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
+    when: enable_local_jse_drop
   # Install Galaxy-specific Python 2.7
   - role: python27
     install_dir: "{{ galaxy_python_dir }}"
