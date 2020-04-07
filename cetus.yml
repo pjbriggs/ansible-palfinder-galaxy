@@ -31,7 +31,11 @@
   - enable_reports: yes
   # Welcome page etc
   - galaxy_welcome_template: "instances/cetus/templates/cetus-welcome.html.j2"
-  - galaxy_base_css: "instances/cetus/files/cetus-base.css"
+  # Custom colours
+  - galaxy_custom_scss:
+      # Colour for navbar/masthead
+      - var: "brand-dark"
+        value: "#660099"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
   # Running jobs
