@@ -62,3 +62,4 @@ cetus:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.70"
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72+galaxy1"
+      - "toolshed.g2.bx.psu.edu/repos/iuc/multiqc/multiqc/1.7.1"
