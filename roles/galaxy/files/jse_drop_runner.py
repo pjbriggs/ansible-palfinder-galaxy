@@ -323,7 +323,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             elif jse_drop_status == JSEDropStatus.ERROR:
                 # Job is in error state
                 log.warn("%s: job is in error state" % job_name)
-                message = "Job in error state"
+                message = "Job in error state: try resubmitting?"
             else:
                 # Can't find the job
                 log.warn("%s: no such job in JSE-drop?" % job_name)
