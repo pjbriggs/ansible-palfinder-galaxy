@@ -313,16 +313,22 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 jse_drop.cleanup(job_name)
             return None
         if jse_drop_status in (JSEDropStatus.FAILED,
-                               JSEDropStatus.MISSING):
+                               JSEDropStatus.MISSING,
+                               JSEDropStatus.ERROR,):
             if jse_drop_status == JSEDropStatus.FAILED:
                 # Get message from qfail file
                 log.warn("%s: failed" % job_name)
                 message = "Submission to JSE-drop failed: %s" % \
                           jse_drop.qfail(job_name)['stderr']
+            elif jse_drop_status == JSEDropStatus.ERROR:
+                # Job is in error state
+                log.warn("%s: job is in error state" % job_name)
+                message = "Job in error state: try resubmitting?"
             else:
                 # Can't find the job
                 log.warn("%s: no such job in JSE-drop?" % job_name)
                 message = "%s: no such job in JSE-drop?" % job_name
+            job_state.fail_message = message
             self.fail_job(job_state)
             # Remove the JSE-drop files
             cleanup_job = self.app.config.cleanup_job

@@ -15,6 +15,7 @@ class JSEDropStatus(object):
     FAILED = 3
     RUNNING = 4
     FINISHED = 5
+    ERROR = 6
 
 class JSEDrop(object):
     """
@@ -152,6 +153,12 @@ class JSEDrop(object):
             # Waiting for submission
             return JSEDropStatus.WAITING
         if not os.path.exists("%s.drop.qacct" % base_name):
+            # Check for job in error state
+            try:
+                if self.qstat(base_name)['state'] == "Eqw":
+                    return JSEDropStatus.ERROR
+            except KeyError:
+                pass
             # Running
             return JSEDropStatus.RUNNING
         # Finished
