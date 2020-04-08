@@ -34,7 +34,8 @@ server {
 {% else %}
     listen 80 default;
 {% endif %}
-    client_max_body_size 10G;
+    client_body_temp_path {{ nginx_client_body_temp_path }};
+    client_max_body_size {{ nginx_client_max_body_size }};
     # UWSGI settings
     uwsgi_temp_path /tmp/uwsgi;
     uwsgi_max_temp_file_size 1024k;

@@ -165,6 +165,10 @@ galaxy_sanitize_whitelist_file: "config/sanitize_whitelist.txt"
 # - ...
 galaxy_sanitize_whitelist_tools:
 
+# nginx configuration
+nginx_client_body_temp_path: "/tmp/nginx"
+nginx_client_max_body_size: "10G"
+
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
 
