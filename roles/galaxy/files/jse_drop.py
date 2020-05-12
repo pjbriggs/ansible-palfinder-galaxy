@@ -346,8 +346,8 @@ class JSEDrop(object):
         """
         kill_file = os.path.join(self._drop_dir,"%s.drop.qdel" % name)
         if os.path.exists(kill_file):
-            raise OSError("Kill file for job with name '%s' already exists" %
-                          name)
+            # Kill file already exists, ignore
+            return
         with open(kill_file,'w') as fp:
             pass
 
