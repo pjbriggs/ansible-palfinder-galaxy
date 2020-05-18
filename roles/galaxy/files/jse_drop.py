@@ -6,6 +6,8 @@ import shutil
 import tempfile
 import re
 import glob
+from datetime import datetime
+from datetime import timedelta
 
 # JSE-drop job status codes
 class JSEDropStatus(object):
@@ -396,6 +398,39 @@ class JSEDrop(object):
             return
         with open(kill_file,'w') as fp:
             pass
+
+    def timestamp(self,name):
+        """
+        Return timestamp associated with a job
+
+        This will be the most recent timestamp across
+        all '.drop.*' files associated with the job
+
+        Arguments:
+          name (str): name of the job
+
+        """
+        extensions = ('.drop.qsub',
+                      '.drop.qsubmit',
+                      '.drop.qfail',
+                      '.drop.qstat',
+                      '.drop.qdel',
+                      '.drop.qdeleted',
+                      '.drop.qacct',)
+        timestamp = None
+        for ext in extensions:
+            try:
+                ts = os.path.getmtime(os.path.join(self._drop_dir,
+                                                   "%s%s" % (name,ext)))
+                if timestamp:
+                    timestamp = max(timestamp,ts)
+                else:
+                    timestamp = ts
+            except OSError:
+                pass
+            except Exception as ex:
+                print("%s: failed to get job timestamp: %s" % (name,ex))
+        return timestamp
 
     def cleanup(self,name):
         """
