@@ -13,7 +13,6 @@ from datetime import timedelta
 class JSEDropStatus(object):
     MISSING = 0
     WAITING = 1
-    SUBMITTED = 2
     FAILED = 3
     RUNNING = 4
     FINISHED = 5
