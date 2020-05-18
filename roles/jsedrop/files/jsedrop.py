@@ -53,12 +53,12 @@ class PopenBackend(object):
         try:
             # Paths to output files
             stdout_path = os.path.join(out_dir,
-                                       "%s--%s.o%s" %
-                                       (name,job_id,
+                                       "%s.o%s" %
+                                       (job_id,
                                         self._job_number[job_id]))
             stderr_path = os.path.join(out_dir,
-                                       "%s--%s.e%s" %
-                                       (name,job_id,
+                                       "%s.e%s" %
+                                       (job_id,
                                         self._job_number[job_id]))
             # Get file handles for outputs
             self._job_stdout[job_id] = open(stdout_path,'wt')
@@ -97,7 +97,7 @@ class PopenBackend(object):
             # Job is still running, return qstat-style output
             return (None,
                     """<JB_job_number>{job_number}</JB_job_number>
-<JB_name>{job}  {job_id}</JB_name>
+<JB_name>{job_id}</JB_name>
 <JB_owner>{user}</JB_owner>
 <state>r</state>
 <JAT_start_time>{start_time}<start_time>
@@ -106,7 +106,6 @@ class PopenBackend(object):
            start_time=time.strftime("%Y-%m-%dT%T",
                                     self._job_start_time[job_id]),
            job_number=self._job_number[job_id],
-           job=self._job_name[job_id],
            job_id=job_id))
         else:
             # Job has finished, return qacct-style output
@@ -118,7 +117,7 @@ qname        test
 hostname     {hostname}
 group        {group}
 owner        {user}
-jobname      {job}--{job_id}
+jobname      {job_id}
 jobnumber    {job_number}
 qsub_time    {start_time}
 start_time   {start_time}
@@ -134,7 +133,6 @@ exit_status  {status}
                                     self._job_start_time[job_id]),
            end_time=time.strftime("%a %b %d %T %Y",
                                   self._job_end_time[job_id]),
-           job=self._job_name[job_id],
            job_id=job_id,
            job_number=self._job_number[job_id],
            status=self._job_status[job_id]))
@@ -274,8 +272,15 @@ class JSEDrop(object):
         qsubmit_file = os.path.join(self._drop_dir,
                                     "%s.drop.qsubmit" % job)
         if os.path.exists(qsubmit_file):
-            with open(qsubmit_file,'rt') as fp:
-                return fp.read().strip('/').split(' ')[-1]
+            # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
+            try:
+                with open(qsubmit_file,'rt') as fp:
+                    job_id = fp.read()
+                # Remove leading and trailing spaces and '//'
+                return job_id.strip().strip('/')
+            except Exception as ex:
+                raise Exception("Failed to extract job id for '%s' "
+                                "from '%s': %s" % (job,job_id,ex))
         else:
             return None
 
@@ -302,9 +307,13 @@ class JSEDrop(object):
         else:
             user = None
         # Get random ID for job
-        job_id = "%s--JSE-DROP" % ''.join(random.choice(
-            string.ascii_uppercase +
-            string.ascii_lowercase) for _ in range(32))
+        job_id = "%s%s--%s--JSE-DROP" % (job,
+                                         '_'*max(0,10-len(job)),
+                                         ''.join(random.choice(
+                                             string.ascii_uppercase +
+                                             string.ascii_lowercase)
+                                                 for _ in range(32)))
+        self.log("-- Assigned job ID: %s" % job_id)
         # Submit job
         try:
             self._backend.submit(name=job,
