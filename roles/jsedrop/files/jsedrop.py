@@ -389,7 +389,7 @@ STDERR:
                 status,output = self._backend.get_status(job_id)
             except Exception as ex:
                 self.log("-- WARNING error getting status for "
-                         "job '%s'" % job)
+                         "job '%s': %s" % (job,ex))
                 return
             if status is None:
                 # Job still running, write qstat file
