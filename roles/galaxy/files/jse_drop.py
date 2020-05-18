@@ -414,6 +414,8 @@ class JSEDrop(object):
                       '.drop.qacct',)
         # Remove stdout/stderr first
         for f in (self.stdout_file(name),self.stderr_file(name)):
+            if f is None:
+                continue
             try:
                 os.remove(f)
             except OSError:
