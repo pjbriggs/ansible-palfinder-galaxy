@@ -470,6 +470,29 @@ class JSEDrop(object):
             except OSError:
                 pass
 
+def jse_drop_cleanup_deleted(drop_dir,interval):
+    """
+    Clean up deleted jobs in the specified drop directory
+
+    Arguments:
+      drop_dir (str): path to JSE 'drop-off' directory
+      interval (int): interval (in seconds) from now which
+        deleted jobs must be older than in order to be
+        cleaned up
+
+    """
+    jsedrop = JSEDrop(drop_dir)
+    now = datetime.now()
+    interval = timedelta(seconds=interval)
+    jobs = [j for j in jsedrop.jobs()
+            if (jsedrop.status(j) == JSEDropStatus.DELETED
+                and
+                (now - datetime.fromtimestamp(jsedrop.timestamp(j)))
+                > interval)]
+    for job in jobs:
+        print("Cleaning up deleted job '%s'" % job)
+        jsedrop.cleanup(job)
+
 if __name__ == '__main__':
     # Test program
     import sys
