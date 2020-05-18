@@ -1,5 +1,42 @@
 """
 Python API for the JSE-drop job submission mechnanism.
+
+Provides the following classes:
+
+- ``JSEDropStatus``: status codes for JSE-drop jobs returned by
+  the ``JSEDrop.status`` method
+- ``JSEDrop``: class providing API methods for submitting,
+  monitoring and controlling JSE-drop jobs
+
+There is also a utility function:
+
+- ``jse_drop_cleanup_deleted``: removes the files associated
+  with deleted JSE-drop jobs which are older than a specified
+  time interval
+
+In normal operation the status codes indicate the following:
+
+- ``WAITING``: job has ``qsub`` file but not yet been
+  submitted by JSE-Drop (i.e. there is no ``qsubmit`` file)
+- ``RUNNING``: job is running (i.e. there is a ``qsubmit``
+  file indicating job started, but no ``qacct`` file to
+  indicate that it has finished)
+- ``FINISHED``: job has completed (i.e. there is a ``qacct``
+  file indicating the job has finished)
+- ``DELETING``: job is scheduled for deletion but may still
+  be active (i.e. there is a ``qdel`` file but no ``qdeleted``
+  file)
+- ``DELETED``: job has been deleted (i.e. there is a
+  ``qdeleted`` file)
+
+The following status codes indicate a problem:
+
+- ``FAILED``: job failed on submission (i.e. there is a
+  ``qfail`` file)
+- ``ERROR``: job was submitted but is in an error state
+  (e.g. ``Eqw`` state for Grid Engine backend)
+- ``MISSING``: job with that name is not found
+
 """
 import os
 import shutil
