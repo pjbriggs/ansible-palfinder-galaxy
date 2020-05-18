@@ -326,7 +326,7 @@ class JSEDrop(object):
             qsubmit_file = os.path.join(self._drop_dir,
                                         "%s.drop.qsubmit" % job)
             with open(qsubmit_file,'wt') as fp:
-                fp.write("//%s  %s//" % (job,job_id))
+                fp.write(" //%s//\n" % job_id)
         except Exception as ex:
             # Submission failed, write qfail file
             status = 1
