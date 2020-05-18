@@ -129,9 +129,49 @@ class JSEDrop(object):
         if not os.path.exists(qsubmit_file):
             return None
         with open(qsubmit_file) as fp:
-            #//my_job  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
+            # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
             job_id = fp.read()
-        return job_id.strip().split(' ')[1].rstrip('/')
+        try:
+            # Remove leading and trailing spaces and '//'
+            return job_id.strip().strip('/')
+        except Exception as ex:
+            raise Exception("Failed to extract job id for '%s' from "
+                            "'%s': %s" % (name,job_id,ex))
+
+    def get_job_number(self,name):
+        """
+        Return the number assigned by the backend compute engine
+
+        Attempts to fetch the job number from the
+        .drop.qacct file; if no information can be read
+        from .drop.qacct (e.g. job hasn't finished yet) then
+        tries to acquire the data from the .drop.qstat file.
+
+        If neither of these files exists then tries to infer
+        the job number from the '.o' file on the file system.
+
+        If none of these methods yields a job number then
+        returns None.
+
+        Arguments:
+          name (str): name of the job
+
+        """
+        # Try qacct
+        qacct = self.qacct(name)
+        if qacct:
+            return qacct['jobnumber']
+        # Fallback to qstat
+        qstat = self.qstat(name)
+        if qstat:
+            return qstat['JB_job_number']
+        # Finally: try checking the file system
+        output_files = glob.glob(os.path.join(self._drop_dir,
+                                              '%s--*--JSE-DROP.o*' % name))
+        if len(output_files) == 1:
+            return output_files[0].split('.')[-1][1:]
+        # Unable to acquire the job number
+        return None
 
     def status(self,name):
         """
@@ -306,43 +346,41 @@ class JSEDrop(object):
         """
         Return path to the stdout file for the job
 
-        Constructs and returns the full path to the stdout
-        file for the job, based on information from the
-        .drop.qacct file.
-
-        If no information could be read from .drop.qacct
-        (e.g. job hasn't finished yet) then returns None.
-
         There is no guarantee that the named file exists.
 
         """
-        qacct = self.qacct(name)
-        if not qacct:
+        # Get the job name
+        job_id = self.get_job_id(name)
+        # Get the job number
+        job_number = self.get_job_number(name)
+        if job_number is not None:
+            # Construct stdout file name
+            return os.path.join(self._drop_dir,
+                                '%s.o%s' % (job_id,
+                                            job_number))
+        else:
+            # No data available
             return None
-        return os.path.join(self._drop_dir,
-                            '%s.o%s' % (qacct['jobname'],
-                                        qacct['jobnumber']))
 
     def stderr_file(self,name):
         """
         Return path to the stderr file for the job
 
-        Constructs and returns the full path to the stderr
-        file for the job, based on information from the
-        .drop.qacct file.
-
-        If no information could be read from .drop.qacct
-        (e.g. job hasn't finished yet) then returns None.
-
         There is no guarantee that the named file exists.
 
         """
-        qacct = self.qacct(name)
-        if not qacct:
+        # Get the job name
+        job_id = self.get_job_id(name)
+        # Get the job number
+        job_number = self.get_job_number(name)
+        if job_number is not None:
+            # Construct stdout file name
+            return os.path.join(self._drop_dir,
+                                '%s.e%s' % (job_id,
+                                            job_number))
+        else:
+            # No data available
             return None
-        return os.path.join(self._drop_dir,
-                            '%s.e%s' % (qacct['jobname'],
-                                        qacct['jobnumber']))
 
     def kill(self,name):
         """
