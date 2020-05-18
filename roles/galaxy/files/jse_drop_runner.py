@@ -312,6 +312,11 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             if cleanup_job == "always" or cleanup_job == "onsuccess":
                 jse_drop.cleanup(job_name)
             return None
+        if jse_drop_status in (JSEDropStatus.DELETED,
+                               JSEDropStatus.DELETING,):
+            # Job either deleted, or waiting to be deleted
+            # Nothing to do here either way
+            return None
         if jse_drop_status in (JSEDropStatus.FAILED,
                                JSEDropStatus.MISSING,
                                JSEDropStatus.ERROR,):

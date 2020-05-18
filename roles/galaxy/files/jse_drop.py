@@ -16,6 +16,8 @@ class JSEDropStatus(object):
     RUNNING = 4
     FINISHED = 5
     ERROR = 6
+    DELETING = 7
+    DELETED = 8
 
 class JSEDrop(object):
     """
@@ -149,6 +151,12 @@ class JSEDrop(object):
         if os.path.exists("%s.drop.qfail" % base_name):
             # Submission failed
             return JSEDropStatus.FAILED
+        if os.path.exists("%s.drop.qdeleted" % base_name):
+            # Job has been deleted
+            return JSEDropStatus.DELETED
+        if os.path.exists("%s.drop.qdel" % base_name):
+            # Job is pending deletion
+            return JSEDropStatus.DELETING
         if not os.path.exists("%s.drop.qsubmit" % base_name):
             # Waiting for submission
             return JSEDropStatus.WAITING
