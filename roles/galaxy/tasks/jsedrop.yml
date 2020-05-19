@@ -32,3 +32,11 @@
     minute=00
     job='find {{ galaxy_jse_drop_dir }} -name "*" -type f -mtime +28 -exec rm -f {} \;'
     state=present
+
+- name: "Clean up deleted files from JSE-drop directory"
+  cron:
+    user='{{ galaxy_user }}'
+    name='Clean up deleted JSE-drop jobs'
+    special_time='hourly'
+    job='source {{ galaxy_root }}/.venv/bin/activate && PYTHONPATH={{ galaxy_root }}/lib:$PYTHONPATH python -c "from galaxy.jobs.runners.jse_drop import jse_drop_cleanup_deleted ; jse_drop_cleanup_deleted(\'{{ galaxy_jse_drop_dir }}\',{{ galaxy_jse_drop_cleanup_grace_period }})" 2>&1 1>>{{ galaxy_log_dir}}/jse_drop_cleanup.log'
+    state=present

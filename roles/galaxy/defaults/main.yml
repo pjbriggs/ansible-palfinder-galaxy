@@ -139,6 +139,9 @@ galaxy_default_runner: "local"
 galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
 galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
 galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
+# Grace period after which files from deleted jobs
+# can be removed (seconds)
+galaxy_jse_drop_cleanup_grace_period: "600"
 
 # Job destinations
 # Define entries as a dictionary with:

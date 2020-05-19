@@ -1,21 +1,62 @@
 """
 Python API for the JSE-drop job submission mechnanism.
+
+Provides the following classes:
+
+- ``JSEDropStatus``: status codes for JSE-drop jobs returned by
+  the ``JSEDrop.status`` method
+- ``JSEDrop``: class providing API methods for submitting,
+  monitoring and controlling JSE-drop jobs
+
+There is also a utility function:
+
+- ``jse_drop_cleanup_deleted``: removes the files associated
+  with deleted JSE-drop jobs which are older than a specified
+  time interval
+
+In normal operation the status codes indicate the following:
+
+- ``WAITING``: job has ``qsub`` file but not yet been
+  submitted by JSE-Drop (i.e. there is no ``qsubmit`` file)
+- ``RUNNING``: job is running (i.e. there is a ``qsubmit``
+  file indicating job started, but no ``qacct`` file to
+  indicate that it has finished)
+- ``FINISHED``: job has completed (i.e. there is a ``qacct``
+  file indicating the job has finished)
+- ``DELETING``: job is scheduled for deletion but may still
+  be active (i.e. there is a ``qdel`` file but no ``qdeleted``
+  file)
+- ``DELETED``: job has been deleted (i.e. there is a
+  ``qdeleted`` file)
+
+The following status codes indicate a problem:
+
+- ``FAILED``: job failed on submission (i.e. there is a
+  ``qfail`` file)
+- ``ERROR``: job was submitted but is in an error state
+  (e.g. ``Eqw`` state for Grid Engine backend)
+- ``MISSING``: job with that name is not found
+
 """
 import os
 import shutil
 import tempfile
 import re
 import glob
+import time
+from datetime import datetime
+from datetime import timedelta
 
 # JSE-drop job status codes
 class JSEDropStatus(object):
     MISSING = 0
     WAITING = 1
-    SUBMITTED = 2
     FAILED = 3
     RUNNING = 4
     FINISHED = 5
     ERROR = 6
+    DELETING = 7
+    DELETED = 8
 
 class JSEDrop(object):
     """
@@ -127,9 +168,49 @@ class JSEDrop(object):
         if not os.path.exists(qsubmit_file):
             return None
         with open(qsubmit_file) as fp:
-            #//my_job  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
+            # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
             job_id = fp.read()
-        return job_id.strip().split(' ')[1].rstrip('/')
+        try:
+            # Remove leading and trailing spaces and '//'
+            return job_id.strip().strip('/')
+        except Exception as ex:
+            raise Exception("Failed to extract job id for '%s' from "
+                            "'%s': %s" % (name,job_id,ex))
+
+    def get_job_number(self,name):
+        """
+        Return the number assigned by the backend compute engine
+
+        Attempts to fetch the job number from the
+        .drop.qacct file; if no information can be read
+        from .drop.qacct (e.g. job hasn't finished yet) then
+        tries to acquire the data from the .drop.qstat file.
+
+        If neither of these files exists then tries to infer
+        the job number from the '.o' file on the file system.
+
+        If none of these methods yields a job number then
+        returns None.
+
+        Arguments:
+          name (str): name of the job
+
+        """
+        # Try qacct
+        qacct = self.qacct(name)
+        if qacct:
+            return qacct['jobnumber']
+        # Fallback to qstat
+        qstat = self.qstat(name)
+        if qstat:
+            return qstat['JB_job_number']
+        # Finally: try checking the file system
+        output_files = glob.glob(os.path.join(self._drop_dir,
+                                              '%s--*--JSE-DROP.o*' % name))
+        if len(output_files) == 1:
+            return output_files[0].split('.')[-1][1:]
+        # Unable to acquire the job number
+        return None
 
     def status(self,name):
         """
@@ -149,6 +230,12 @@ class JSEDrop(object):
         if os.path.exists("%s.drop.qfail" % base_name):
             # Submission failed
             return JSEDropStatus.FAILED
+        if os.path.exists("%s.drop.qdeleted" % base_name):
+            # Job has been deleted
+            return JSEDropStatus.DELETED
+        if os.path.exists("%s.drop.qdel" % base_name):
+            # Job is pending deletion
+            return JSEDropStatus.DELETING
         if not os.path.exists("%s.drop.qsubmit" % base_name):
             # Waiting for submission
             return JSEDropStatus.WAITING
@@ -298,43 +385,41 @@ class JSEDrop(object):
         """
         Return path to the stdout file for the job
 
-        Constructs and returns the full path to the stdout
-        file for the job, based on information from the
-        .drop.qacct file.
-
-        If no information could be read from .drop.qacct
-        (e.g. job hasn't finished yet) then returns None.
-
         There is no guarantee that the named file exists.
 
         """
-        qacct = self.qacct(name)
-        if not qacct:
+        # Get the job name
+        job_id = self.get_job_id(name)
+        # Get the job number
+        job_number = self.get_job_number(name)
+        if job_number is not None:
+            # Construct stdout file name
+            return os.path.join(self._drop_dir,
+                                '%s.o%s' % (job_id,
+                                            job_number))
+        else:
+            # No data available
             return None
-        return os.path.join(self._drop_dir,
-                            '%s.o%s' % (qacct['jobname'],
-                                        qacct['jobnumber']))
 
     def stderr_file(self,name):
         """
         Return path to the stderr file for the job
 
-        Constructs and returns the full path to the stderr
-        file for the job, based on information from the
-        .drop.qacct file.
-
-        If no information could be read from .drop.qacct
-        (e.g. job hasn't finished yet) then returns None.
-
         There is no guarantee that the named file exists.
 
         """
-        qacct = self.qacct(name)
-        if not qacct:
+        # Get the job name
+        job_id = self.get_job_id(name)
+        # Get the job number
+        job_number = self.get_job_number(name)
+        if job_number is not None:
+            # Construct stdout file name
+            return os.path.join(self._drop_dir,
+                                '%s.e%s' % (job_id,
+                                            job_number))
+        else:
+            # No data available
             return None
-        return os.path.join(self._drop_dir,
-                            '%s.e%s' % (qacct['jobname'],
-                                        qacct['jobnumber']))
 
     def kill(self,name):
         """
@@ -350,6 +435,39 @@ class JSEDrop(object):
             return
         with open(kill_file,'w') as fp:
             pass
+
+    def timestamp(self,name):
+        """
+        Return timestamp associated with a job
+
+        This will be the most recent timestamp across
+        all '.drop.*' files associated with the job
+
+        Arguments:
+          name (str): name of the job
+
+        """
+        extensions = ('.drop.qsub',
+                      '.drop.qsubmit',
+                      '.drop.qfail',
+                      '.drop.qstat',
+                      '.drop.qdel',
+                      '.drop.qdeleted',
+                      '.drop.qacct',)
+        timestamp = None
+        for ext in extensions:
+            try:
+                ts = os.path.getmtime(os.path.join(self._drop_dir,
+                                                   "%s%s" % (name,ext)))
+                if timestamp:
+                    timestamp = max(timestamp,ts)
+                else:
+                    timestamp = ts
+            except OSError:
+                pass
+            except Exception as ex:
+                print("%s: failed to get job timestamp: %s" % (name,ex))
+        return timestamp
 
     def cleanup(self,name):
         """
@@ -368,6 +486,8 @@ class JSEDrop(object):
                       '.drop.qacct',)
         # Remove stdout/stderr first
         for f in (self.stdout_file(name),self.stderr_file(name)):
+            if f is None:
+                continue
             try:
                 os.remove(f)
             except OSError:
@@ -386,6 +506,30 @@ class JSEDrop(object):
                                        "%s%s" % (name,ext)))
             except OSError:
                 pass
+
+def jse_drop_cleanup_deleted(drop_dir,interval):
+    """
+    Clean up deleted jobs in the specified drop directory
+
+    Arguments:
+      drop_dir (str): path to JSE 'drop-off' directory
+      interval (int): interval (in seconds) from now which
+        deleted jobs must be older than in order to be
+        cleaned up
+
+    """
+    jsedrop = JSEDrop(drop_dir)
+    now = datetime.now()
+    interval = timedelta(seconds=interval)
+    jobs = [j for j in jsedrop.jobs()
+            if (jsedrop.status(j) == JSEDropStatus.DELETED
+                and
+                (now - datetime.fromtimestamp(jsedrop.timestamp(j)))
+                > interval)]
+    for job in jobs:
+        print("%s: cleaning up deleted job '%s'" %
+              (time.strftime("%Y-%m-%d %H:%M:%S"),job))
+        jsedrop.cleanup(job)
 
 if __name__ == '__main__':
     # Test program
