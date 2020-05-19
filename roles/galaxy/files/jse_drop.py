@@ -43,6 +43,7 @@ import shutil
 import tempfile
 import re
 import glob
+import time
 from datetime import datetime
 from datetime import timedelta
 
@@ -526,7 +527,8 @@ def jse_drop_cleanup_deleted(drop_dir,interval):
                 (now - datetime.fromtimestamp(jsedrop.timestamp(j)))
                 > interval)]
     for job in jobs:
-        print("Cleaning up deleted job '%s'" % job)
+        print("%s: cleaning up deleted job '%s'" %
+              (time.strftime("%Y-%m-%d %H:%M:%S"),job))
         jsedrop.cleanup(job)
 
 if __name__ == '__main__':
