@@ -1,6 +1,12 @@
 <tool name="Venn Diagram" id="cistrome_venn" version="1.0.1">
   <description>Given 2 or 3 intervals, generate a Venn diagram of their intersections</description>
-  <command interpreter="python">cistrome_venn_diagram.py $bfile1 $bfile2 $bfile3 -H $height -W $width -t "$title" -l "$bf1label" -l "$bf2label" -l "$bf3label" -o $output $proportional
+  <command interpreter="python">cistrome_venn_diagram.py $bfile1 $bfile2
+  #if $bfile3
+    $bfile3
+  #end if
+  -H $height -W $width -t "$title"
+  -l "$bf1label" -l "$bf2label" -l "$bf3label"
+  -o $output $proportional
 </command>
   <inputs> 
     <param name="title" type="text" label="Diagram title" value="Bed Venn Diagram" size="50" />
