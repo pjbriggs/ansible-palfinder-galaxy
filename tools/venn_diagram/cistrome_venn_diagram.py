@@ -196,7 +196,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     tempsize = 0
     for key in datadict1:
         tempsize+=len(datadict1[key])
-    print 'tmpsize= ', tempsize
+    print('tmpsize= %s' % tempsize)
 
     #developing new datadicts based on clustering
     datadict12,datadict1_12,datadict2_12 = make_cluster(datadict1,datadict2)
@@ -236,7 +236,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
         sizeAC+=len(datadict_AC[key])
     for key in datadict_ABC:
         sizeABC+=len(datadict_ABC[key])
-    print sizeABC
+    print(sizeABC)
     total_size = sizeA+sizeB+sizeC+sizeAB+sizeBC+sizeAC+sizeABC    
     sizeA_tot = sizeA+sizeAB+sizeAC+sizeABC
     sizeB_tot = sizeB+sizeAB+sizeBC+sizeABC
@@ -266,7 +266,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     venn_diagram_webpage = 'http://chart.apis.google.com/chart?cht=v&chs='+image_size+'&chd=t:'+data_sizes+'&chco='+colors+'&chdl='+legend+'&chtt='+title+'&chdlp='+'bv'
     url = venn_diagram_webpage.replace(' ','%20')
     if opts.url == 'yes':
-        print url
+        print(url)
     #accessing webpage and copying png image to file
     opener = urllib.FancyURLopener({})
     f = opener.open(url)
