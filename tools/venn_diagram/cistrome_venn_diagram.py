@@ -227,7 +227,7 @@ def main(bed1,bed2,bed3,title,height,width,show_url,bedlabel,
 
     #calclating size of each cluster
     sizeA=sizeB=sizeC=sizeAB=sizeBC=sizeAC=sizeABC=0
-    #print datadict_ABC
+    #print(datadict_ABC)
     for key in datadict_A:
         sizeA+=len(datadict_A[key])
     for key in datadict_B:
@@ -242,7 +242,7 @@ def main(bed1,bed2,bed3,title,height,width,show_url,bedlabel,
         sizeAC+=len(datadict_AC[key])
     for key in datadict_ABC:
         sizeABC+=len(datadict_ABC[key])
-    print(sizeABC)
+    #print(sizeABC)
     total_size = sizeA+sizeB+sizeC+sizeAB+sizeBC+sizeAC+sizeABC    
     sizeA_tot = sizeA+sizeAB+sizeAC+sizeABC
     sizeB_tot = sizeB+sizeAB+sizeBC+sizeABC
