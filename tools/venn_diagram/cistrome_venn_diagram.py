@@ -5,6 +5,11 @@ import urllib
 import argparse
 import copy
 import math
+try:
+    from urllib.request import FancyURLopener
+except ImportError:
+    # Fallback to Python2
+    from urllib import FancyURLopener
 
 def read_bed_file(bedfilename):
     """
@@ -296,7 +301,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     if args.url == 'yes':
         print(url)
     #accessing webpage and copying png image to file
-    opener = urllib.FancyURLopener({})
+    opener = FancyURLopener({})
     f = opener.open(url)
     venn_diagram = f.read()
     newFile = open(png_out, "wb")
