@@ -189,7 +189,8 @@ def combine_dicts_2(dict1,dict2):
             new_dict[key] = dict2[key]
     return new_dict
 
-def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
+def main(bed1,bed2,bed3,title,height,width,show_url,bedlabel,
+         png_out='venn_diagram.png',notproportional=False):
     """
     This function takes in three bed files and creats a png file containing a venn_diagram which illustrates the number of regions shared by the bed files.
     """
@@ -250,7 +251,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     sizeAC_tot = sizeAC+sizeABC  #fixed a typo here, was AB+ABC before now changed to AC+ABC
     sizeBC_tot = sizeBC+sizeABC
     #generating html page which defines the venn diagram
-    if args.notproportional:
+    if notproportional:
         data_sizes = str(100.0*sizeA_tot/total_size)+','+\
                      str(100.0*sizeB_tot/total_size)+','+\
                      str(100.0*sizeC_tot/total_size)+','+\
@@ -258,7 +259,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
                      str(100.0*sizeAC_tot/total_size)+','+\
                      str(100.0*sizeBC_tot/total_size)+','+\
                      str(100.0*sizeABC/total_size)
-    elif not args.notproportional:
+    else:
         # fixed values for non-proportional diagrams
         data_sizes = '100,100,100,20,20,20,10'
     colors = 'ff0000,0000ff,00ff00,ffffff,ffffff,ffffff,ffffff'
@@ -267,38 +268,38 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
         height='600'
     image_size=width+'x'+height
     if bed2 == bed3:
-        if args.notproportional:
+        if notproportional:
             data_sizes = str(100.0*sizeA_tot/total_size)+','+\
                          str(100.0*sizeB_tot/total_size)+',0,'+\
                          str(100.0*sizeABC/total_size)
-        elif not args.notproportional:
+        else:
             # fixed values for non-proportional option
             data_sizes = '100,100,0,25'
         colors = 'ff0000,0000ff,ffffff'
-        legend = args.bedlabel[0]+\
+        legend = bedlabel[0]+\
                  ' only (locations= '+str(sizeA)+')|'+\
-                 args.bedlabel[1]+\
+                 bedlabel[1]+\
                  ' only (locations= '+str(sizeBC)+')|'+\
-                 args.bedlabel[0]+' and '+args.bedlabel[1]+\
+                 bedlabel[0]+' and '+bedlabel[1]+\
                  '(shared locations= '+str(sizeABC)+')'
     else:
-        legend = args.bedlabel[0]+\
+        legend = bedlabel[0]+\
                  ' only (locations= '+str(sizeA)+')|'+\
-                 args.bedlabel[1]+\
+                 bedlabel[1]+\
                  ' only (locations= '+str(sizeB)+')|'+\
-                 args.bedlabel[2]+\
+                 bedlabel[2]+\
                  ' only (locations= '+str(sizeC)+')|'+\
-                 args.bedlabel[0]+' and '+args.bedlabel[1]+\
+                 bedlabel[0]+' and '+bedlabel[1]+\
                  ' only (shared locations= '+str(sizeAB)+')|'+\
-                 args.bedlabel[0]+' and '+args.bedlabel[2]+\
+                 bedlabel[0]+' and '+bedlabel[2]+\
                  ' only (shared locations= '+str(sizeAC)+')|'+\
-                 args.bedlabel[1]+' and '+args.bedlabel[2]+\
+                 bedlabel[1]+' and '+bedlabel[2]+\
                  ' only (shared locations= '+str(sizeBC)+')|'+\
-                 args.bedlabel[0]+','+args.bedlabel[1]+', and '+args.bedlabel[2]+\
+                 bedlabel[0]+','+bedlabel[1]+', and '+bedlabel[2]+\
                  ' (shared locations= '+str(sizeABC)+')'
     venn_diagram_webpage = 'http://chart.apis.google.com/chart?cht=v&chs='+image_size+'&chd=t:'+data_sizes+'&chco='+colors+'&chdl='+legend+'&chtt='+title+'&chdlp='+'bv'
     url = venn_diagram_webpage.replace(' ','%20')
-    if args.url == 'yes':
+    if show_url:
         print(url)
     #accessing webpage and copying png image to file
     opener = FancyURLopener({})
@@ -315,7 +316,7 @@ if __name__ == '__main__':
     parser.add_argument('-H','--height', dest ='height', default='500')
     parser.add_argument('-W','--width', dest='width', default='500')
     parser.add_argument('-t','--title',dest='title',default='Bed Venn Diagram')
-    parser.add_argument('-u','--url',dest='url',default='no')
+    parser.add_argument('-u','--url',dest='url')
     parser.add_argument('-n','--notproportional',action='store_false',
                         dest='notproportional',default=True)
     parser.add_argument('-o',"--output",dest='png_out',type=str,
@@ -341,4 +342,6 @@ if __name__ == '__main__':
          args.height,
          args.width,
          args.url,
-         png_out=args.png_out)
+         bedlabel,
+         png_out=args.png_out,
+         notproportional=args.notproportional,)
