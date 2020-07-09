@@ -327,10 +327,16 @@ if __name__ == '__main__':
     parser.add_argument('bed2')
     parser.add_argument('bed3',nargs='?')
     args = parser.parse_args()
-    if not args.bedlabel:
-        bedlabel = ["Bed File 1","Bed File 2","Bed File 3"]
-    else:
-        bedlabel = args.bedlabel
+    # Handle labels
+    bedlabel = list()
+    for label,default in zip(args.bedlabel,
+                             ("Bed File 1",
+                              "Bed File 2",
+                              "Bed File 3")):
+        if label:
+            bedlabel.append(label)
+        else:
+            bedlabel.append(default)
     bed1 = args.bed1
     bed2 = args.bed2
     if not args.bed3:
