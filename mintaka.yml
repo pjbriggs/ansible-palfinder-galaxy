@@ -183,12 +183,13 @@
   - galaxy_outgoing_email_addr: "Mintaka Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
   - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
   # Mintaka-specific settings
-  # Message of the day to display on the front page
-  - mintaka_motd: |
-       <h2>Mintaka is in beta testing</h2>
-       <p>Please report problems to
-       <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
-  - galaxy_message: "Mintaka is in beta testing mode, please report any problems"
+  # Message of the day to display on the front page and message
+  # to display under masthead
+  # -- for ansible <2.6 "errors=..." option is not supported so
+  #    an empty placeholder file is required to stop the playbook
+  #    failing
+  - mintaka_motd: "{{ lookup('file', 'instances/mintaka/files/motd', errors='warn') }}"
+  - galaxy_message: "{{ lookup('file', 'instances/mintaka/files/message', errors='warn') }}"
 
   vars_files:
   - instances/mintaka/{{ mintaka_secrets }}
