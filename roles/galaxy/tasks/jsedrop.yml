@@ -13,6 +13,7 @@
   file:
     path='{{ galaxy_jse_drop_dir }}'
     state=directory
+    mode=0775
 
 # Setup cron jobs to clean up JSE-drop directory
 - name: Clean up qsub files from JSE-drop directory
