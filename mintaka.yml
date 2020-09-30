@@ -36,7 +36,11 @@
   - galaxy_welcome_template: "instances/mintaka/templates/mintaka-welcome.html.j2"
   - galaxy_terms: "instances/mintaka/files/mintaka-terms.html"
   - galaxy_citations: "instances/mintaka/files/mintaka-citations.html"
-  - galaxy_base_css: "instances/mintaka/files/mintaka-base.css"
+  # Custom colours
+  - galaxy_custom_scss:
+      # Colour for navbar/masthead
+      - var: "brand-dark"
+        value: "#660099"
   # Users
   - galaxy_admin_user: "admin@galaxy.org"
   - galaxy_users:
