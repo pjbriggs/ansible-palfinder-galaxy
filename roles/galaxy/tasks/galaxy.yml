@@ -173,13 +173,14 @@
     .venv/bin/python scripts/create_db.py
   when: dbstatus.rc != 0
 
-- name: "Dump Galaxy database SQL as a backup"
-  shell:
-    "pg_dump {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
-  when: dbstatus.rc == 0
+- name: "Update existing Galaxy database"
+  block:
+    - name: "Dump Galaxy database SQL as a backup"
+      shell:
+        "pg_dump {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
 
-- name: "Update the Galaxy database"
-  command:
-    chdir='{{ galaxy_root }}'
-    ./manage_db.sh upgrade
+    - name: "Update the Galaxy database"
+      command:
+        chdir='{{ galaxy_root }}'
+        ./manage_db.sh upgrade
   when: dbstatus.rc == 0
