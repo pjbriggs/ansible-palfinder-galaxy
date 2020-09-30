@@ -230,4 +230,5 @@
   - role: restart-galaxy
     enable_master_api_key: no
   # Additional set up
+  - galaxy-auto-delete-datasets
   - galaxy-audit-report
