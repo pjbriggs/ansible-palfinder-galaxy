@@ -10,6 +10,7 @@
   - '{{ galaxy_tool_dependency_dir }}'
   - '{{ galaxy_ftp_upload_dir }}'
   - '{{ galaxy_dir }}/logs'
+  - '{{ galaxy_dir }}/backups'
 
 - name: Set Galaxy URL
   set_fact:
@@ -160,7 +161,26 @@
   environment:
     PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
 
-- name: "Run create_db.py to initialise the database"
+# Create or update Galaxy database
+- name: "Check if Galaxy database exists"
+  shell:
+    psql -c '\dt' '{{ galaxy_db }}'
+  register: dbstatus
+
+- name: "Run create_db.py to initialise the Galaxy database"
   command:
     chdir='{{ galaxy_root }}'
     .venv/bin/python scripts/create_db.py
+  when: dbstatus.rc != 0
+
+- name: "Update existing Galaxy database"
+  block:
+    - name: "Dump Galaxy database SQL as a backup"
+      shell:
+        "pg_dump {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
+
+    - name: "Update the Galaxy database"
+      command:
+        chdir='{{ galaxy_root }}'
+        ./manage_db.sh upgrade
+  when: dbstatus.rc == 0
