@@ -36,10 +36,10 @@
     state=present
   with_items:
   - { name: "Clean up files from job working directory",
-      job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +28 -exec rm -rf {} \;",
+      job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +28 -exec rm -rf {} \\;",
       hour: 00,
       minute: 10 }
   - { name: "Clean up empty directories from job working directory",
-      job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +28 -empty -exec rmdir {} \;",
+      job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +28 -empty -exec rmdir {} \\;",
       hour: 00,
       minute: 15 }
