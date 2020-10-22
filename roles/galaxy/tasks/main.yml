@@ -18,7 +18,7 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
-- include: purgehistories.yml
+- include: cleanup.yml
 
 - include: logrotate.yml
 
