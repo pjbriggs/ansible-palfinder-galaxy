@@ -74,8 +74,13 @@
   - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
   - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
   # Palfinder-specific settings
-  # Message of the day to display on the front page
-  - palfinder_motd:
+  # Message of the day to display on the front page and message
+  # to display under masthead
+  # -- for ansible <2.6 "errors=..." option is not supported so
+  #    an empty placeholder file is required to stop the playbook
+  #    failing
+  - palfinder_motd: "{{ lookup('file', 'instances/palfinder/files/motd', errors='warn') }}"
+  - galaxy_message: "{{ lookup('file', 'instances/palfinder/files/message', errors='warn') }}"
 
   vars_files:
   - instances/palfinder/{{ palfinder_secrets }}
