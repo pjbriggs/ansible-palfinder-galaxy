@@ -225,8 +225,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             qsub_header.append(qsub_options)
         qsub_header = '\n'.join(["#$ %s" % opt for opt in qsub_header])
         log.debug("qsub_header: %s" % qsub_header)
+        # Also get the GE job ID and hostname
+        qsub_info = '\n'.join(
+            ["echo \"##JSEDROP {env_var} ${env_var}\"".format(env_var=var)
+             for var in ('HOSTNAME','JOB_ID',)])
         # Reassemble the script components
-        script = "\n".join((shell,qsub_header,script))
+        script = "\n".join((shell,qsub_header,qsub_info,script))
         # Create the drop file to submit the job
         try:
             drop_file = jse_drop.run(job_name,script)
