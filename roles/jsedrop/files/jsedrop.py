@@ -15,6 +15,8 @@ import pwd
 import grp
 import atexit
 import signal
+import tempfile
+import subprocess
 
 DEFAULT_INTERVAL = 30
 
@@ -31,8 +33,6 @@ class PopenBackend(object):
         self._job_name = dict()
         self._job_number = dict()
         self._job_popen = dict()
-        self._job_stdout = dict()
-        self._job_stderr = dict()
         self._job_status = dict()
         self._job_owner = dict()
         self._job_start_time = dict()
@@ -60,17 +60,17 @@ class PopenBackend(object):
                                        "%s.e%s" %
                                        (job_id,
                                         self._job_number[job_id]))
-            # Get file handles for outputs
-            self._job_stdout[job_id] = open(stdout_path,'wt')
-            self._job_stderr[job_id] = open(stderr_path,'wt')
             # Run the script
             if user is None:
-                cmd = [script,]
+                cmd = '%s 1>%s 2>%s' % (script,
+                                        stdout_path,
+                                        stderr_path)
             else:
-                cmd = ['su','-m',user,'-c',script,]
-            p = Popen(cmd,
-                      stdout=self._job_stdout[job_id],
-                      stderr=self._job_stderr[job_id])
+                cmd = 'su -m %s -c "%s 1>%s 2>%s"' % (user,
+                                                      script,
+                                                      stdout_path,
+                                                      stderr_path)
+            p = Popen(cmd,shell=True)
             # Store Popen object
             self._job_popen[job_id] = p
         except Exception as ex:
@@ -284,6 +284,34 @@ class JSEDrop(object):
         else:
             return None
 
+    def _write_qfile(self,job,qfile,content):
+        """
+        Write content to a 'qfile' (e.g. 'qsubmit','qstat' etc)
+        """
+        qfile_path = os.path.join(self._drop_dir,"%s.drop.%s" %
+                                  (job,qfile))
+        if self._run_as_user:
+            user = self._get_job_owner(job)
+        else:
+            user = None
+        if user is None:
+            # Write file directly
+            with open(qfile_path,'wt') as fp:
+                fp.write("%s" % content)
+        else:
+            # Write intermediate file and copy as user
+            file_no,tmp_qfile = tempfile.mkstemp(
+                suffix=".jsedrop.%s" % qfile,
+                text=True)
+            os.fdopen(file_no).close()
+            with open(tmp_qfile,'wt') as fp:
+                fp.write("%s" % content)
+            os.chmod(tmp_qfile,0o644)
+            cmd = 'su -m %s -c "cp -f %s %s"' % (user,tmp_qfile,qfile_path)
+            retcode = subprocess.check_call(cmd,shell=True)
+            os.remove(tmp_qfile)
+        return qfile_path
+
     def log(self,s):
         """
         Write to log file
@@ -323,17 +351,14 @@ class JSEDrop(object):
                                  out_dir=self._drop_dir,
                                  user=user)
             # Write the qsubmit file to indicate job has started
-            qsubmit_file = os.path.join(self._drop_dir,
-                                        "%s.drop.qsubmit" % job)
-            with open(qsubmit_file,'wt') as fp:
-                fp.write(" //%s//\n" % job_id)
+            self._write_qfile(job,"qsubmit"," //%s//\n" % job_id)
         except Exception as ex:
             # Submission failed, write qfail file
             status = 1
-            qfail_file = os.path.join(self._drop_dir,
-                                      "%s.drop.qfail" % job)
-            with open(qfail_file,'wt') as fp:
-                fp.write("""======================================
+            self.log("-- Submission failed for job '%s': %s" % (job,ex))
+            try:
+                self._write_qfile(job,"qfail",
+                            """======================================
 
 Exit status: //{status}//
 
@@ -345,7 +370,9 @@ STDERR:
 
 ======================================
 """.format(status=status,ex=ex))
-            self.log("-- Submission failed for job '%s'" % job)
+            except Exception as ex:
+                self.log("-- Error attempting to write qfail file "
+                         "for job '%s': %s" % (job,ex))
             return
 
     def delete(self,job):
@@ -366,10 +393,8 @@ STDERR:
             stdout = ""
             stderr = "No submitted job matching '%s'" % job
         # Write qdeleted file
-        qdeleted_file = os.path.join(self._drop_dir,
-                                    "%s.drop.qdeleted" % job)
-        with open(qdeleted_file,'wt') as fp:
-            fp.write("""Exit status: //{status}//
+        self._write_qfile(job,"qdeleted",
+                    """Exit status: //{status}//
 
 STDOUT: 
  {stdout}
@@ -393,16 +418,10 @@ STDERR:
                 return
             if status is None:
                 # Job still running, write qstat file
-                qstat_file = os.path.join(self._drop_dir,
-                                          "%s.drop.qstat" % job)
-                with open(qstat_file,'wt') as fp:
-                    fp.write(output)
+                self._write_qfile(job,"qstat",output)
             else:
                 # Job has completed, write qacct file
-                qacct_file = os.path.join(self._drop_dir,
-                                          "%s.drop.qacct" % job)
-                with open(qacct_file,'wt') as fp:
-                    fp.write(output)
+                self._write_qfile(job,"qacct",output)
                 self.log("-- Job '%s' has completed" % job)
         
     def process(self):
