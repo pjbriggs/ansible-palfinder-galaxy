@@ -9,7 +9,7 @@
   - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "mintaka"
-  - galaxy_version: "release_18.09"
+  - galaxy_version: "release_19.05"
   - galaxy_install_dir: "/mnt/rvmi/mintaka/galaxy"
   - galaxy_dir: "{{ galaxy_install_dir }}/production"
   # Database and reference data
@@ -36,7 +36,11 @@
   - galaxy_welcome_template: "instances/mintaka/templates/mintaka-welcome.html.j2"
   - galaxy_terms: "instances/mintaka/files/mintaka-terms.html"
   - galaxy_citations: "instances/mintaka/files/mintaka-citations.html"
-  - galaxy_base_css: "instances/mintaka/files/mintaka-base.css"
+  # Custom colours
+  - galaxy_custom_scss:
+      # Colour for navbar/masthead
+      - var: "brand-dark"
+        value: "#660099"
   # Users
   - galaxy_admin_user: "admin@galaxy.org"
   - galaxy_users:
@@ -150,6 +154,7 @@
   # Add tools to whitelist for rendering HTML correctly
   - galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72+galaxy1"
   # Chromosome length files (.len)
   - galaxy_chromosome_len_files:
       - "data/chrom/hg38.len"
@@ -158,9 +163,18 @@
       - "data/chrom/mm10.len"
       - "data/chrom/mm9.len"
   # uWSGI and handler configuration
-  # Set number of uWSGI & handler processes in inventory file
+  # *** Set number of uWSGI & handler processes in inventory file ***
   # Job configuration
-  - enable_jse_drop: no
+  # (Always uses a local JSE-Drop service)
+  - enable_jse_drop: yes
+  - enable_local_jse_drop: yes
+  - jsedrop_python3_yum_package: "python34"
+  - jsedrop_python3: "/usr/bin/python3.4"
+  - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-local"
+  - galaxy_default_runner: "jse_drop_serial"
+  - galaxy_job_destinations:
+      - id: "jse_drop_serial"
+        runner: "jse_drop"
   # Running jobs
   - galaxy_new_file_path: "/mnt/rvmi/mintaka/galaxy/tmp"
   # Check toolshed for updates
@@ -171,12 +185,13 @@
   - galaxy_outgoing_email_addr: "Mintaka Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
   - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
   # Mintaka-specific settings
-  # Message of the day to display on the front page
-  - mintaka_motd: |
-       <h2>Mintaka is in beta testing</h2>
-       <p>Please report problems to
-       <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a></p>
-  - galaxy_message: "Mintaka is in beta testing mode, please report any problems"
+  # Message of the day to display on the front page and message
+  # to display under masthead
+  # -- for ansible <2.6 "errors=..." option is not supported so
+  #    an empty placeholder file is required to stop the playbook
+  #    failing
+  - mintaka_motd: "{{ lookup('file', 'instances/mintaka/files/motd', errors='warn') }}"
+  - galaxy_message: "{{ lookup('file', 'instances/mintaka/files/message', errors='warn') }}"
 
   vars_files:
   - instances/mintaka/{{ mintaka_secrets }}
@@ -196,6 +211,9 @@
   - role: postfix-null-client
     when: enable_smtp
   - lets-encrypt-client
+  # Install local JSEDrop service
+  - role: jsedrop
+    jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
   # Install Galaxy-specific Python 2.7
   - role: python27
     install_dir: "{{ galaxy_python_dir }}"
@@ -216,4 +234,5 @@
   - role: restart-galaxy
     enable_master_api_key: no
   # Additional set up
+  - galaxy-auto-delete-datasets
   - galaxy-audit-report
