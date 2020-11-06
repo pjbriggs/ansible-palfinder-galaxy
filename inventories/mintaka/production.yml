@@ -22,6 +22,3 @@ mintaka:
     enable_https: yes
     ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
     ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
-    # Local JSE-drop dependencies
-    jsedrop_python3_yum_package: "python34"
-    jsedrop_python3: "/usr/bin/python3.4"
