@@ -28,7 +28,7 @@ case $1 in
 	fi
 
         echo "Starting jsedrop..."
-        /usr/bin/python3 $JSEDROP_BIN {{ jsedrop_drop_dir }} --log $LOGFILE --pid_file $PIDFILE --run-as-user &
+        {{ jsedrop_python3 }} $JSEDROP_BIN {{ jsedrop_drop_dir }} --log $LOGFILE --pid_file $PIDFILE --run-as-user &
 	;;
 
     stop)

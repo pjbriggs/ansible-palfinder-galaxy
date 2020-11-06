@@ -2,4 +2,5 @@
 # jsedrop.py installation defaults
 jsedrop_install_dir: "/usr/bin"
 jsedrop_drop_dir: "/usr/share/drop-off"
+jsedrop_python3: "/usr/bin/python3"
 jsedrop_python3_yum_package: "python3"
