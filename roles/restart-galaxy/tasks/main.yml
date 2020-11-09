@@ -1,54 +1,23 @@
 ---
 # Restart Galaxy instance (with/without master API key)
 
-- name: Check for YAML configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/galaxy.yml'
-  register: galaxy_yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
-
-- name: Check for INI configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/galaxy.ini'
-  register: galaxy_ini
-  become: yes
-  become_user: "{{ galaxy_user }}"
-
-- name: Add master API key to YAML config file
+- name: Add master API key to Galaxy config file
   lineinfile:
     path: '{{ galaxy_root }}/config/galaxy.yml'
     regexp: "(#?)master_api_key: (.*)"
     line: "  master_api_key: {{ master_api_key }}"
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: enable_master_api_key and galaxy_yml.stat.exists == True
+  when: enable_master_api_key == True
 
-- name: Remove master API key from YAML config file
+- name: Remove master API key from Galaxy config file
   lineinfile:
     path: '{{ galaxy_root }}/config/galaxy.yml'
     regexp: "(#?)master_api_key: (.*)"
     line: "  #master_api_key: changethis"
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: not enable_master_api_key and galaxy_yml.stat.exists == True
-
-- name: Add master API key to INI config file
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='master_api_key' value='{{ master_api_key }}'
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: enable_master_api_key and galaxy_ini.stat.exists == True
-
-- name: Remove master API key from INI config file
-  ini_file:
-    dest='{{ galaxy_root }}/config/galaxy.ini'
-    section='app:main' option='master_api_key'
-    state='absent'
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: not enable_master_api_key and galaxy_ini.stat.exists == True
+  when: enable_master_api_key == False
 
 - name: Restart Galaxy
   command:
