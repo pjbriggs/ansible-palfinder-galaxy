@@ -1,18 +1,7 @@
 ---
 # Cron job to email audit report
 
-- name: Check for YAML Galaxy configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/galaxy.yml'
-  register: galaxy_yml
-  when: galaxy_yml.stat.exists == True
-
-- name: Check for INI Galaxy configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/galaxy.ini'
-  register: galaxy_ini
-
-- name: Set up cron jobs to email audit reports (YAML config)
+- name: Set up cron jobs to email audit reports
   cron:
     user="{{ galaxy_user }}"
     name="Email audit report"
@@ -23,15 +12,3 @@
     - enable_smtp
     - email_audit_report_to is defined and email_audit_report_to != None
     - galaxy_yml.stat.exists == True
-
-- name: Set up cron jobs to email audit reports (INI config)
-  cron:
-    user="{{ galaxy_user }}"
-    name="Email audit report"
-    job="{{ galaxy_utils_dir }}/bin/audit_report.py -c {{ galaxy_root }}/config/galaxy.ini -i '7 days' {{ email_audit_report_to }} 2>&1 >> {{ galaxy_dir }}/logs/audit_report.log"
-    hour=22 minute=35 weekday=0
-    state=present
-  when:
-    - enable_smtp
-    - email_audit_report_to is defined and email_audit_report_to != None
-    - galaxy_ini.stat.exists == True
