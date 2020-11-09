@@ -17,10 +17,9 @@
 # - https://stackoverflow.com/a/55851121
 - name: "Update curl and nss to work with EPEL"
   yum:
-    name: "{{ item }}"
+    name:
+      - nss
+      - curl
+      - libcurl
     state: "latest"
     disablerepo: "epel"
-  with_items:
-  - nss
-  - curl
-  - libcurl
