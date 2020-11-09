@@ -1,21 +1,22 @@
 ---
 # Fetch the Let's Encrypt 'certbot' client
 - name: Install certbot system dependencies
-  yum: state=present name={{item}}
-  with_items:
-  - gcc
-  - dialog
-  - augeas-libs
-  - openssl
-  - openssl-devel
-  - libffi-devel
-  - redhat-rpm-config
-  - ca-certificates
-  - python
-  - python-devel
-  - python-virtualenv
-  - python-tools
-  - python-pip
+  yum:
+    name:
+      - gcc
+      - dialog
+      - augeas-libs
+      - openssl
+      - openssl-devel
+      - libffi-devel
+      - redhat-rpm-config
+      - ca-certificates
+      - python
+      - python-devel
+      - python-virtualenv
+      - python-tools
+      - python-pip
+    state: present
   register: installed_certbot_dependencies
 
 - name: Fetch certbot-auto
