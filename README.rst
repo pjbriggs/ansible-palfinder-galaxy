@@ -53,6 +53,7 @@ The following roles are defined:
    * (Optionally) set up the JSE-drop job runner plugin
    * Configure uWSGI for Galaxy
    * Configure Supervisord for Galaxy
+   * (Optionally) set up custom colour scheme via SCSS
 
  - ``galaxy-utils``: installs utility scripts for Galaxy
    user creation, tool installation etc
@@ -125,6 +126,14 @@ Job runner configuration:
    be a dictionary defining a tool destination to be added to
    the ``tools`` section of ``job_conf.xml`` (default: no
    tool destinations are defined)
+
+Custom colour scheme:
+
+ - ``galaxy_custom_scss``: a list where each item should be
+   a dictionary defining an SCSS variable (``item``) and a
+   corresponding ``value``. (See "Adjusting styles" in the
+   tutorial presentation:
+   https://training.galaxyproject.org/training-material/topics/admin/tutorials/advanced-galaxy-customisation/slides.html#20)
 
 Other configuration settings:
 
