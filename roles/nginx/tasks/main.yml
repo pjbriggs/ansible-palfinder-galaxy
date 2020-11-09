@@ -1,12 +1,13 @@
 ---
 # Install, configure and start Nginx on remote server
 - name: Install Nginx
-  yum: name={{item}} state=present
-  with_items:
-  - nginx
-  - libselinux-python
-  - libsemanage-python
-  - python-passlib
+  yum:
+    name:
+      - nginx
+      - libselinux-python
+      - libsemanage-python
+      - python-passlib
+    state: present
 
 - name: Get status of SELinux
   command: getenforce
