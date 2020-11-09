@@ -11,12 +11,11 @@
 
 - name: Install dependencies for utilities
   pip:
-    name="{{ item }}"
-    executable='{{ python_install_dir }}/bin/pip'
-    state=present
-  with_items:
-    - "psycopg2==2.6.2"
-    - "pyyaml"
+    name:
+      - "psycopg2==2.6.2"
+      - "pyyaml"
+    executable: '{{ python_install_dir }}/bin/pip'
+    state: present
 
 - name: Install Nebulizer
   pip:
