@@ -1,28 +1,9 @@
 # Enable Galaxy's reporting interface
 ---
-- name: Check for sample reports.yml configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/reports.yml.sample'
-  register: reports_yml
-  become: yes
-  become_user: '{{ galaxy_user }}'
-
 - name: Create reports.yml configuration file
-  include: reports_yaml.yml
-  when: reports_yml.stat.exists == True
-  become: yes
-  become_user: '{{ galaxy_user }}'
-
-- name: Check for sample reports.ini configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/reports.ini.sample'
-  register: reports_ini
-  become: yes
-  become_user: '{{ galaxy_user }}'
-
-- name: Create reports.ini configuration file
-  include_tasks: reports_ini.yml
-  when: reports_ini.stat.exists == True
+  template:
+    dest='{{ galaxy_root }}/config/reports.yml'
+    src=galaxy-reports.yml.j2
   become: yes
   become_user: '{{ galaxy_user }}'
 
