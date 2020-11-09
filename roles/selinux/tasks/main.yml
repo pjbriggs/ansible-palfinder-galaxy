@@ -6,9 +6,9 @@
   changed_when: false
 
 - name: Install dependencies for managing SELinux
-  yum: name={{item}} state=present
-  with_items:
-  - policycoreutils-python
+  yum:
+    name: policycoreutils-python
+    state: present
   when: "'Disabled' not in sestatus.stdout"
 
 - name: Allow logrotate to operate on NFS
