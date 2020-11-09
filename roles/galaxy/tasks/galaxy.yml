@@ -68,23 +68,10 @@
     {{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ galaxy_python_dir }}/bin/python
     creates='{{ galaxy_root }}/.venv'
 
-- name: Check for sample YAML configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/galaxy.yml.sample'
-  register: galaxy_yml
-
-- name: Create Galaxy YAML configuration file
-  include: config_yaml.yml
-  when: galaxy_yml.stat.exists == True
-
-- name: Check for sample INI configuration file
-  stat:
-    path: '{{ galaxy_root }}/config/galaxy.ini.sample'
-  register: galaxy_ini
-
-- name: Create Galaxy INI configuration file
-  include_tasks: config_ini.yml
-  when: galaxy_ini.stat.exists == True
+- name: Create Galaxy configuration file
+  template:
+    dest='{{ galaxy_root }}/config/galaxy.yml'
+    src=galaxy-config.yml.j2
 
 # Import or create tool_conf files
 - name: "Import base tool_conf.xml"
