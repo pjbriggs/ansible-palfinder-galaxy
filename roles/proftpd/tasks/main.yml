@@ -4,13 +4,14 @@
 # See http://galacticengineer.blogspot.co.uk/2015/02/ftp-upload-to-galaxy-using-proftpd-and.html
 
 - name: Install ProFTPd build dependencies
-  yum: state=present name={{item}}
-  with_items:
-  - gcc
-  - postgresql-devel
-  - openssl-devel
-  - pam-devel
-  - libnetfilter_conntrack
+  yum:
+    name:
+      - gcc
+      - postgresql-devel
+      - openssl-devel
+      - pam-devel
+      - libnetfilter_conntrack
+    state: present
 
 - name: Determine the user home directory
   shell:
