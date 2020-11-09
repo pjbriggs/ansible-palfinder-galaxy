@@ -29,18 +29,17 @@
 
 - name: Install build dependencies
   yum:
-    name={{ item }}
-    state=present
-  with_items:
-    - gcc
-    - openssl-devel
-    - libcurl-devel
-    - expat-devel
-    - tcl
-    - gettext
-    - asciidoc
-    - xmlto
-    - docbook2X
+    name:
+      - gcc
+      - openssl-devel
+      - libcurl-devel
+      - expat-devel
+      - tcl
+      - gettext
+      - asciidoc
+      - xmlto
+      - docbook2X
+    state: present
 
 # Need to make link to docbook2x-text to build
 # git documentation, see
