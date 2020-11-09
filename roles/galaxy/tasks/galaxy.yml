@@ -56,12 +56,6 @@
   with_items: "{{ galaxy_custom_scss }}"
   when: galaxy_custom_scss|default(None) != None
 
-- name: "DEPRECATED: import base CSS styles file"
-  copy:
-    src='{{ galaxy_base_css }}'
-    dest='{{ galaxy_root }}/static/style/blue/base.css'
-  when: galaxy_base_css|default(None) != None
-
 - name: Make virtualenv in Galaxy root
   command:
     chdir={{ galaxy_root }}

@@ -38,11 +38,6 @@ galaxy_citations:
 # - value (Value e.g. 'red', '#660099')
 galaxy_custom_scss: null
 
-# Pre-built base CSS file to import for this
-# instance (overwrites existing CSS file)
-# !!!DEPRECATED: use 'galaxy_custom_scss' instead!!!
-galaxy_base_css: null
-
 # Message of the day
 # This message will be displayed under the masthead
 # on the Galaxy site
