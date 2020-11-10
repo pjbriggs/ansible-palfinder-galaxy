@@ -1,10 +1,11 @@
 ---
 # Install, configure and start PostgreSQL on remote server
 - name: Install PostgreSQL server
-  yum: name={{item}} state=present
-  with_items:
-  - postgresql
-  - postgresql-server
+  yum:
+    name:
+      - postgresql
+      - postgresql-server
+    state: present
   register: postgresql_installed
 
 - name: Check if PostgreSQL is initialised

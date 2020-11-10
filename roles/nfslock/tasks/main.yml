@@ -2,10 +2,10 @@
 # Install and start the nfslock service
 - name: Install NFS dependencies
   yum:
-    name={{ item }} state=present
-  with_items:
-  - nfs-utils
-  - rpcbind  
+    name:
+      - nfs-utils
+      - rpcbind
+    state: present
   register: installed_nfs_dependencies
 
 - name: Start rpcbind and enable on boot

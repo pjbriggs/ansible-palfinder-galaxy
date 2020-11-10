@@ -3,25 +3,26 @@
 # Also installs pip and virtualenv packages
 
 - name: Install Python build dependencies
-  yum: state="present" name="{{item}}"
-  with_items:
-  - autoconf
-  - make
-  - automake
-  - gcc
-  - readline
-  - sqlite
-  - zlib
-  - bzip2-devel
-  - bzip2
-  - ncurses-devel
-  - ncurses
-  - openssl-devel
-  - openssl
-  - readline-devel
-  - sqlite-devel
-  - zlib-devel
-  - tkinter
+  yum:
+    name:
+      - autoconf
+      - make
+      - automake
+      - gcc
+      - readline
+      - sqlite
+      - zlib
+      - bzip2-devel
+      - bzip2
+      - ncurses-devel
+      - ncurses
+      - openssl-devel
+      - openssl
+      - readline-devel
+      - sqlite-devel
+      - zlib-devel
+      - tkinter
+    state: "present"
 
 - name: Create installation directory
   file:

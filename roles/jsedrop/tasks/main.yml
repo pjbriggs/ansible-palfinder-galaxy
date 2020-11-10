@@ -3,10 +3,9 @@
 
 - name: "Install jsedrop.py dependencies"
   yum:
-    state=present
-    name="{{item}}"
-  with_items:
-    - "{{ jsedrop_python3_yum_package }}"
+    name:
+      - "{{ jsedrop_python3_yum_package }}"
+    state: present
 
 - name: "Install and start local JSE-Drop service (SL6)"
   block:
