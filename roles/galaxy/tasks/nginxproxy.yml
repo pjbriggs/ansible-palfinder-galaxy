@@ -2,49 +2,52 @@
 # See https://wiki.galaxyproject.org/Admin/Config/nginxProxy
 ---
 # Create conf file for Galaxy and put into Nginx conf.d/
-- name: Configure Nginx proxy
+- name: "Configure Nginx proxy"
   template:
-    dest="/etc/nginx/conf.d/galaxy.conf"
-    src=nginx-galaxy.conf.j2
+    dest: "{{ nginx_conf_dir }}/conf.d/galaxy.conf"
+    src: nginx-galaxy.conf.j2
   notify:
   - Restart Nginx
 
 # Need write permission on home so that static content
 # can be read by Nginx proxy
-- name: Allow group read on Galaxy user home
+- name: "Allow group read on Galaxy user home"
   file:
-    path=/home/{{ galaxy_user }}
-    mode='g+rx'
+    path: "/home/{{ galaxy_user }}"
+    mode: 'g+rx'
   become: yes
   become_user: '{{ galaxy_user }}'
   register: set_group_read_on_galaxy_home
 
 # Required to allow Nginx to read static content
 # from Galaxy's home directory
-- name: Add Nginx user to galaxy group
+- name: "Add Nginx user to galaxy group"
   user:
-    name=nginx
-    groups='nginx,{{ galaxy_group }}'
+    name: "{{ nginx_user }}"
+    groups: '{{ nginx_group }},{{ galaxy_group }}'
   notify:
   - Restart Nginx
 
 # Set up strong Diffie-Hellman group for TLS/SSL
-- name: Check for Diffie-Hellman parameter file
-  stat: path=/etc/ssl/certs/dhparam.pem
+- name: "Check for Diffie-Hellman parameter file"
+  stat:
+    path: "/etc/ssl/certs/dhparam.pem"
   register: dhparam_file
 
-- name: Create strong Diffie-Hellman parameter group
-  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+- name: "Create strong Diffie-Hellman parameter group"
+  command: "openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048"
   when: enable_https and dhparam_file.stat.exists == False
 
 # Make sure that the .well-know directory exists for certbot
 # Let's Encrypt client
-- name: Add certbot .well-known web directory
+- name: "Add certbot .well-known web directory"
   file:
-    path=/usr/share/nginx/html/.well-known
-    state=directory
+    path: "{{ nginx_share_dir }}/html/.well-known"
+    state: directory
   when: enable_https
 
 # Force restart of nginx
-- name: Restart Nginx
-  service: name=nginx state=reloaded
+- name: "Restart Nginx"
+  service:
+    name: "{{ nginx_service }}"
+    state: reloaded
