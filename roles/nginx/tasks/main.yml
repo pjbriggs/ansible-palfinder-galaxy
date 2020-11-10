@@ -1,20 +1,20 @@
 ---
 # Install, configure and start Nginx on remote server
-- name: Install Nginx
+- name: "Install Nginx"
   yum:
     name:
-      - nginx
-      - libselinux-python
-      - libsemanage-python
-      - python-passlib
+      - "{{ nginx_yum_package }}"
+      - "libselinux-python"
+      - "libsemanage-python"
+      - "python-passlib"
     state: present
 
-- name: Get status of SELinux
+- name: "Get status of SELinux"
   command: getenforce
   register: sestatus
   changed_when: false
 
-- name: Set sebooleans for httpd
+- name: "Set sebooleans for httpd"
   seboolean:
     name={{ item }} state=yes persistent=yes
   with_items:
@@ -23,8 +23,28 @@
   - httpd_use_nfs
   when: "'Disabled' not in sestatus.stdout"
 
-- name: Start Nginx
+- name: "Check if default Nginx configuration is present"
+  stat: path={{ nginx_conf_dir }}/conf.d/default.conf
+  register: nginx_default_conf
+
+- name: "Move default Nginx configuration"
+  command: "mv {{ nginx_conf_dir }}/conf.d/default.conf {{ nginx_conf_dir }}/conf.d/default.conf.bak"
+  when: nginx_default_conf.stat.exists
+
+# On Scientific Linux 7 the default nginx.conf file contains
+# a 'server' block which clashes with the one in the Galaxy
+# conf file, so need to replace it
+- name: "Replace main Nginx conf file"
+  template:
+    src: "nginx.conf.j2"
+    dest: "{{ nginx_conf_dir }}/nginx.conf"
+    mode: "u=rw,go=r"
+  when: ansible_distribution_major_version == "7"
+  notify:
+  - "Restart Nginx"
+
+- name: "Start Nginx"
   service:
-    name=nginx
-    state=started
-    enabled=on
+    name: "{{ nginx_service }}"
+    state: started
+    enabled: on

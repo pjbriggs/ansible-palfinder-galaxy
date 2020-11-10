@@ -2,13 +2,13 @@
 #   * Official English Documentation: http://nginx.org/en/docs/
 #   * Official Russian Documentation: http://nginx.org/ru/docs/
 
-user nginx;
+user {{ nginx_user }};
 worker_processes auto;
-error_log /var/log/nginx/error.log;
-pid /var/run/nginx.pid;
+error_log {{ nginx_log_dir }}/error.log;
+pid {{ nginx_pid_file }};
 
 # Load dynamic modules. See /usr/share/nginx/README.dynamic.
-include /usr/share/nginx/modules/*.conf;
+include {{ nginx_share_dir }}/modules/*.conf;
 
 events {
     worker_connections  1024;
@@ -19,7 +19,7 @@ http {
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
-    access_log  /var/log/nginx/access.log  main;
+    access_log  {{ nginx_log_dir }}/access.log  main;
 
     sendfile            on;
     tcp_nopush          on;
@@ -27,11 +27,11 @@ http {
     keepalive_timeout   65;
     types_hash_max_size 2048;
 
-    include             /etc/nginx/mime.types;
+    include             {{ nginx_conf_dir }}/mime.types;
     default_type        application/octet-stream;
 
     # Load modular configuration files from the /etc/nginx/conf.d directory.
     # See http://nginx.org/en/docs/ngx_core_module.html#include
     # for more information.
-    include /etc/nginx/conf.d/*.conf;
+    include {{ nginx_conf_dir }}/conf.d/*.conf;
 }

@@ -1,24 +1,6 @@
 # Configure Nginx proxying
 # See https://wiki.galaxyproject.org/Admin/Config/nginxProxy
 ---
-- name: Check if default Nginx configuration is present
-  stat: path=/etc/nginx/conf.d/default.conf
-  register: nginx_default_conf
-
-- name: Move default Nginx configuration
-  command: mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
-  when: nginx_default_conf.stat.exists
-
-# On Scientific Linux 7 the default nginx.conf file contains
-# a 'server' block which clashes with the one in the Galaxy
-# conf file, so need to replace it
-- name: Replace main Nginx conf file
-  copy:
-    src="nginx.conf"
-    dest="/etc/nginx/nginx.conf"
-    mode="u=rw,go=r"
-  when: ansible_distribution_major_version == "7"
-
 # Create conf file for Galaxy and put into Nginx conf.d/
 - name: Configure Nginx proxy
   template:
