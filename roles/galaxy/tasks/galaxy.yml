@@ -145,7 +145,7 @@
 # Create or update Galaxy database
 - name: "Check if Galaxy database exists"
   shell:
-    "PGPASSWORD={{ galaxy_db_password }} psql -c '\\dt' '{{ galaxy_db }}'"
+    "PGPASSWORD={{ galaxy_db_password }} psql -c '\\dt' '{{ galaxy_db }}' {{ galaxy_db_user }}"
   register: dbstatus
 
 - name: "Run create_db.py to initialise the Galaxy database"
@@ -158,7 +158,7 @@
   block:
     - name: "Dump Galaxy database SQL as a backup"
       shell:
-        "PGPASSWORD={{ galaxy_db_password }} pg_dump {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
+        "PGPASSWORD={{ galaxy_db_password }} pg_dump -U {{ galaxy_db_user }} {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
 
     - name: "Update the Galaxy database"
       command:
