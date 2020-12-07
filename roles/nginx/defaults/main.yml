@@ -1,0 +1,22 @@
+# Defaults for setting up Nginx server
+---
+# Yum package to install Nginx
+nginx_yum_package: nginx
+
+# Name of the Nginx service
+nginx_service: nginx
+
+# Nginx user
+nginx_user: nginx
+
+# Top level location for Nginx conf file
+nginx_conf_dir: /etc/nginx
+
+# Location for log files
+nginx_log_dir: /var/log/nginx
+
+# Location for shared files
+nginx_share_dir: /usr/share/nginx
+
+# Path to PID file
+nginx_pid_file: /var/run/nginx.pid

@@ -1,9 +1,15 @@
 ---
-- name: Restart Nginx
-  service: name=nginx state=reloaded
+- name: "Restart Nginx"
+  service:
+    name: "{{ nginx_service }}"
+    state: reloaded
 
-- name: Restart Supervisord
-  service: name=supervisord state=reloaded
+- name: "Restart Supervisord"
+  service:
+    name: supervisord
+    state: restarted
 
-- name: Restart Galaxy reports
-  service: name=galaxy_reports state=restarted
+- name: "Restart Galaxy reports"
+  service:
+    name: galaxy_reports
+    state: restarted

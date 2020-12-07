@@ -166,6 +166,11 @@ galaxy_sanitize_whitelist_tools:
 # nginx configuration
 nginx_client_body_temp_path: "/tmp/nginx"
 nginx_client_max_body_size: "10G"
+nginx_service: "nginx"
+nginx_user: "nginx"
+nginx_group: "nginx"
+nginx_conf_dir: "/etc/nginx"
+nginx_share_dir: "/usr/share/nginx"
 
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
