@@ -4,7 +4,7 @@
 # Create conf file for Galaxy and put into Nginx conf.d/
 - name: "Configure Nginx proxy"
   template:
-    dest: "{{ nginx_conf_dir }}/conf.d/galaxy.conf"
+    dest: "{{ nginx_conf_dir }}/conf.d/{{ galaxy_name }}.conf"
     src: nginx-galaxy.conf.j2
   notify:
   - Restart Nginx
