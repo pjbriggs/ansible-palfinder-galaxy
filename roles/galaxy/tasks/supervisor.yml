@@ -1,14 +1,14 @@
 # Set up Supervisor config for Galaxy
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/Scaling#Starting_and_Stopping
 ---
-- name: Set up Galaxy supervisord conf file
+- name: "Set up Galaxy supervisord conf file"
   template:
-    dest='/usr/local/etc/supervisord.d/galaxy.ini'
+    dest='/usr/local/etc/supervisord.d/{{ galaxy_name }}.ini'
     src=supervisord-galaxy.ini.j2
   notify:
     - Restart Supervisord
 
-- name: Force restart of supervisord
+- name: "Force restart of supervisord"
   service:
     name='supervisord'
     state='restarted'
