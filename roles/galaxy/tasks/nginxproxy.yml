@@ -1,6 +1,18 @@
 # Configure Nginx proxying
 # See https://wiki.galaxyproject.org/Admin/Config/nginxProxy
 ---
+# Remove old 'galaxy.conf' file
+- name: "Check for legacy Nginx proxy file 'galaxy.conf'"
+  stat:
+    path: '{{ nginx_conf_dir }}/conf.d/galaxy.conf'
+  register: 'legacy_conf_file'
+
+- name: "Remove legacy Nginx proxy file 'galaxy.conf'"
+  file:
+    path='{{ nginx_conf_dir }}/conf.d/galaxy.conf'
+    state='absent'
+  when: legacy_conf_file.stat.exists == true
+
 # Create conf file for Galaxy and put into Nginx conf.d/
 - name: "Configure Nginx proxy"
   template:
