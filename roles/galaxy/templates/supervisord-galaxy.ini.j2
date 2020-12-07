@@ -27,5 +27,5 @@ stopsignal      = INT
 environment     = VIRTUAL_ENV="{{ galaxy_root }}/.venv",PATH="{{ galaxy_root }}/.venv/bin:%(ENV_PATH)s"
 {% endif %}
 
-[group:galaxy]
+[group:{{ galaxy_name }}]
 programs = galaxy_uwsgi{% if enable_reports %},galaxy_reports{% endif %}
