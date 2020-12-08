@@ -21,6 +21,7 @@ galaxy_db_password: "{{ galaxy_db_user }}"
 # Web server
 galaxy_server_name: "galaxy.example.org"
 galaxy_id_secret:
+galaxy_http_port: 8080
 
 # Proxy prefix
 # Leave blank for no prefix, otherwise must start
@@ -174,6 +175,8 @@ nginx_share_dir: "/usr/share/nginx"
 
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
+galaxy_uwsgi_socket: 4001
+galaxy_reports_uwsgi_socket: 9001
 
 # Galaxy handler processes
 galaxy_handler_processes: 1
