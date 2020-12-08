@@ -1,10 +1,10 @@
 ---
 # Cron job to email audit report
 
-- name: Set up cron jobs to email audit reports
+- name: "Set up cron job to email audit report"
   cron:
     user="{{ galaxy_user }}"
-    name="Email audit report"
+    name="{{ galaxy_name }} email audit report"
     job="{{ galaxy_utils_dir }}/bin/audit_report.py -c {{ galaxy_root }}/config/galaxy.yml -i '7 days' {{ email_audit_report_to }} 2>&1 >> {{ galaxy_dir }}/logs/audit_report.log"
     hour=22 minute=35 weekday=0
     state=present
