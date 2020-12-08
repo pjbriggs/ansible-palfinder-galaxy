@@ -1,5 +1,7 @@
 ---
 
+- include: remove_legacy_cron_jobs.yml
+
 - include: dependencies.yml
 
 - include: database.yml
