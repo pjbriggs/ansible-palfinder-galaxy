@@ -3,11 +3,11 @@
 ---
 - name: "Rotate Galaxy log files"
   template:
-    dest=/etc/logrotate.d/galaxy
-    src=logrotate-galaxy.j2
+    dest='/etc/logrotate.d/{{ galaxy_name }}-galaxy'
+    src='logrotate-galaxy.j2'
 
 # Add logrotation rule for le-renew
 - name: "Rotate SSL certificate renewal logs"
   template:
-    dest=/etc/logrotate.d/lets-encrypt
-    src=logrotate-lets-encrypt.j2
+    dest='/etc/logrotate.d/lets-encrypt'
+    src='logrotate-lets-encrypt.j2'
