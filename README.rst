@@ -35,8 +35,8 @@ The following roles are defined:
  - ``postfix-null-client``: installs and configures Postfix as
    a 'null client'
 
- - ``lets-encrypt-client``: install the Let's Encrypt client
-   ``cert-bot``, and sets up automatic certificate renewal
+ - ``lets-encrypt-client``: installs the Let's Encrypt client
+   ``cert-bot``
 
  - ``galaxy``: install and configure a Galaxy instance:
 
@@ -54,6 +54,7 @@ The following roles are defined:
    * Configure uWSGI for Galaxy
    * Configure Supervisord for Galaxy
    * (Optionally) set up custom colour scheme via SCSS
+   * (Optionally) sets up automatic SSL certificate renewal
 
  - ``galaxy-utils``: installs utility scripts for Galaxy
    user creation, tool installation etc
@@ -94,11 +95,20 @@ Key variables:
  - ``galaxy_install_dir``: top-level directory to use; by default Galaxy
    will be installed under ``${galaxy_install_dir}/${galaxy_name}``
 
-Webserver:
+Webserver and proxying:
 
  - ``galaxy_server_name``: URL for the Galaxy web service
  - ``galaxy_http_port``: port to communicate with Galaxy via
    (default: 8080)
+ - ``enable_https``: if ``yes`` then serve Galaxy via HTTPS;
+   this also requires:
+   - ``ssl_certificate``: points to the ``fullchain.pem`` certificate
+     file, and
+   - ``ssl_certificate_key``: points to the ``privkey.pem`` file
+   - ``enable_certificate_renewal``: if ``yes`` then a cronjob will be
+     created to automatically renew the SSL certificates from
+     Let's Encrypt (this is the default, turn off if managing
+     certificates externally)
 
 Admin user:
 
