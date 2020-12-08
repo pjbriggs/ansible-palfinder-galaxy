@@ -5,7 +5,7 @@ uwsgi:
   # The address and port on which to listen.  By default, only listen to
   # localhost (galaxy will not be accessible over the network).  Use
   # ':8080' to listen on all available network interfaces.
-  http: 127.0.0.1:8080
+  http: 127.0.0.1:{{ galaxy_http_port }}
 
   # By default uWSGI allocates a very small buffer (4096 bytes) for the
   # headers of each request. If you start receiving "invalid request
@@ -19,7 +19,7 @@ uwsgi:
   processes: {{ galaxy_uwsgi_processes }}
 
   # Socket to communicate with uwsgi using
-  socket: 127.0.0.1:4001
+  socket: 127.0.0.1:{{ galaxy_uwsgi_socket }}
 
   # Number of threads for each web server process.
   threads: 4

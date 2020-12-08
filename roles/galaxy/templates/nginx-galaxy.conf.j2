@@ -55,7 +55,7 @@ server {
 {% if enable_reports %}
     # Galaxy reporting interface
     location ^~ {{ galaxy_proxy_prefix }}/reports/ {
-        uwsgi_pass 127.0.0.1:9001;
+        uwsgi_pass 127.0.0.1:{{ galaxy_reports_uwsgi_socket }};
         uwsgi_param UWSGI_SCHEME $scheme;
         include uwsgi_params;
         auth_basic "Restricted";
@@ -64,7 +64,7 @@ server {
 {% endif %}
     # Galaxy server
     location {{ galaxy_proxy_prefix }}/ {
-        uwsgi_pass 127.0.0.1:4001;
+        uwsgi_pass 127.0.0.1:{{ galaxy_uwsgi_socket }};
         uwsgi_param UWSGI_SCHEME $scheme;
         include uwsgi_params;
     }

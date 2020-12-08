@@ -97,6 +97,8 @@ Key variables:
 Webserver:
 
  - ``galaxy_server_name``: URL for the Galaxy web service
+ - ``galaxy_http_port``: port to communicate with Galaxy via
+   (default: 8080)
 
 Admin user:
 
@@ -112,6 +114,15 @@ Database passwords:
  - ``galaxy_ftp_password``: password used by FTP server for
    authenticating users against Postgresql database
    (default: same name as the FTP database user)
+
+UWSGI settings:
+
+ - ``galaxy_uwsgi_processes``: number of UWSGI processes to
+   use (default: 8)
+ - ``galaxy_uwsgi_socket``: socket for Galaxy to use to
+   communicate with UWSGI (default: 4001)
+ - ``galaxy_reports_uwsgi_socket``: socket for Galaxy reporting
+   interface to use to communicate with UWSGI (default: 9001)
 
 Job runner configuration:
 

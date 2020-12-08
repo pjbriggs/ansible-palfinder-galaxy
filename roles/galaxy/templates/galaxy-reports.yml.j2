@@ -6,7 +6,7 @@ uwsgi:
   #http: 127.0.0.1:9001
 
   # Socket to communicate with uwsgi using
-  socket: 127.0.0.1:9001
+  socket: 127.0.0.1:{{ galaxy_reports_uwsgi_socket }}
 
   # By default uWSGI allocates a very small buffer (4096 bytes) for the
   # headers of each request. If you start receiving "invalid request
