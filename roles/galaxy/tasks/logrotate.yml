@@ -1,7 +1,13 @@
-# Set up log rotation of Galaxy logs
+# Set up log rotation of Galaxy logs and related files
 # See https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Rotate_log_files
 ---
-- name: Rotate Galaxy log files
+- name: "Rotate Galaxy log files"
   template:
     dest=/etc/logrotate.d/galaxy
     src=logrotate-galaxy.j2
+
+# Add logrotation rule for le-renew
+- name: "Rotate SSL certificate renewal logs"
+  template:
+    dest=/etc/logrotate.d/lets-encrypt
+    src=logrotate-lets-encrypt.j2

@@ -20,6 +20,8 @@
 
 - include: cleanup.yml
 
+- include: renew_certificates.yml
+
 - include: logrotate.yml
 
 - include: ftpupload.yml
