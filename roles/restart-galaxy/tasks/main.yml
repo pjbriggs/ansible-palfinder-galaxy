@@ -21,4 +21,4 @@
 
 - name: Restart Galaxy
   command:
-    "{{ galaxy_utils_dir }}/bin/restart_galaxy.sh galaxy"
+    "{{ galaxy_utils_dir }}/bin/restart_galaxy.sh {{ galaxy_name }}"

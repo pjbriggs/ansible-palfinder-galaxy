@@ -86,7 +86,10 @@ Variables
 
 Key variables:
 
- - ``galaxy_name``: name for the Galaxy instance
+ - ``galaxy_name``: name for the Galaxy instance (NB this is also used
+   as the name for the instance-specific Supervisor and Nginx
+   configuration files, and for naming the Supervisor processes and
+   process groups)
  - ``galaxy_version``: version of Galaxy to install
  - ``galaxy_install_dir``: top-level directory to use; by default Galaxy
    will be installed under ``${galaxy_install_dir}/${galaxy_name}``
