@@ -15,3 +15,4 @@
     - 'Purge datasets'
     - 'Clean up files from job working directory'
     - 'Clean up empty directories from job working directory'
+    - 'Delete old datasets'
