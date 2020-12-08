@@ -46,6 +46,7 @@ galaxy_message:
 
 # HTTPS parameters
 enable_https: no
+enable_certificate_renewal: yes
 ssl_certificate: "/etc/ssl/certs/{{ galaxy_server_name }}"
 ssl_certificate_key: "/etc/ssl/certs/{{ galaxy_server_name }}"
 

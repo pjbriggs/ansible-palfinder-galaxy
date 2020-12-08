@@ -16,11 +16,11 @@
         minute="{{ random_minute }}"
         weekday=1
         state=present
-  when: enable_https == true
+  when: enable_https and enable_certificate_renewal
 
 - name: "Remove cronjob for SSL certificate renewal"
   cron:
     user="root"
     name="Renew SSL certificate from Lets Encrypt"
     state=absent
-  when: enable_https == false
+  when: not enable_https or not enable_certificate_renewal
