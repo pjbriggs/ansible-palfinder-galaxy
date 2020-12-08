@@ -2,44 +2,46 @@
 ---
 - name: "Set up daily cron jobs to purge deleted data in Galaxy"
   cron:
-    user='{{ galaxy_user }}'
-    name='{{ item.name }}'
-    job=". {{ galaxy_root }}/.venv/bin/activate && sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
-    hour={{ item.hour }} minute={{ item.minute }}
-    state=present
+    user: '{{ galaxy_user }}'
+    name: '{{ item.name }}'
+    job: ". {{ galaxy_root }}/.venv/bin/activate && sh {{ galaxy_root }}/scripts/cleanup_datasets/{{ item.script }}"
+    hour: '{{ item.hour }}'
+    minute: '{{ item.minute }}'
+    state: present
   with_items:
-  - { name: 'Delete userless histories',
-      script: 'delete_userless_histories.sh',
-      hour: 03, minute: 00 }
-  - { name: 'Purge histories',
-      script: 'purge_histories.sh',
-      hour: 03, minute: 10 }
-  - { name: 'Purge libraries',
-      script: 'purge_libraries.sh',
-      hour: 03, minute: 20 }
-  - { name: 'Purge folders',
-      script: 'purge_folders.sh',
-      hour: 03, minute: 30 }
-  - { name: 'Delete datasets',
-      script: 'delete_datasets.sh',
-      hour: 03, minute: 40 }
-  - { name: 'Purge datasets',
-      script: 'purge_datasets.sh',
-      hour: 04, minute: 00 }
+    - { name: '{{ galaxy_name }} delete userless histories',
+        script: 'delete_userless_histories.sh',
+        hour: 03, minute: 00 }
+    - { name: '{{ galaxy_name }} purge histories',
+        script: 'purge_histories.sh',
+        hour: 03, minute: 10 }
+    - { name: '{{ galaxy_name }} purge libraries',
+        script: 'purge_libraries.sh',
+        hour: 03, minute: 20 }
+    - { name: '{{ galaxy_name }} purge folders',
+        script: 'purge_folders.sh',
+        hour: 03, minute: 30 }
+    - { name: '{{ galaxy_name }} delete datasets',
+        script: 'delete_datasets.sh',
+        hour: 03, minute: 40 }
+    - { name: '{{ galaxy_name }} purge datasets',
+        script: 'purge_datasets.sh',
+        hour: 04, minute: 00 }
 
 - name: "Clean up Galaxy job working directory"
   cron:
-    user='{{ galaxy_user }}'
-    name='{{ item.name }}'
-    job='{{ item.job }}'
-    hour={{ item.hour }} minute={{ item.minute }}
-    state=present
+    user: '{{ galaxy_user }}'
+    name: '{{ item.name }}'
+    job: '{{ item.job }}'
+    hour: '{{ item.hour }}'
+    minute: '{{ item.minute }}'
+    state: present
   with_items:
-  - { name: "Clean up files from job working directory",
-      job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +28 -exec rm -rf {} \\;",
-      hour: 00,
-      minute: 10 }
-  - { name: "Clean up empty directories from job working directory",
-      job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +28 -empty -exec rmdir {} \\;",
-      hour: 00,
-      minute: 15 }
+    - { name: "{{ galaxy_name }} clean up files from job working directory",
+        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +28 -exec rm -rf {} \\;",
+        hour: 00,
+        minute: 10 }
+    - { name: "{{ galaxy_name }} clean up empty directories from job working directory",
+        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +28 -empty -exec rmdir {} \\;",
+        hour: 00,
+        minute: 15 }

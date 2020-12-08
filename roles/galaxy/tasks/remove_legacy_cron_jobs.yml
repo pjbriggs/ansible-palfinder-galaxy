@@ -1,0 +1,19 @@
+# Remove 'legacy' cron jobs set up pre-19.09
+# These will be replaced by instance-specific versions
+---
+- name: "Remove legacy cron jobs for Galaxy"
+  cron:
+    user: '{{ galaxy_user }}'
+    name: '{{ item }}'
+    state: absent
+  with_items:
+    - 'Delete userless histories'
+    - 'Purge histories'
+    - 'Purge libraries'
+    - 'Purge folders'
+    - 'Delete datasets'
+    - 'Purge datasets'
+    - 'Clean up files from job working directory'
+    - 'Clean up empty directories from job working directory'
+    - 'Delete old datasets'
+    - 'Email audit report'
