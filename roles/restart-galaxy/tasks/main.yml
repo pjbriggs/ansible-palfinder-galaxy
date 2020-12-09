@@ -1,24 +1,12 @@
 ---
 # Restart Galaxy instance (with/without master API key)
 
-- name: Add master API key to Galaxy config file
-  lineinfile:
-    path: '{{ galaxy_root }}/config/galaxy.yml'
-    regexp: "(#?)master_api_key: (.*)"
-    line: "  master_api_key: {{ master_api_key }}"
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: enable_master_api_key == True
-
-- name: Remove master API key from Galaxy config file
-  lineinfile:
-    path: '{{ galaxy_root }}/config/galaxy.yml'
-    regexp: "(#?)master_api_key: (.*)"
-    line: "  #master_api_key: changethis"
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: enable_master_api_key == False
-
-- name: Restart Galaxy
+- name: "Restart Galaxy with master API key"
   command:
-    "{{ galaxy_utils_dir }}/bin/restart_galaxy.sh {{ galaxy_name }}"
+    "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+  when: enable_master_api_key
+
+- name: "Restart Galaxy without master API key"
+  command:
+    "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
+  when: not enable_master_api_key
