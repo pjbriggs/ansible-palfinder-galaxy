@@ -184,6 +184,7 @@ galaxy_handler_processes: 1
 
 # Logging
 galaxy_log_dir: "{{ galaxy_dir }}/logs"
+enable_log_rotation: yes
 
 # FTP uploads
 enable_ftp_upload: no

@@ -5,9 +5,24 @@
   template:
     dest='/etc/logrotate.d/{{ galaxy_name }}-galaxy'
     src='logrotate-galaxy.j2'
+  when: enable_log_rotation
 
 # Add logrotation rule for le-renew
 - name: "Rotate SSL certificate renewal logs"
   template:
     dest='/etc/logrotate.d/lets-encrypt'
     src='logrotate-lets-encrypt.j2'
+  when:
+    - enable_https
+    - enable_certificate_renewal
+    - enable_log_rotation
+
+# Remove logrotate files if rotation is disabled
+- name: "Disable log rotation"
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+      - '/etc/logrotate.d/{{ galaxy_name }}-galaxy'
+      - '/etc/logrotate.d/lets-encrypt'
+  when: not enable_log_rotation
