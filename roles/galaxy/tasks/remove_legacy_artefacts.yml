@@ -1,6 +1,13 @@
-# Remove 'legacy' cron jobs set up pre-19.09
+# Remove 'legacy' artefacts and cron jobs set up pre-19.09
 # These will be replaced by instance-specific versions
 ---
+# Logrotation file
+- name: "Remove legacy logrotation file"
+  file:
+    path: '/etc/logrotate.d/galaxy'
+    state: absent
+
+# Cron jobs
 - name: "Remove legacy cron jobs for Galaxy"
   cron:
     user: '{{ galaxy_user }}'

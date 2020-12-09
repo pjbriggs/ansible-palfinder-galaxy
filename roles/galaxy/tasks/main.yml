@@ -1,6 +1,6 @@
 ---
 
-- include: remove_legacy_cron_jobs.yml
+- include: remove_legacy_artefacts.yml
 
 - include: dependencies.yml
 
