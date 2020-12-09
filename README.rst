@@ -151,6 +151,13 @@ Job runner configuration:
    the ``tools`` section of ``job_conf.xml`` (default: no
    tool destinations are defined)
 
+Dependency resolvers:
+
+- ``galaxy_dependency_resolvers``: a list where each item
+  should be a dictionary defining a dependency resolver to
+  to be added to ``dependency_resolvers.xml`` (default: no
+  resolvers are defined)
+
 Custom colour scheme:
 
  - ``galaxy_custom_scss``: a list where each item should be
