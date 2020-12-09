@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<dependency_resolvers>
+{% if galaxy_dependency_resolvers %}
+{% for resolver in galaxy_dependency_resolvers %}
+  <{{ resolver.type }}{% if resolver.versionless is defined %} versionless="{{ resolver.versionless }}"{% endif %}{% if resolver.base_path is defined %} base_path="{{ resolver.base_path }}"{% endif %} />
+{% endfor %}
+{% else %}
+  <!-- Defaults -->
+  <tool_shed_packages />
+  <galaxy_packages />
+  <galaxy_packages versionless="true" />
+  <conda />
+  <conda versionless="true" />
+{% endif %}
+</dependency_resolvers>
