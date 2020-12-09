@@ -94,6 +94,12 @@
     dest='{{ galaxy_root }}/config/job_conf.xml'
     src=job_conf.xml.j2
 
+# Create/update dependency_resolvers.xml file
+- name: "Update Galaxy dependency_resolvers.xml"
+  template:
+    dest='{{ galaxy_root }}/config/dependency_resolvers.xml'
+    src='dependency_resolvers.xml.j2'
+
 # Create/update tool_data_table_conf.xml file
 - name: Update tool_data_table_conf XML file
   template:
