@@ -20,7 +20,7 @@ galaxy_utils_dir: "/usr/local"
 #      - email: "{{ galaxy_admin_user }}"
 #        password: "{{ galaxy_admin_passwd }}"
 #      - email: ...
-#      - password: ...etc
+#        password: ...etc
 galaxy_users: null
 
 # Galaxy installation location
