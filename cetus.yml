@@ -81,15 +81,7 @@
   - galaxy
   # Install utilities
   - galaxy-utils
-  # Restart with master API key enabled (needed
-  # to create user accounts)
-  - role: restart-galaxy
-    enable_master_api_key: yes
+  # Set up users, tools etc
   - galaxy-create-users
   - galaxy-install-tools
   - galaxy-set-default-quota
-  # Restart with master API key disabled
-  - role: restart-galaxy
-    enable_master_api_key: no
-  # Additional set up
-  #- galaxy-audit-report
