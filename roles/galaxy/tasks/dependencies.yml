@@ -17,5 +17,5 @@
 - name: "Install galaxyctl.sh script"
   copy:
     src: 'galaxyctl.sh'
-    dest: '/usr/local/bin/galaxyctl.sh'
+    dest: '{{ galaxy_utils_dir }}/bin/galaxyctl.sh'
     mode: 'ugo+rx'
