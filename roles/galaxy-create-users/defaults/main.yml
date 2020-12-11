@@ -1,6 +1,15 @@
 ---
 # Defaults for user account creation
 
+# NB the following variables need to be set
+# externally for this task:
+#
+# - galaxy_name
+# - galaxy_root (or galaxy_dir)
+# - galaxy_user
+# - galaxy_db_user
+# - master_api_key
+
 # galaxy-utils should be installed under the 'bin' subdirectory
 # of this location
 galaxy_utils_dir: "/usr/local"
@@ -11,8 +20,11 @@ galaxy_utils_dir: "/usr/local"
 #      - email: "{{ galaxy_admin_user }}"
 #        password: "{{ galaxy_admin_passwd }}"
 #      - email: ...
-#      - password: ...etc
+#        password: ...etc
 galaxy_users: null
+
+# Galaxy installation location
+galaxy_root: "{{ galaxy_dir }}/galaxy"
 
 # Postgresql database
 galaxy_db: "galaxy_{{ galaxy_name }}"

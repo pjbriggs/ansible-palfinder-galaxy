@@ -1,15 +1,21 @@
 # Install dependencies
 ---
-- name: Install Galaxy dependencies
+- name: "Install Galaxy system-package dependencies"
   yum:
     name:
-      - python-psycopg2
-      - libtool
-      - libtool-ltdl
-      - libtool-ltdl-devel
-      - java-1.8.0-openjdk
-      - samtools
-      - python2-pyyaml
-      - net-tools
+      - 'python-psycopg2'
+      - 'libtool'
+      - 'libtool-ltdl'
+      - 'libtool-ltdl-devel'
+      - 'java-1.8.0-openjdk'
+      - 'samtools'
+      - 'python2-pyyaml'
+      - 'net-tools'
     state: latest
   register: installed_dependencies
+
+- name: "Install galaxyctl.sh script"
+  copy:
+    src: 'galaxyctl.sh'
+    dest: '{{ galaxy_utils_dir }}/bin/galaxyctl.sh'
+    mode: 'ugo+rx'

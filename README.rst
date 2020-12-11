@@ -78,10 +78,6 @@ The following roles are defined:
  - ``galaxy-audit-report``: sets up weekly emailing of audit
    reports
 
- - ``restart-galaxy``: restart the Galaxy instance using
-   Supervisord, optionally enabling the master API key
-   first
-
 Variables
 ---------
 
@@ -389,5 +385,5 @@ Known Issues
    ``supervisorctl`` utility can fail. This appears to be due to
    ``uWSGI`` child processes not being removed, and subsequently
    blocking the port used by ``uWSGI``/``Galaxy``. Why this is the
-   case is not clear, so for now the ``restart_galaxy.sh`` utility
+   case is not clear, so for now the ``galaxyctl.sh`` utility
    script has been added to work around this problem.

@@ -1,22 +1,33 @@
 ---
 # Create user accounts in Galaxy instance
 
-- name: Set Galaxy URL
+- name: "Set Galaxy URL"
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
-- name: Create Galaxy user accounts
-  command:
-    "{{ galaxy_utils_dir }}/bin/create_user.sh '{{ item.email }}' '{{ item.password }}' '{{ master_api_key }}' '{{ galaxy_url }}'"
-  with_items: "{{ galaxy_users }}"
-  when: galaxy_users|default(None) != None
+- name: "Create and activate Galaxy user accounts"
+  block:
+    # Create the accounts
+    - name: "Activate Galaxy master API key for user creation"
+      command:
+        "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
 
-# Activate the admin user account
-- name: Activate Galaxy user accounts
-  command:
-    "{{ galaxy_utils_dir }}/bin/activate_user.sh '{{ galaxy_db }}' '{{ galaxy_db_user }}' '{{ galaxy_db_password }}' '{{ item.email }}'"
-  with_items: "{{ galaxy_users }}"
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: galaxy_users|default(None) != None and enable_user_activation
+    - name: "Create Galaxy user accounts"
+      command:
+        "{{ galaxy_utils_dir }}/bin/create_user.sh '{{ item.email }}' '{{ item.password }}' '{{ master_api_key }}' '{{ galaxy_url }}'"
+      with_items: "{{ galaxy_users }}"
+
+    - name: "Deactivate Galaxy master API key"
+      command:
+        "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
+
+    # Activate accounts
+    - name: "Activate Galaxy user accounts"
+      command:
+        "{{ galaxy_utils_dir }}/bin/activate_user.sh '{{ galaxy_db }}' '{{ galaxy_db_user }}' '{{ galaxy_db_password }}' '{{ item.email }}'"
+      with_items: "{{ galaxy_users }}"
+      become: yes
+      become_user: "{{ galaxy_user }}"
+      when: enable_user_activation
+  when: galaxy_users|default(None) != None
 

@@ -30,7 +30,6 @@
     dest='{{ galaxy_utils_dir }}/bin/{{ item }}'
     mode='ugo+rx'
   with_items:
-  - restart_galaxy.sh
   - create_user.sh
   - install_tool.sh
   - delete_old_datasets.sh
