@@ -17,7 +17,7 @@
   - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/job_working_directory"
   - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/tool-data"
   # Galaxy-specific Python installation
-  - galaxy_python_dir: "/mnt/rvmi/cetus/galaxy/python"
+  - galaxy_python_version: "2.7.10"
   # Account management
   - allow_user_creation: no
   - allow_user_deletion: no
@@ -72,11 +72,6 @@
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
     when: enable_local_jse_drop
-  # Install Galaxy-specific Python 2.7
-  - role: python27
-    install_dir: "{{ galaxy_python_dir }}"
-    become: yes
-    become_user: "{{ galaxy_user }}"
   # Install and configure Galaxy
   - galaxy
   # Install utilities
