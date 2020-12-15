@@ -17,7 +17,7 @@
   - galaxy_job_working_dir: "{{ galaxy_dir }}/job_working_directory"
   - galaxy_data_manager_data_path: "{{ galaxy_dir }}/tool-data"
   # Galaxy-specific Python installation
-  - galaxy_python_dir: "/mnt/rvmi/mintaka/galaxy/python"
+  - galaxy_python_version: "2.7.10"
   # Account management
   - allow_user_creation: yes
   - allow_user_deletion: yes
@@ -214,11 +214,6 @@
   # Install local JSEDrop service
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
-  # Install Galaxy-specific Python 2.7
-  - role: python27
-    install_dir: "{{ galaxy_python_dir }}"
-    become: yes
-    become_user: "{{ galaxy_user }}"
   # Install and configure Galaxy
   - galaxy
   # Install utilities
