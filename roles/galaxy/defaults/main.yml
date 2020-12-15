@@ -10,9 +10,6 @@ galaxy_group: "{{ galaxy_user }}"
 # Galaxy admin user
 galaxy_admin_user: "admin@galaxy.org"
 
-# Python for Galaxy
-galaxy_python_dir: '/usr/local'
-
 # Postgresql database
 galaxy_db: "galaxy_{{ galaxy_name }}"
 galaxy_db_user: "{{ galaxy_user }}"
@@ -83,6 +80,10 @@ galaxy_new_file_path: "{{ galaxy_database_dir }}/tmp"
 galaxy_tool_data_path: "{{ galaxy_root }}/tool-data"
 galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"
 galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
+
+# Python for Galaxy
+galaxy_python_version: "2.7.10"
+galaxy_python_dir: '{{ galaxy_dir }}/python/{{ galaxy_python_version }}'
 
 # Toolshed check
 enable_tool_shed_check: no
