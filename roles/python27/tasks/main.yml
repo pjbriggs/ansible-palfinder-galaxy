@@ -2,85 +2,94 @@
 # Build and install Python 2.7 on the remote host
 # Also installs pip and virtualenv packages
 
-- name: Install Python build dependencies
-  yum:
-    name:
-      - autoconf
-      - make
-      - automake
-      - gcc
-      - readline
-      - sqlite
-      - zlib
-      - bzip2-devel
-      - bzip2
-      - ncurses-devel
-      - ncurses
-      - openssl-devel
-      - openssl
-      - readline-devel
-      - sqlite-devel
-      - zlib-devel
-      - tkinter
-    state: "present"
+- name: "Check if Python2.7 is already installed"
+  stat:
+    path: "{{ install_dir }}/bin/python2.7"
+  register: python
 
-- name: Create installation directory
-  file:
-    path='{{ install_dir }}'
-    state=directory
+- name: "Install Python 2.7"
+  block:
+    - name: "Install Python build dependencies"
+      yum:
+        name:
+          - 'autoconf'
+          - 'make'
+          - 'automake'
+          - 'gcc'
+          - 'readline'
+          - 'sqlite'
+          - 'zlib'
+          - 'bzip2-devel'
+          - 'bzip2'
+          - 'ncurses-devel'
+          - 'ncurses'
+          - 'openssl-devel'
+          - 'openssl'
+          - 'readline-devel'
+          - 'sqlite-devel'
+          - 'zlib-devel'
+          - 'tkinter'
+          - 'python-setuptools'
+        state: "present"
 
-- name: Determine the user home directory
-  shell:
-    "echo $HOME"
-  register: user_home
-  changed_when: False
+    - name: "Create installation directory"
+      file:
+        path: '{{ install_dir }}'
+        state: directory
 
-- name: Determine the build directory
-  set_fact:
-    build_dir: "{{ user_home.stdout }}/build"
+    - name: "Determine the user home directory"
+      shell:
+        "echo $HOME"
+      register: user_home
+      changed_when: False
 
-- name: Print the location of the build directory
-  debug: msg="Build directory {{ build_dir }}"
+    - name: "Determine the build directory"
+      set_fact:
+        build_dir: "{{ user_home.stdout }}/build"
 
-- name: Create build directory
-  file:
-    path='{{ build_dir }}'
-    state=directory
+    - name: "Print the location of the build directory"
+      debug: msg="Build directory {{ build_dir }}"
 
-- name: Download Python 2.7
-  get_url:
-    url='https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
-    dest='{{ build_dir }}'
+    - name: "Create build directory"
+      file:
+        path: '{{ build_dir }}'
+        state: directory
 
-- name: Unpack Python 2.7
-  unarchive:
-    src='{{ build_dir }}/Python-{{ python_version }}.tgz'
-    dest='{{ build_dir }}'
-    copy=no
-    creates='{{ build_dir }}/Python-{{ python_version }}'
+    - name: "Download Python 2.7"
+      get_url:
+        url: 'https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
+        dest: '{{ build_dir }}'
 
-- name: Install Python 2.7
+    - name: "Unpack Python 2.7"
+      unarchive:
+        src: '{{ build_dir }}/Python-{{ python_version }}.tgz'
+        dest: '{{ build_dir }}'
+        copy: no
+        creates: '{{ build_dir }}/Python-{{ python_version }}'
+
+    - name: "Install Python 2.7"
+      command:
+        chdir: '{{ build_dir }}/Python-{{ python_version }}'
+        cmd: '{{item}}'
+        creates: '{{ install_dir }}/bin/python2.7'
+      with_items:
+        - './configure --prefix={{ install_dir }}'
+        - 'make install'
+  when: not python.stat.exists
+
+- name: "Install Pip"
   command:
-    chdir='{{ build_dir }}/Python-{{ python_version }}'
-    {{item}}
-    creates='{{ install_dir }}/bin/python2.7'
-  with_items:
-  - ./configure --prefix={{ install_dir }}
-  - make install
+    cmd: '{{ install_dir }}/bin/python2.7 -m ensurepip'
+    creates: '{{ install_dir }}/bin/pip'
 
-- name: Install Pip
+- name: "Upgrade Pip"
   command:
-    chdir='{{ build_dir }}'
-    {{ install_dir }}/bin/python2.7 -m ensurepip
-    creates='{{ install_dir }}/bin/pip'
+    cmd: '{{ install_dir }}/bin/pip install --upgrade pip'
 
-- name: Upgrade Pip
-  command:
-    chdir='{{ build_dir }}'
-    {{ install_dir }}/bin/pip install --upgrade pip
-
-- name: Install Virtualenv
+- name: "Install Virtualenv"
   pip:
-    name=virtualenv
-    state=present
-    executable='{{ install_dir }}/bin/pip'
+    name:
+      - 'setuptools'
+      - 'virtualenv'
+    state: present
+    executable: '{{ install_dir }}/bin/pip'

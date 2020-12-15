@@ -3,68 +3,82 @@
 # We need v1.3.5+ for PBKDF2 support
 # See http://galacticengineer.blogspot.co.uk/2015/02/ftp-upload-to-galaxy-using-proftpd-and.html
 
-- name: Install ProFTPd build dependencies
-  yum:
-    name:
-      - gcc
-      - postgresql-devel
-      - openssl-devel
-      - pam-devel
-      - libnetfilter_conntrack
-    state: present
+- name: "Check if ProFTPd is already installed"
+  stat:
+    path: "{{ proftpd_install_dir }}/sbin/proftpd"
+  register: proftpd
 
-- name: Determine the user home directory
-  shell:
-    "echo $HOME"
-  register: user_home
-  changed_when: False
+- name: "Build and install ProFTPd"
+  block:
+    - name: "Install ProFTPd build dependencies"
+      yum:
+        name:
+          - 'gcc'
+          - 'postgresql-devel'
+          - 'openssl-devel'
+          - 'pam-devel'
+          - 'libnetfilter_conntrack'
+        state: present
 
-- name: Determine the build directory
-  set_fact:
-    build_dir: "{{ user_home.stdout }}/build"
+    - name: "Determine the user home directory"
+      shell:
+        "echo $HOME"
+      register: user_home
+      changed_when: False
 
-- name: Print the location of the build directory
-  debug: msg="Build directory {{ build_dir }}"
+    - name: "Determine the build directory"
+      set_fact:
+        build_dir: "{{ user_home.stdout }}/build"
 
-- name: Create build directory
-  file:
-    path='{{ build_dir }}'
-    state=directory
+    - name: "Print the location of the build directory"
+      debug: msg="Build directory {{ build_dir }}"
 
-- name: Download ProFTPd source
-  get_url:
-    url='https://github.com/proftpd/proftpd/archive/v{{ proftpd_version }}.tar.gz'
-    dest='{{ build_dir }}'
+    - name: "Create build directory"
+      file:
+        path: '{{ build_dir }}'
+        state: directory
 
-- name: Unpack ProFTPd source
-  unarchive:
-    src='{{ build_dir }}/proftpd-{{ proftpd_version }}.tar.gz'
-    dest='{{ build_dir }}'
-    copy=no
-    owner=root
-    group=root
-    creates='{{ build_dir }}/proftpd-{{ proftpd_version }}'
+    - name: "Download ProFTPd source"
+      get_url:
+        url: 'https://github.com/proftpd/proftpd/archive/v{{ proftpd_version }}.tar.gz'
+        dest: '{{ build_dir }}'
 
-- name: Install ProFTPd
-  command:
-    chdir='{{ build_dir }}/proftpd-{{ proftpd_version }}'
-    {{item}}
-    creates={{ proftpd_install_dir }}/sbin/proftpd
-  with_items:
-  - ./configure --prefix={{ proftpd_install_dir }} --disable-auth-file --disable-ncurses --disable-ident --disable-shadow --enable-openssl --with-modules=mod_sql:mod_sql_postgres:mod_sql_passwd
-  - make
-  - make install
+    - name: "Unpack ProFTPd source"
+      unarchive:
+        src: '{{ build_dir }}/proftpd-{{ proftpd_version }}.tar.gz'
+        dest: '{{ build_dir }}'
+        copy: no
+        owner: root
+        group: root
+        creates: '{{ build_dir }}/proftpd-{{ proftpd_version }}'
+
+    - name: "Install ProFTPd"
+      command:
+        chdir: '{{ build_dir }}/proftpd-{{ proftpd_version }}'
+        cmd: "{{item}}"
+        creates: '{{ proftpd_install_dir }}/sbin/proftpd'
+      with_items:
+        - './configure --prefix={{ proftpd_install_dir }} --disable-auth-file --disable-ncurses --disable-ident --disable-shadow --enable-openssl --with-modules=mod_sql:mod_sql_postgres:mod_sql_passwd'
+        - 'make'
+        - 'make install'
+  when: not proftpd.stat.exists
 
 # Set up as a service
-- name: Create init.d script for ProFTPd
-  copy:
-    dest=/etc/init.d/proftpd
-    src=proftpd.init.sh
-    mode='ugo+x'
+- name: "Check for ProFTPd init.d script"
+  stat:
+    path: '/etc/init.d/proftpd'
+  register: init_d
 
-- name: Start ProFTPd service
+- name: "Create init.d script for ProFTPd"
+  copy:
+    dest: '/etc/init.d/proftpd'
+    src: 'proftpd.init.sh'
+    mode: 'ugo+x'
+  when: not init_d.stat.exists
+
+- name: "Start ProFTPd service"
   service:
-    name=proftpd
-    enabled=on
-    state=started
+    name: 'proftpd'
+    enabled: on
+    state: started
 
