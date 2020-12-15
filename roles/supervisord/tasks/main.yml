@@ -4,93 +4,107 @@
 # NOTE: we need a newer version of Supervisord than is available
 # via yum on Scientific Linux 6, hence installing it this way
 # rather than pulling in from yum
-- name: Uninstall yum version of Supervisor
+- name: "Uninstall yum version of Supervisor"
   yum:
-    name=supervisor
-    state=absent
+    name: 'supervisor'
+    state: absent
 
-- name: Determine the user home directory
-  shell:
-    "echo $HOME"
-  register: user_home
-  changed_when: False
+- name: "Check if Supervisor is already installed"
+  stat:
+    path: "{{ supervisor_install_dir }}/bin/supervisord"
+  register: supervisord
 
-- name: Determine the build directory
-  set_fact:
-    build_dir: "{{ user_home.stdout }}/build"
+- name: "Build and install local version of Supervisor"
+  block:
+  - name: "Determine the user home directory"
+    shell:
+      "echo $HOME"
+    register: user_home
+    changed_when: False
 
-- name: Print the location of the build directory
-  debug: msg="Build directory {{ build_dir }}"
+  - name: "Determine the build directory"
+    set_fact:
+      build_dir: "{{ user_home.stdout }}/build"
 
-- name: Create build directory
-  file:
-    path='{{ build_dir }}'
-    state=directory
+  - name: "Print the location of the build directory"
+    debug: msg="Build directory {{ build_dir }}"
 
-- name: Download Supervisor source
-  get_url:
-    url=https://pypi.python.org/packages/source/s/supervisor/supervisor-{{supervisor_version}}.tar.gz
-    dest='{{ build_dir }}'
+  - name: "Create build directory"
+    file:
+      path: '{{ build_dir }}'
+      state: directory
 
-- name: Unpack Supervisor source
-  unarchive:
-    src='{{ build_dir }}/supervisor-{{ supervisor_version }}.tar.gz'
-    dest='{{ build_dir }}'
-    copy=no
-    owner=root
-    group=root
-    creates='{{ build_dir }}/supervisor-{{ supervisor_version }}'
+  - name: "Download Supervisor source"
+    get_url:
+      url: 'https://pypi.python.org/packages/source/s/supervisor/supervisor-{{supervisor_version}}.tar.gz'
+      dest: '{{ build_dir }}'
 
-- name: Install Supervisor
-  command:
-    chdir='{{ build_dir }}/supervisor-{{ supervisor_version }}'
-    {{ supervisor_python_dir }}/bin/python setup.py install --prefix={{ supervisor_install_dir }}
-    creates={{ supervisor_install_dir }}/bin/supervisord
+  - name: "Unpack Supervisor source"
+    unarchive:
+      src: '{{ build_dir }}/supervisor-{{ supervisor_version }}.tar.gz'
+      dest: '{{ build_dir }}'
+      copy: no
+      owner: root
+      group: root
+      creates: '{{ build_dir }}/supervisor-{{ supervisor_version }}'
 
-- name: Create Supervisord conf file
-  shell: >-
-    {{ supervisor_install_dir }}/bin/echo_supervisord_conf > {{ supervisor_install_dir }}/etc/supervisord.conf
-    creates={{ supervisor_install_dir }}/etc/supervisord.conf
-  notify: Restart Supervisord
+  - name: "Install Supervisor"
+    command:
+      chdir: '{{ build_dir }}/supervisor-{{ supervisor_version }}'
+      cmd: "{{ supervisor_python_dir }}/bin/python setup.py install --prefix={{ supervisor_install_dir }}"
+      creates: '{{ supervisor_install_dir }}/bin/supervisord'
 
-- name: Create supervisord.d directory
-  file:
-    path='{{ supervisor_install_dir }}/etc/supervisord.d'
-    state=directory
+  - name: "Create Supervisord conf file"
+    shell: >-
+      {{ supervisor_install_dir }}/bin/echo_supervisord_conf > {{ supervisor_install_dir }}/etc/supervisord.conf
+      creates={{ supervisor_install_dir }}/etc/supervisord.conf
+    notify: "Restart Supervisord"
 
-- name: Create supervisord log directory
-  file:
-    path='/var/log/supervisord'
-    state=directory
+  - name: "Create supervisord.d directory"
+    file:
+      path: '{{ supervisor_install_dir }}/etc/supervisord.d'
+      state: directory
 
-- name: Update Supervisord conf file
-  ini_file:
-    dest='{{ supervisor_install_dir }}/etc/supervisord.conf'
-    section='{{ item.section }}'
-    option='{{ item.option }}'
-    value='{{ item.value }}'
-  with_items:
-  - section: 'supervisord'
-    option: 'logfile'
-    value: '/var/log/supervisord/supervisord.log'
-  - section: 'supervisord'
-    option: 'pidfile'
-    value: '/var/run/supervisord.pid'
-  - section: 'include'
-    option: 'files'
-    value: '/usr/local/etc/supervisord.d/*.ini'
-  notify: Restart Supervisord
+  - name: "Create supervisord log directory"
+    file:
+      path: '/var/log/supervisord'
+      state: directory
+
+  - name: "Update Supervisord conf file"
+    ini_file:
+      dest: '{{ supervisor_install_dir }}/etc/supervisord.conf'
+      section: '{{ item.section }}'
+      option: '{{ item.option }}'
+      value: '{{ item.value }}'
+    with_items:
+      - section: 'supervisord'
+        option: 'logfile'
+        value: '/var/log/supervisord/supervisord.log'
+      - section: 'supervisord'
+        option: 'pidfile'
+        value: '/var/run/supervisord.pid'
+      - section: 'include'
+        option: 'files'
+        value: '/usr/local/etc/supervisord.d/*.ini'
+    notify: "Restart Supervisord"
+  when: not supervisord.stat.exists
 
 # Set up as a service
-- name: Create init.d script for Supervisord
-  copy:
-    dest=/etc/init.d/supervisord
-    src=supervisord.init.sh
-    mode='ugo+x'
-  notify: Restart Supervisord
+- name: "Check for Supervisord init.d script"
+  stat:
+    path: '/etc/init.d/supervisord'
+  register: init_d
 
-- name: Start Supervisord service
+- name: "Create init.d script for Supervisord"
+  copy:
+    dest: '/etc/init.d/supervisord'
+    src: 'supervisord.init.sh'
+    mode: 'ugo+x'
+  when: not init_d.stat.exists
+  notify: "Restart Supervisord"
+
+- name: "Start Supervisord service"
   service:
-    name=supervisord
-    enabled=on
-    state=started
+    name: 'supervisord'
+    enabled: on
+    state: started
