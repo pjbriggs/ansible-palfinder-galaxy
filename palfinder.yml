@@ -6,11 +6,12 @@
   - galaxy_name: "palfinder"
   - galaxy_version: "release_19.05"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
-  - galaxy_python_dir: "/mnt/rvmi/palfinder/galaxy/python"
   - enable_require_login: yes
   - enable_quotas: yes
   - enable_ftp_upload: yes
   - enable_reports: yes
+  # Galaxy-specific Python installation
+  - galaxy_python_version: "2.7.10"
   # GDPR compliance
   - enable_beta_gdpr: yes
   # Welcome page etc
@@ -105,11 +106,6 @@
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
     when: enable_local_jse_drop
-  # Install Galaxy-specific Python 2.7
-  - role: python27
-    install_dir: "{{ galaxy_python_dir }}"
-    become: yes
-    become_user: "{{ galaxy_user }}"
   # Install and configure Galaxy
   - galaxy
   # Install utilities
