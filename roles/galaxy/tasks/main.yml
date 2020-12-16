@@ -4,6 +4,10 @@
 
 - include: dependencies.yml
 
+- include: python.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
 - include: database.yml
   become: yes
   become_user: postgres

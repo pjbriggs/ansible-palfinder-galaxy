@@ -59,11 +59,16 @@
   with_items: "{{ galaxy_custom_scss }}"
   when: galaxy_custom_scss|default(None) != None
 
-- name: Make virtualenv in Galaxy root
+- name: "Remove existing virtualenv from Galaxy root"
+  file:
+    path: '{{ galaxy_root }}/.venv'
+    state: absent
+
+- name: "Make virtualenv in Galaxy root"
   command:
-    chdir={{ galaxy_root }}
-    {{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ galaxy_python_dir }}/bin/python
-    creates='{{ galaxy_root }}/.venv'
+    chdir: '{{ galaxy_root }}'
+    cmd: "{{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ galaxy_python_dir }}/bin/python"
+    creates: '{{ galaxy_root }}/.venv'
 
 - name: Create Galaxy configuration file
   template:
