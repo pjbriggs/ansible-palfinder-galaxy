@@ -4,6 +4,8 @@
 
 - include: dependencies.yml
 
+- include: halt_galaxy.yml
+
 - include: python.yml
   become: yes
   become_user: "{{ galaxy_user }}"
