@@ -1,9 +1,5 @@
 # Install and configure Galaxy
 ---
-- name: "Halt running Galaxy"
-  command:
-    "{{ galaxy_utils_dir }}/bin/galaxyctl.sh stop {{ galaxy_name }}"
-
 - name: Create top-level Galaxy directories
   file:
     path='{{ item }}'
