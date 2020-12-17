@@ -1,0 +1,4 @@
+---
+# Python defaults
+python_version: '3.6.11'
+install_dir: '/usr/local/python/{{ python_version }}'
