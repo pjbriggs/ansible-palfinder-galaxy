@@ -148,6 +148,14 @@
   with_items: "{{ galaxy_sanitize_whitelist_tools }}"
   when: galaxy_sanitize_whitelist_tools|default(None) != None
 
+# Remove compiled .mako templates for Python 3 updates
+# See https://docs.galaxyproject.org/en/release_20.01/admin/python.html
+- name: "Remove compiled .mako templates"
+  file:
+    path: '{{ galaxy_root }}/database/compiled_templates/'
+    state: absent
+  when: galaxy_python_version.startswith("3.")
+
 # Setup/update Galaxy
 - name: "Run common_startup.sh to initialise/update Galaxy installation"
   command:
