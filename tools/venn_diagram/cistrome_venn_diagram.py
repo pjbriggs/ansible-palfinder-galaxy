@@ -2,9 +2,14 @@
 
 import sys
 import urllib
-import optparse
+import argparse
 import copy
 import math
+try:
+    from urllib.request import FancyURLopener
+except ImportError:
+    # Fallback to Python2
+    from urllib import FancyURLopener
 
 def read_bed_file(bedfilename):
     """
@@ -184,7 +189,8 @@ def combine_dicts_2(dict1,dict2):
             new_dict[key] = dict2[key]
     return new_dict
 
-def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
+def main(bed1,bed2,bed3,title,height,width,show_url,bedlabel,
+         png_out='venn_diagram.png',notproportional=False):
     """
     This function takes in three bed files and creats a png file containing a venn_diagram which illustrates the number of regions shared by the bed files.
     """
@@ -196,7 +202,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     tempsize = 0
     for key in datadict1:
         tempsize+=len(datadict1[key])
-    print 'tmpsize= ', tempsize
+    print('tmpsize= %s' % tempsize)
 
     #developing new datadicts based on clustering
     datadict12,datadict1_12,datadict2_12 = make_cluster(datadict1,datadict2)
@@ -221,7 +227,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
 
     #calclating size of each cluster
     sizeA=sizeB=sizeC=sizeAB=sizeBC=sizeAC=sizeABC=0
-    #print datadict_ABC
+    #print(datadict_ABC)
     for key in datadict_A:
         sizeA+=len(datadict_A[key])
     for key in datadict_B:
@@ -236,7 +242,7 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
         sizeAC+=len(datadict_AC[key])
     for key in datadict_ABC:
         sizeABC+=len(datadict_ABC[key])
-    print sizeABC
+    #print(sizeABC)
     total_size = sizeA+sizeB+sizeC+sizeAB+sizeBC+sizeAC+sizeABC    
     sizeA_tot = sizeA+sizeAB+sizeAC+sizeABC
     sizeB_tot = sizeB+sizeAB+sizeBC+sizeABC
@@ -245,30 +251,58 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     sizeAC_tot = sizeAC+sizeABC  #fixed a typo here, was AB+ABC before now changed to AC+ABC
     sizeBC_tot = sizeBC+sizeABC
     #generating html page which defines the venn diagram
-    if opts.notporportional:
-        data_sizes = str(100.0*sizeA_tot/total_size)+','+str(100.0*sizeB_tot/total_size)+','+str(100.0*sizeC_tot/total_size)+','+str(100.0*sizeAB_tot/total_size)+','+str(100.0*sizeAC_tot/total_size)+','+str(100.0*sizeBC_tot/total_size)+','+str(100.0*sizeABC/total_size)  #changed to float math instead of int math, with int math things may become zeros of other wrong values due to division and rounding
-    elif not opts.notporportional:
-        data_sizes = '100,100,100,20,20,20,10'   #added fixed values for none porportional diagrams
+    if notproportional:
+        data_sizes = str(100.0*sizeA_tot/total_size)+','+\
+                     str(100.0*sizeB_tot/total_size)+','+\
+                     str(100.0*sizeC_tot/total_size)+','+\
+                     str(100.0*sizeAB_tot/total_size)+','+\
+                     str(100.0*sizeAC_tot/total_size)+','+\
+                     str(100.0*sizeBC_tot/total_size)+','+\
+                     str(100.0*sizeABC/total_size)
+    else:
+        # fixed values for non-proportional diagrams
+        data_sizes = '100,100,100,20,20,20,10'
     colors = 'ff0000,0000ff,00ff00,ffffff,ffffff,ffffff,ffffff'
     if int(width)*int(height) > 300000:
         width='500'
         height='600'
     image_size=width+'x'+height
     if bed2 == bed3:
-        if opts.notporportional:
-            data_sizes = str(100.0*sizeA_tot/total_size)+','+str(100.0*sizeB_tot/total_size)+',0,'+str(100.0*sizeABC/total_size)
-        elif not opts.notporportional:
-            data_sizes = '100,100,0,25' #added fixed values for none porportional option
+        if notproportional:
+            data_sizes = str(100.0*sizeA_tot/total_size)+','+\
+                         str(100.0*sizeB_tot/total_size)+',0,'+\
+                         str(100.0*sizeABC/total_size)
+        else:
+            # fixed values for non-proportional option
+            data_sizes = '100,100,0,25'
         colors = 'ff0000,0000ff,ffffff'
-        legend = opts.bedlabel[0]+' only (locations= '+str(sizeA)+')|'+opts.bedlabel[1]+' only (locations= '+str(sizeBC)+')|'+opts.bedlabel[0]+' and '+opts.bedlabel[1]+'(shared locations= '+str(sizeABC)+')'
+        legend = bedlabel[0]+\
+                 ' only (locations= '+str(sizeA)+')|'+\
+                 bedlabel[1]+\
+                 ' only (locations= '+str(sizeBC)+')|'+\
+                 bedlabel[0]+' and '+bedlabel[1]+\
+                 '(shared locations= '+str(sizeABC)+')'
     else:
-        legend = opts.bedlabel[0]+' only (locations= '+str(sizeA)+')|'+opts.bedlabel[1]+' only (locations= ' +str(sizeB)+')|'+opts.bedlabel[2]+' only (locations= '+str(sizeC)+')|'+opts.bedlabel[0]+' and '+opts.bedlabel[1]+' only (shared locations= '+str(sizeAB)+')|'+opts.bedlabel[0]+' and '+opts.bedlabel[2]+' only (shared locations= '+str(sizeAC)+')|'+opts.bedlabel[1]+' and '+opts.bedlabel[2]+' only (shared locations= '+str(sizeBC)+')|'+opts.bedlabel[0]+','+opts.bedlabel[1]+', and '+opts.bedlabel[2]+' (shared locations= '+str(sizeABC)+')'
+        legend = bedlabel[0]+\
+                 ' only (locations= '+str(sizeA)+')|'+\
+                 bedlabel[1]+\
+                 ' only (locations= '+str(sizeB)+')|'+\
+                 bedlabel[2]+\
+                 ' only (locations= '+str(sizeC)+')|'+\
+                 bedlabel[0]+' and '+bedlabel[1]+\
+                 ' only (shared locations= '+str(sizeAB)+')|'+\
+                 bedlabel[0]+' and '+bedlabel[2]+\
+                 ' only (shared locations= '+str(sizeAC)+')|'+\
+                 bedlabel[1]+' and '+bedlabel[2]+\
+                 ' only (shared locations= '+str(sizeBC)+')|'+\
+                 bedlabel[0]+','+bedlabel[1]+', and '+bedlabel[2]+\
+                 ' (shared locations= '+str(sizeABC)+')'
     venn_diagram_webpage = 'http://chart.apis.google.com/chart?cht=v&chs='+image_size+'&chd=t:'+data_sizes+'&chco='+colors+'&chdl='+legend+'&chtt='+title+'&chdlp='+'bv'
     url = venn_diagram_webpage.replace(' ','%20')
-    if opts.url == 'yes':
-        print url
+    if show_url:
+        print(url)
     #accessing webpage and copying png image to file
-    opener = urllib.FancyURLopener({})
+    opener = FancyURLopener({})
     f = opener.open(url)
     venn_diagram = f.read()
     newFile = open(png_out, "wb")
@@ -278,26 +312,42 @@ def main(bed1,bed2,bed3,title,height,width,url,png_out='venn_diagram.png'):
     return datadict_ABC
 
 if __name__ == '__main__':
-    parser = optparse.OptionParser()
-    parser.add_option('-H','--height', dest ='height', default='500')
-    parser.add_option('-W','--width', dest='width', default='500')
-    parser.add_option('-t','--title',dest='title',default='Bed Venn Diagram')
-    parser.add_option('-u','--url',dest='url',default='no')
-    parser.add_option('-n','--notporportional',action='store_false',dest='notporportional',default=True)  #added option for none porportional diagrams
-    parser.add_option('-o',"--output",dest='png_out',type='string',action='store',default='venn_diagram.png')
-    parser.add_option("-l","--bed-label",dest="bedlabel",type="string",action="append")
-    (opts, args) = parser.parse_args(sys.argv)
-    if len(args)<3:
-        parser.print_help()
-        sys.exit()
-    if not opts.bedlabel:
-        opts.bedlabel=["Bed File 1","Bed File 2","Bed File 3"]
-    bed1=args[1]
-    bed2=args[2]
-    try:
-        open(args[3])
-    except (IOError, IndexError):
-        bed3=bed2
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-H','--height', dest ='height', default='500')
+    parser.add_argument('-W','--width', dest='width', default='500')
+    parser.add_argument('-t','--title',dest='title',default='Bed Venn Diagram')
+    parser.add_argument('-u','--url',dest='url')
+    parser.add_argument('-n','--notproportional',action='store_false',
+                        dest='notproportional',default=True)
+    parser.add_argument('-o',"--output",dest='png_out',type=str,
+                        action='store',default='venn_diagram.png')
+    parser.add_argument("-l","--bed-label",dest="bedlabel",type=str,
+                        action="append")
+    parser.add_argument('bed1')
+    parser.add_argument('bed2')
+    parser.add_argument('bed3',nargs='?')
+    args = parser.parse_args()
+    # Handle labels
+    bedlabel = list()
+    for label,default in zip(args.bedlabel,
+                             ("Bed File 1",
+                              "Bed File 2",
+                              "Bed File 3")):
+        if label:
+            bedlabel.append(label)
+        else:
+            bedlabel.append(default)
+    bed1 = args.bed1
+    bed2 = args.bed2
+    if not args.bed3:
+        bed3 = bed2
     else:
-        bed3=args[3]
-    main(bed1,bed2,bed3,opts.title,opts.height,opts.width,opts.url,png_out=opts.png_out)
+        bed3 = args.bed3
+    main(bed1,bed2,bed3,
+         args.title,
+         args.height,
+         args.width,
+         args.url,
+         bedlabel,
+         png_out=args.png_out,
+         notproportional=args.notproportional,)
