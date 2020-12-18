@@ -2,7 +2,7 @@ ansible-palfinder-galaxy
 ========================
 
 ``ansible`` playbook and roles for deploying BCF Galaxy instances
-on Scientific Linux 6.7 virtual machines at the University of
+on Scientific Linux virtual machines at the University of
 Manchester:
 
  * ``pal_finder``: a public instance for running Pal_finder
@@ -39,6 +39,8 @@ The following roles are defined:
 
  - ``lets-encrypt-client``: installs the Let's Encrypt client
    ``cert-bot``
+
+ - ``jsedrop``: installs a local JSE-Drop service
 
  - ``galaxy``: install and configure a Galaxy instance:
 
@@ -216,6 +218,7 @@ Versions of installed components:
  - ``python_version`` (2.7.10)
  - ``proftpd_version`` (1.3.5a)
  - ``supervisor_version`` (3.2.2)
+ - ``git`` (2.20.0)
 
 Playbooks
 ---------
@@ -288,6 +291,8 @@ The following servers are defined in the ``Vagrantfile``:
    http://192.168.60.4)
  - ``cetus``: Scientific Linux 7 VM (uses the address
    http://192.168.60.5)
+ - ``mintaka``: Scientific Linux 7 VM (uses the address
+   http://192.168.60.6)
 
 To create and log into a Vagrant VM instance for testing Palfinder do
 e.g.::
