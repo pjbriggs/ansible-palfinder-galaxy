@@ -67,6 +67,11 @@ import time
 import io
 import os
 
+try:
+    from string import letters as string_letters
+except ImportError:
+    from string import ascii_letters as string_letters
+
 from galaxy import model
 from galaxy.jobs.runners import AsynchronousJobRunner
 from galaxy.jobs.runners import AsynchronousJobState
@@ -114,7 +119,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         if tool_id:
             job_name += '_%s' % tool_id
         job_name = ''.join(map(lambda x:
-                               x if x in (string.letters+string.digits+'_')
+                               x if x in (string_letters+string.digits+'_')
                                else '_', job_name))
         return job_name
 
