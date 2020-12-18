@@ -1,0 +1,109 @@
+---
+# Build and install Python 3 on the remote host
+# Also installs pip and virtualenv packages
+
+- name: "Set major.minor Python version"
+  set_fact:
+    python_major_minor_version: "{{ galaxy_python_version.split('.')[:2] | join('.') }}"
+
+- name: "Report major.minor Python version"
+  debug:
+    msg: "Python version {{ galaxy_python_version }} ({{ python_major_minor_version }})"
+
+- name: "Check if Python3 is already installed"
+  stat:
+    path: "{{ install_dir }}/bin/python{{ python_major_minor_version }}"
+  register: python
+
+- name: "Build and install Python 3"
+  block:
+    - name: "Install Python3 build dependencies"
+      yum:
+        name:
+          - 'autoconf'
+          - 'make'
+          - 'automake'
+          - 'gcc'
+          - 'readline'
+          - 'sqlite'
+          - 'zlib'
+          - 'bzip2-devel'
+          - 'bzip2'
+          - 'ncurses-devel'
+          - 'ncurses'
+          - 'openssl-devel'
+          - 'openssl'
+          - 'readline-devel'
+          - 'sqlite-devel'
+          - 'zlib-devel'
+          - 'tkinter'
+        state: 'present'
+
+    - name: "Create installation directory"
+      file:
+        path: '{{ install_dir }}'
+        state: 'directory'
+
+    - name: "Determine the user home directory"
+      shell:
+        "echo $HOME"
+      register: 'user_home'
+      changed_when: False
+
+    - name: "Determine the build directory"
+      set_fact:
+        build_dir: "{{ user_home.stdout }}/build"
+
+    - name: "Report Python version"
+      debug:
+        msg: "Python version {{ python_version }}"
+
+    - name: "Report installation directory path"
+      debug:
+        msg: "Install directory {{ install_dir }}"
+
+    - name: "Report build directory path"
+      debug:
+        msg: "Build directory {{ build_dir }}"
+
+    - name: "Create build directory"
+      file:
+        path: '{{ build_dir }}'
+        state: 'directory'
+
+    - name: "Download Python 3"
+      get_url:
+        url: 'https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
+        dest: '{{ build_dir }}'
+
+    - name: "Unpack Python 3"
+      unarchive:
+        src: '{{ build_dir }}/Python-{{ python_version }}.tgz'
+        dest: '{{ build_dir }}'
+        copy: no
+        creates: '{{ build_dir }}/Python-{{ python_version }}'
+
+    - name: "Install Python 3"
+      command:
+        cmd: '{{item}}'
+        chdir: '{{ build_dir }}/Python-{{ python_version }}'
+        creates: '{{ install_dir }}/bin/python{{ python_major_minor_version }}'
+      with_items:
+        - './configure --prefix={{ install_dir }}'
+        - 'make install'
+  when: not python.stat.exists
+
+- name: "Install Pip"
+  command:
+    cmd: '{{ install_dir }}/bin/python{{ python_major_minor_version }} -m ensurepip'
+    creates: '{{ install_dir }}/bin/pip'
+
+- name: "Upgrade Pip"
+  command:
+    cmd: '{{ install_dir }}/bin/pip3 install --upgrade pip'
+
+- name: "Install Virtualenv"
+  pip:
+    name: 'virtualenv'
+    state: 'present'
+    executable: '{{ install_dir }}/bin/pip3'

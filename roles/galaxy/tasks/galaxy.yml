@@ -55,6 +55,10 @@
   with_items: "{{ galaxy_custom_scss }}"
   when: galaxy_custom_scss|default(None) != None
 
+- name: "Determine Python executable for setting up virtualenev"
+  set_fact:
+    python_exe: "{{ galaxy_python_dir }}/bin/python{{ galaxy_python_version.split('.')[:2] | join('.') }}"
+
 - name: "Remove existing virtualenv from Galaxy root"
   file:
     path: '{{ galaxy_root }}/.venv'
@@ -63,7 +67,7 @@
 - name: "Make virtualenv in Galaxy root"
   command:
     chdir: '{{ galaxy_root }}'
-    cmd: "{{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ galaxy_python_dir }}/bin/python"
+    cmd: "{{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ python_exe }}"
     creates: '{{ galaxy_root }}/.venv'
 
 - name: Create Galaxy configuration file
@@ -143,6 +147,14 @@
     line="{{ item }}"
   with_items: "{{ galaxy_sanitize_whitelist_tools }}"
   when: galaxy_sanitize_whitelist_tools|default(None) != None
+
+# Remove compiled .mako templates for Python 3 updates
+# See https://docs.galaxyproject.org/en/release_20.01/admin/python.html
+- name: "Remove compiled .mako templates"
+  file:
+    path: '{{ galaxy_root }}/database/compiled_templates/'
+    state: absent
+  when: galaxy_python_version.startswith("3.")
 
 # Setup/update Galaxy
 - name: "Run common_startup.sh to initialise/update Galaxy installation"
