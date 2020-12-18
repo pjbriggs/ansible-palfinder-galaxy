@@ -24,6 +24,8 @@ The following roles are defined:
 
  - ``python27``: builds and installs Python 2.7 from source
 
+ - ``python3``: builds and installs Python 3 from source
+
  - ``nginx``: installs Nginx
 
  - ``postgresql``: installs and configures PostgreSQL
@@ -41,6 +43,7 @@ The following roles are defined:
  - ``galaxy``: install and configure a Galaxy instance:
 
    * Install Galaxy dependencies
+   * Install Galaxy-specific Python
    * Set up database
    * Clone and configure specified Galaxy version
    * Uploads ``welcome``, ``terms`` and ``citation`` pages,
@@ -202,8 +205,11 @@ Reference data (``.loc`` file contents):
 Variables for handling special cases:
 
  - ``galaxy_python_dir``: location to install Galaxy-specific
-   version of Python (e.g. if default installation of Python
-   isn't accessible across cluster nodes)
+   version of Python (this is required for example if the
+   default installation of Python isn't accessible across compute
+   cluster nodes) (default: install Galaxy-specific Python in
+   a ``python/VERSION`` directory parallel to the Galaxy code
+   cloned from GitHub)
 
 Versions of installed components:
 
