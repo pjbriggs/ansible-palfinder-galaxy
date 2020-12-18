@@ -541,14 +541,14 @@ if __name__ == '__main__':
         sys.exit(1)
     jse = JSEDrop('.')
     status = jse.status(job_name)
-    print "Job   : %s" % job_name
-    print "Status: %s" % status
+    print("Job   : %s" % job_name)
+    print("Status: %s" % status)
     if status == JSEDropStatus.RUNNING:
-        print "Job is running"
-        print "State: %s" % jse.qstat(job_name)['state']
+        print("Job is running")
+        print("State: %s" % jse.qstat(job_name)['state'])
     elif status == JSEDropStatus.FINISHED:
-        print "Job has finished"
-        print "Exit status: %s" % jse.qacct(job_name)['exit_status']
+        print("Job has finished")
+        print("Exit status: %s" % jse.qacct(job_name)['exit_status'])
     elif status == JSEDropStatus.FAILED:
-        print "Job has failed"
-        print "Exit status: %s" % jse.qfail(job_name)['exit_code']
+        print("Job has failed")
+        print("Exit status: %s" % jse.qfail(job_name)['exit_code'])
