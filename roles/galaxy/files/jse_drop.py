@@ -134,7 +134,7 @@ class JSEDrop(object):
         jobs.sort()
         return jobs
 
-    def run(self,name,script,mode=0775):
+    def run(self,name,script,mode=0x775):
         """
         Submit a script to JSE-drop
 
