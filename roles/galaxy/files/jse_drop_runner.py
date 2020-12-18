@@ -67,6 +67,11 @@ import time
 import io
 import os
 
+try:
+    from string import letters as string_letters
+except ImportError:
+    from string import ascii_letters as string_letters
+
 from galaxy import model
 from galaxy.jobs.runners import AsynchronousJobRunner
 from galaxy.jobs.runners import AsynchronousJobState
@@ -114,7 +119,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         if tool_id:
             job_name += '_%s' % tool_id
         job_name = ''.join(map(lambda x:
-                               x if x in (string.letters+string.digits+'_')
+                               x if x in (string_letters+string.digits+'_')
                                else '_', job_name))
         return job_name
 
@@ -370,9 +375,15 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 log.debug("finish_job %s: reading stdout from %s" %
                           (external_job_id,tool_stdout_path))
                 with io.open(tool_stdout_path,'rt') as fp:
-                    stdout = fp.read().\
-                             encode('ascii',errors='ignore').\
-                             replace('\x00','?')
+                    stdout = fp.read()
+                    try:
+                        # Try to clean up non-ascii characters
+                        # (Python 2 only)
+                        stdout = stdout.\
+                                 encode('ascii',errors='ignore').\
+                                 replace('\x00','?')
+                    except TypeError:
+                        pass
             else:
                 log.debug("finish_job %s: couldn't find %s" %
                           (external_job_id,tool_stdout_path))
@@ -383,9 +394,15 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 log.debug("finish_job %s: reading stderr from %s" %
                           (external_job_id,tool_stderr_path))
                 with io.open(tool_stderr_path,'rt') as fp:
-                    stderr = fp.read().\
-                             encode('ascii',errors='ignore').\
-                             replace('\x00','?')
+                    stderr = fp.read()
+                    try:
+                        # Try to clean up non-ascii characters
+                        # (Python 2 only)
+                        stderr = stderr.\
+                                 encode('ascii',errors='ignore').\
+                                 replace('\x00','?')
+                    except TypeError:
+                        pass
             else:
                 log.debug("finish_job %s: couldn't find %s" %
                           (external_job_id,tool_stderr_path))
