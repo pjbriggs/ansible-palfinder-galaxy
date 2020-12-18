@@ -149,7 +149,7 @@ class JSEDrop(object):
         if os.path.exists(drop_file):
             raise OSError("Job with name '%s' already exists" % name)
         fd,tmp_drop_file = tempfile.mkstemp()
-        with open(tmp_drop_file,'w') as fp:
+        with open(tmp_drop_file,'wt') as fp:
             fp.write(script)
         os.close(fd)
         shutil.move(tmp_drop_file,drop_file)
@@ -167,7 +167,7 @@ class JSEDrop(object):
         qsubmit_file = os.path.join(self._drop_dir,"%s.drop.qsubmit" % name)
         if not os.path.exists(qsubmit_file):
             return None
-        with open(qsubmit_file) as fp:
+        with open(qsubmit_file,'rt') as fp:
             # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
             job_id = fp.read()
         try:
@@ -269,7 +269,7 @@ class JSEDrop(object):
         if not os.path.exists(qstat_file):
             return {}
         qstat = {}
-        with open(qstat_file) as fp:
+        with open(qstat_file,'rt') as fp:
             #<JB_job_number>204784</JB_job_number>
             #<JAT_prio>50.25000</JAT_prio>
             #<JB_name>drop-test  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP</JB_name>
@@ -302,7 +302,7 @@ class JSEDrop(object):
         if not os.path.exists(qacct_file):
             return {}
         qacct = {}
-        with open(qacct_file) as fp:
+        with open(qacct_file,'rt') as fp:
             #==============================================================
             #qname        C6220-galaxy.q
             #hostname     node009.prv.hydra.cluster
@@ -349,7 +349,7 @@ class JSEDrop(object):
         if not os.path.exists(qfail_file):
             return {}
         qfail = {}
-        with open(qfail_file) as fp:
+        with open(qfail_file,'rt') as fp:
             #======================================
             #
             #Exit status: //2//
@@ -433,7 +433,7 @@ class JSEDrop(object):
         if os.path.exists(kill_file):
             # Kill file already exists, ignore
             return
-        with open(kill_file,'w') as fp:
+        with open(kill_file,'wt') as fp:
             pass
 
     def timestamp(self,name):
