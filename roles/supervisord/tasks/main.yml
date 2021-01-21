@@ -36,8 +36,8 @@
 
   - name: "Download Supervisor source"
     get_url:
-      url: 'https://pypi.python.org/packages/source/s/supervisor/supervisor-{{supervisor_version}}.tar.gz'
-      dest: '{{ build_dir }}'
+      url: 'https://github.com/Supervisor/supervisor/archive/{{ supervisor_version }}.tar.gz'
+      dest: '{{ build_dir }}/supervisor-{{ supervisor_version }}.tar.gz'
 
   - name: "Unpack Supervisor source"
     unarchive:
