@@ -14,8 +14,34 @@
     path: "{{ supervisor_install_dir }}/bin/supervisord"
   register: supervisord
 
+- name: "Determine if Supervisor should be installed"
+  set_fact:
+    install_supervisor: not supervisord.stat.exists
+
+- name: "Determine if Supervisor should be reinstalled"
+  block:
+  - name: "Get installed Supervisor version"
+    shell:
+      "{{ supervisor_install_dir }}/bin/supervisord --version"
+    register: supervisord_installed_version
+
+  - name: "Check if new version is different"
+    set_fact:
+      install_supervisor: "{{ supervisord_installed_version.stdout is version(supervisor_version,'!=') }}"
+
+  - name: "Report Supervisord versions"
+    debug:
+      msg: "Supervisord: current version {{ supervisord_installed_version.stdout }} -> {{ supervisor_version }}"
+  when: supervisord.stat.exists
+
 - name: "Build and install local version of Supervisor"
   block:
+  - name: "Disable Supervisord service"
+    service:
+      name: 'supervisord'
+      enabled: false
+      state: stopped
+
   - name: "Determine the user home directory"
     shell:
       "echo $HOME"
@@ -52,7 +78,6 @@
     command:
       chdir: '{{ build_dir }}/supervisor-{{ supervisor_version }}'
       cmd: "{{ supervisor_python_exe }} setup.py install --prefix={{ supervisor_install_dir }}"
-      creates: '{{ supervisor_install_dir }}/bin/supervisord'
 
   - name: "Create Supervisord conf file"
     shell: >-
@@ -87,21 +112,15 @@
         option: 'files'
         value: '/usr/local/etc/supervisord.d/*.ini'
     notify: "Restart Supervisord"
-  when: not supervisord.stat.exists
 
-# Set up as a service
-- name: "Check for Supervisord init.d script"
-  stat:
-    path: '/etc/init.d/supervisord'
-  register: init_d
-
-- name: "Create init.d script for Supervisord"
-  copy:
-    dest: '/etc/init.d/supervisord'
-    src: 'supervisord.init.sh'
-    mode: 'ugo+x'
-  when: not init_d.stat.exists
-  notify: "Restart Supervisord"
+  - name: "Create init.d script for Supervisord"
+    copy:
+      dest: '/etc/init.d/supervisord'
+      src: 'supervisord.init.sh'
+      mode: 'ugo+x'
+    when: not init_d.stat.exists
+    notify: "Restart Supervisord"
+  when: install_supervisor == True
 
 - name: "Start Supervisord service"
   service:
