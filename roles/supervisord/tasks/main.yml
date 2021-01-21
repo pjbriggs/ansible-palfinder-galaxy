@@ -51,7 +51,7 @@
   - name: "Install Supervisor"
     command:
       chdir: '{{ build_dir }}/supervisor-{{ supervisor_version }}'
-      cmd: "{{ supervisor_python_dir }}/bin/python setup.py install --prefix={{ supervisor_install_dir }}"
+      cmd: "{{ supervisor_python_exe }} setup.py install --prefix={{ supervisor_install_dir }}"
       creates: '{{ supervisor_install_dir }}/bin/supervisord'
 
   - name: "Create Supervisord conf file"

@@ -5,3 +5,4 @@ supervisor_install_dir: '/usr/local'
 
 # Location of Python installation to use
 supervisor_python_dir: '/usr/local'
+supervisor_python_exe: '{{ supervisor_python_dir }}/bin/python'
