@@ -4,11 +4,11 @@
 
 - name: "Set major.minor Python version"
   set_fact:
-    python_major_minor_version: "{{ galaxy_python_version.split('.')[:2] | join('.') }}"
+    python_major_minor_version: "{{ python_version.split('.')[:2] | join('.') }}"
 
 - name: "Report major.minor Python version"
   debug:
-    msg: "Python version {{ galaxy_python_version }} ({{ python_major_minor_version }})"
+    msg: "Python version {{ python_version }} ({{ python_major_minor_version }})"
 
 - name: "Check if Python3 is already installed"
   stat:
@@ -96,7 +96,7 @@
 - name: "Install Pip"
   command:
     cmd: '{{ install_dir }}/bin/python{{ python_major_minor_version }} -m ensurepip'
-    creates: '{{ install_dir }}/bin/pip'
+    creates: '{{ install_dir }}/bin/pip3'
 
 - name: "Upgrade Pip"
   command:
