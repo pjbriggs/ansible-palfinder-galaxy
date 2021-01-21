@@ -96,7 +96,7 @@
 - name: "Install Pip"
   command:
     cmd: '{{ install_dir }}/bin/python{{ python_major_minor_version }} -m ensurepip'
-    creates: '{{ install_dir }}/bin/pip'
+    creates: '{{ install_dir }}/bin/pip3'
 
 - name: "Upgrade Pip"
   command:
