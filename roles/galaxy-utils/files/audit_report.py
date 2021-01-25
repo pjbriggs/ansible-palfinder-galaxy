@@ -3,9 +3,15 @@
 # Generate and email report on Galaxy usage
 import sys
 import os
-import optparse
-from ConfigParser import ConfigParser
-from ConfigParser import NoOptionError
+import argparse
+try:
+    # Python2
+    from ConfigParser import ConfigParser
+    from ConfigParser import NoOptionError
+except ModuleNotFoundError:
+    # Python3
+    from configparser import ConfigParser
+    from configparser import NoOptionError
 import yaml
 import psycopg2
 import logging
