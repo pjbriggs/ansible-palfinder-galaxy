@@ -29,7 +29,7 @@ class GalaxyConfig(object):
             self._config.read(galaxy_conf_file)
         elif galaxy_conf_file.endswith(".yml"):
             self._format = "yaml"
-            self._config = yaml.load(open(galaxy_conf_file,'r').read())
+            self._config = yaml.safe_load(open(galaxy_conf_file,'r').read())
         else:
             raise NotImplementedError("'%s': unrecognised format"
                                       % galaxy_conf_file)
