@@ -289,7 +289,7 @@ def send_report(sender,recipients,subject,message,html=None,
     # https://stackoverflow.com/a/882770/579925
     if html is None:
         # Plain text message
-        print "Sending message as plain text"
+        print("Sending message as plain text")
         msg = MIMEText(message)
         msg['Subject'] = subject
         msg['From'] = sender
@@ -303,7 +303,7 @@ def send_report(sender,recipients,subject,message,html=None,
             logging.error("Error: unable to send email:  %s" %ex)
     else:
         # HTML/multipart message
-        print "Sending message as HTML"
+        print("Sending message as HTML")
         # Create message container with MIME type 'multipart/alternative'
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
@@ -436,5 +436,5 @@ if __name__ == "__main__":
                     smtp_host=smtp_host)
     else:
         # Report job info (plain text)
-        print report.write()
+        print(report.write())
     galaxy.close()
