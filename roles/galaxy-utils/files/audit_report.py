@@ -3,9 +3,15 @@
 # Generate and email report on Galaxy usage
 import sys
 import os
-import optparse
-from ConfigParser import ConfigParser
-from ConfigParser import NoOptionError
+import argparse
+try:
+    # Python2
+    from ConfigParser import ConfigParser
+    from ConfigParser import NoOptionError
+except ModuleNotFoundError:
+    # Python3
+    from configparser import ConfigParser
+    from configparser import NoOptionError
 import yaml
 import psycopg2
 import logging
@@ -23,7 +29,7 @@ class GalaxyConfig(object):
             self._config.read(galaxy_conf_file)
         elif galaxy_conf_file.endswith(".yml"):
             self._format = "yaml"
-            self._config = yaml.load(open(galaxy_conf_file,'r').read())
+            self._config = yaml.safe_load(open(galaxy_conf_file,'r').read())
         else:
             raise NotImplementedError("'%s': unrecognised format"
                                       % galaxy_conf_file)
@@ -283,7 +289,7 @@ def send_report(sender,recipients,subject,message,html=None,
     # https://stackoverflow.com/a/882770/579925
     if html is None:
         # Plain text message
-        print "Sending message as plain text"
+        print("Sending message as plain text")
         msg = MIMEText(message)
         msg['Subject'] = subject
         msg['From'] = sender
@@ -297,7 +303,7 @@ def send_report(sender,recipients,subject,message,html=None,
             logging.error("Error: unable to send email:  %s" %ex)
     else:
         # HTML/multipart message
-        print "Sending message as HTML"
+        print("Sending message as HTML")
         # Create message container with MIME type 'multipart/alternative'
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
@@ -323,33 +329,35 @@ def send_report(sender,recipients,subject,message,html=None,
 
 if __name__ == "__main__":
     # Process command line
-    p = optparse.OptionParser(usage="%prog OPTIONS <recipient> [<recipient>...]")
-    p.add_option('-c',action="store",dest="galaxy_config",default=None,
-                 help="get settings from GALAXY_CONFIG file")
-    p.add_option('-i',action="store",dest="interval",default="1 week",
-                 help="report changes in time INTERVAL (e.g. '1 week')")
-    p.add_option('-n',action="store_true",dest="no_email",
-                 help="don't send email (i.e. for testing)")
-    p.add_option('--host',action="store",dest="pg_host",default=None,
-                 help="explicitly specify the 'host' for PostgreSQL "
-                 "database connection (e.g. '/var/run'); use if "
-                 "database connection fails because of incorrect "
-                 "Unix domain socket path reported by psycopg2")
-    opts,args = p.parse_args()
+    p = argparse.ArgumentParser()
+    p.add_argument('-c',action="store",dest="galaxy_config",default=None,
+                   help="get settings from GALAXY_CONFIG file")
+    p.add_argument('-i',action="store",dest="interval",default="1 week",
+                   help="report changes in time INTERVAL (e.g. '1 week')")
+    p.add_argument('-n',action="store_true",dest="no_email",
+                   help="don't send email (i.e. for testing)")
+    p.add_argument('--host',action="store",dest="pg_host",default=None,
+                  help="explicitly specify the 'host' for PostgreSQL "
+                  "database connection (e.g. '/var/run'); use if "
+                  "database connection fails because of incorrect "
+                  "Unix domain socket path reported by psycopg2")
+    p.add_argument('recipients',metavar='recipient',nargs='*',
+                   help="email address to send HTML report to")
+    args = p.parse_args()
     # Send email report?
-    send_email = (not opts.no_email)
+    send_email = (not args.no_email)
     # Get database connection from config
-    if opts.galaxy_config:
-        if not os.path.isfile(opts.galaxy_config):
+    if args.galaxy_config:
+        if not os.path.isfile(args.galaxy_config):
             logging.critical("Config file '%s': not found" %
-                             opts.galaxy_config)
+                             args.galaxy_config)
             sys.exit(1)
     else:
         logging.critical("Need to supply galaxy config file")
         sys.exit(1)
     try:
-        galaxy = GalaxyDatabase(opts.galaxy_config,
-                                pg_host=opts.pg_host)
+        galaxy = GalaxyDatabase(args.galaxy_config,
+                                pg_host=args.pg_host)
     except Exception as ex:
         logging.fatal("Failed to connect to database: %s" % ex)
         sys.exit(1)
@@ -366,8 +374,8 @@ if __name__ == "__main__":
                             "email disabled")
             send_email = False
     # Report user info
-    print "%s: generating audit report" % time.strftime("%d/%m/%Y %H:%M:%S")
-    interval = opts.interval
+    print("%s: generating audit report" % time.strftime("%d/%m/%Y %H:%M:%S"))
+    interval = args.interval
     title = "%s: summary report %s" % (galaxy_name,
                                        time.strftime("%d/%m/%Y"))
     report = Report(title)
@@ -420,7 +428,7 @@ if __name__ == "__main__":
         smtp_host = smtp_server.split(':')[0]
         # Send email
         send_report(email_from,
-                    args,
+                    list(args.recipients),
                     "%s Galaxy: report %s" % (galaxy_name,
                                               time.strftime("%d/%m/%Y")),
                     report.write(),
@@ -428,5 +436,5 @@ if __name__ == "__main__":
                     smtp_host=smtp_host)
     else:
         # Report job info (plain text)
-        print report.write()
+        print(report.write())
     galaxy.close()
