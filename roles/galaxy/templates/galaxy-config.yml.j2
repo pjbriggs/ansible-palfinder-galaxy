@@ -249,7 +249,7 @@ galaxy:
   # Set to True to instruct Galaxy to install Conda from the web
   # automatically if it cannot find a local copy and conda_exec is not
   # configured.
-  #conda_auto_init: true
+  conda_auto_init: {{ galaxy_conda_auto_init }}
 
   # You must set this to True if conda_prefix and job_working_directory
   # are not on the same volume, or some conda dependencies will fail to
@@ -257,7 +257,7 @@ galaxy:
   # creating hardlinks or symlinks. This will prevent problems with some
   # specific packages (perl, R), at the cost of extra disk space usage
   # and extra time spent copying packages.
-  #conda_copy_dependencies: false
+  conda_copy_dependencies: {{ galaxy_conda_copy_dependencies }}
 
   # Certain dependency resolvers (namely Conda) take a considerable
   # amount of time to build an isolated job environment in the
