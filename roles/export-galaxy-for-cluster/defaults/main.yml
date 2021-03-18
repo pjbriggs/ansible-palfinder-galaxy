@@ -1,0 +1,26 @@
+---
+# Galaxy name and version
+galaxy_name: "csf"
+galaxy_version: "19.09"
+
+# Galaxy user
+galaxy_user: "galaxy"
+galaxy_uid: 400
+galaxy_group: "{{ galaxy_user }}"
+galaxy_gid: 400
+
+# Galaxy source code
+galaxy_repo: "https://github.com/galaxyproject/galaxy.git"
+galaxy_version_tag: "release_{{ galaxy_version }}"
+
+# Galaxy installation directory
+galaxy_root_dir: "/mnt/rvmi/{{ galaxy_name }}/galaxy"
+galaxy_install_dir: "{{ galaxy_root_dir }}/shared/csf/galaxy/{{ galaxy_version }}"
+
+# Python for Galaxy
+python_version: "3.6.11"
+python_install_dir: '{{ galaxy_root_dir }}/shared/csf/python/{{ python_version }}'
+
+# Exported tgz
+archive_name: "{{ galaxy_name }}-virtualenv-galaxy-{{ galaxy_version }}-python-{{ python_version }}"
+assets_dir: "assets/"

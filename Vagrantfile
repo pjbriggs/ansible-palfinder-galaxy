@@ -51,4 +51,14 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     chmod ugo+rwX /mnt/rvmi/
   SHELL
   end
+  # CSF compute cluster VM
+  config.vm.define "csf" do |csf|
+    csf.vm.box = "centos/7"
+    csf.vm.hostname = "csf"
+    csf.vm.network :private_network, ip: "192.168.60.8"
+    csf.vm.provision "shell", inline: <<-SHELL
+    mkdir -p /mnt/rvmi
+    chmod ugo+rwX /mnt/rvmi/
+  SHELL
+  end
 end

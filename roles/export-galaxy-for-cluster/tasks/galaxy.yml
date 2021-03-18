@@ -1,0 +1,54 @@
+# Install Galaxy
+---
+- name: "Galaxy: create top-level directories"
+  file:
+    path: '{{ item }}'
+    state: 'directory'
+  with_items:
+  - '{{ galaxy_install_dir }}'
+
+# Clone the base repository first and then checkout the
+# required tag in a separate command
+
+# We would prefer to let Ansible clone with the correct
+# tag using the 'git' module, but this doesn't seem to
+# work in practice (cloned repository contains modified
+# files which break the subsequent checkout)
+- name: "Galaxy: clone source code from GitHub"
+  git:
+    repo: '{{ galaxy_repo }}'
+    dest: '{{ galaxy_install_dir }}/galaxy-src'
+    force: yes
+
+- name: "Galaxy: checkout required version"
+  shell:
+    chdir: '{{ galaxy_install_dir }}/galaxy-src'
+    cmd: git fetch origin && git checkout {{ galaxy_version_tag }} && git pull --ff-only origin {{ galaxy_version_tag }}
+
+- name: "Galaxy: determine Python executable for setting up virtualenev"
+  set_fact:
+    python_exe: "{{ python_install_dir }}/bin/python{{ python_version.split('.')[:2] | join('.') }}"
+
+- name: "Galaxy: set name for virtualenv"
+  set_fact:
+    galaxy_venv: "venv_py{{ python_version.split('.')[:2] | join('.') }}"
+
+- name: "Galaxy: show virtualenv name"
+  debug:
+    msg: "Galaxy virtualenv: {{ galaxy_venv }}"
+
+- name: "Galaxy: remove previous virtualenv"
+  file:
+    path: '{{ galaxy_install_dir }}/{{ galaxy_venv }}'
+    state: absent
+
+- name: "Galaxy: make new virtualenv"
+  command:
+    chdir: '{{ galaxy_install_dir }}'
+    cmd: "{{ python_install_dir }}/bin/virtualenv {{ galaxy_venv }} -p {{ python_exe }}"
+    creates: '{{ galaxy_install_dir }}/venv'
+
+- name: "Galaxy: run common_startup.sh --skip-venv to install into virtualenv"
+  shell:
+    cmd: source {{ galaxy_install_dir }}/{{ galaxy_venv }}/bin/activate && ./scripts/common_startup.sh --skip-venv
+    chdir: '{{ galaxy_install_dir }}/galaxy-src'

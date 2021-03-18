@@ -1,0 +1,19 @@
+# Install Galaxy
+---
+
+- include: dependencies.yml
+
+- include: galaxy_user.yml
+
+- include: python.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
+- include: galaxy.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
+- include: export.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  

@@ -1,0 +1,23 @@
+---
+- name: "Install build dependencies"
+  yum:
+    name:
+      - 'git'
+      - 'autoconf'
+      - 'make'
+      - 'automake'
+      - 'gcc'
+      - 'readline'
+      - 'sqlite'
+      - 'zlib'
+      - 'bzip2-devel'
+      - 'bzip2'
+      - 'ncurses-devel'
+      - 'ncurses'
+      - 'openssl-devel'
+      - 'openssl'
+      - 'readline-devel'
+      - 'sqlite-devel'
+      - 'zlib-devel'
+      - 'tkinter'
+    state: 'present'

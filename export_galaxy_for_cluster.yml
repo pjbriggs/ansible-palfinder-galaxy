@@ -1,0 +1,5 @@
+---
+- hosts: csf
+
+  roles:
+  - export-galaxy-for-cluster

@@ -1,0 +1,70 @@
+---
+# Build and install Python 3 for Galaxy
+
+- name: "Python: create installation directory"
+  file:
+    path: '{{ python_install_dir }}'
+    state: 'directory'
+
+- name: "Python: determine the user home directory"
+  shell:
+    "echo $HOME"
+  register: 'user_home'
+  changed_when: False
+
+- name: "Python: determine the build directory"
+  set_fact:
+    build_dir: "{{ user_home.stdout }}/build"
+
+- name: "Python: report version"
+  debug:
+    msg: "Python version {{ python_version }}"
+
+- name: "Python: report installation directory path"
+  debug:
+    msg: "Install directory {{ python_install_dir }}"
+
+- name: "Python: report build directory path"
+  debug:
+    msg: "Build directory {{ build_dir }}"
+
+- name: "Python: create build directory"
+  file:
+    path: '{{ build_dir }}'
+    state: 'directory'
+
+- name: "Python: download source code archive"
+  get_url:
+    url: 'https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz'
+    dest: '{{ build_dir }}'
+
+- name: "Python: unpack source code archive"
+  unarchive:
+    src: '{{ build_dir }}/Python-{{ python_version }}.tgz'
+    dest: '{{ build_dir }}'
+    copy: no
+    creates: '{{ build_dir }}/Python-{{ python_version }}'
+
+- name: "Python: build and install"
+  command:
+    cmd: '{{item}}'
+    chdir: '{{ build_dir }}/Python-{{ python_version }}'
+    creates: '{{ python_install_dir }}/bin/python3'
+  with_items:
+    - './configure --prefix={{ python_install_dir }}'
+    - 'make install'
+
+- name: "Python: install Pip"
+  command:
+    cmd: '{{ python_install_dir }}/bin/python3 -m ensurepip'
+    creates: '{{ python_install_dir }}/bin/pip3'
+
+- name: "Python: upgrade Pip"
+  command:
+    cmd: '{{ python_install_dir }}/bin/pip3 install --upgrade pip'
+
+- name: "Python: install Virtualenv"
+  pip:
+    name: 'virtualenv'
+    state: 'present'
+    executable: '{{ python_install_dir }}/bin/pip3'

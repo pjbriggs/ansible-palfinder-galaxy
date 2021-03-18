@@ -83,6 +83,10 @@ The following roles are defined:
  - ``galaxy-audit-report``: sets up weekly emailing of audit
    reports
 
+ - ``export-galaxy-for-cluster``: installs Galaxy into a Python
+   virtualenv which is then exported for use when submitting
+   jobs to the local cluster system
+
 Variables
 ---------
 
@@ -240,6 +244,12 @@ to edit (use the ``view`` command just to see the contents).
 Use the ``--ask-vault`` option to prompt for the encryption password
 when running the playbook.
 
+In addition there is a playbook ``export_galaxy_for_cluster.yml``
+which is used to install Galaxy into virtualenvs which can then be
+installed on the local cluster system for running Galaxy jobs in the
+production environment (see "Building Galaxy virtualenvs for the
+cluster system" below).
+
 Inventory files
 ---------------
 
@@ -271,8 +281,8 @@ use the ``-i`` option e.g.::
 
 will target the production Palfinder service instance.
    
-Running the playbook
---------------------
+Running the playbooks
+---------------------
 
 You must pass in the hosts that the playbooks will be run on via
 the ``ansible-playbook`` command line, for example::
@@ -294,6 +304,12 @@ The following servers are defined in the ``Vagrantfile``:
  - ``mintaka``: Scientific Linux 7 VM (uses the address
    http://192.168.60.6)
 
+An additional VM is used to build Galaxy virtual environment for
+deployment on the compute cluster:
+
+ - ``csf``: CentOS 7.8 (http://192.168.60.8) - see below ("Building
+   Galaxy virtualenvs for the cluster system")
+
 To create and log into a Vagrant VM instance for testing Palfinder do
 e.g.::
 
@@ -307,6 +323,37 @@ these are not as fully-featured as the production versions), e.g.::
 
 Point your browser at the appropriate address to access the local
 test instance once it has been deployed.
+
+Building Galaxy virtualenvs for the cluster system
+--------------------------------------------------
+
+For some production instances where jobs are submitted to the cluster
+system, there can be issues when the Galaxy VM OS is substantially
+different to that of the cluster.
+
+In these cases a workaround is to build a Galaxy virtualenv that is
+installed on the cluster and which is used by the jobs submitted to it;
+the ``export_galaxy_for_cluster.yml`` playbook can be used to build
+Galaxy virtualenvs on a CentOS 7 Vagrant box for this purpose.
+
+The inventory files in ``inventories/csf/`` target specific production
+Galaxy instances; to generate a Galaxy virtualenv for the ``centaurus``
+instance do e.g.:
+
+::
+
+   ansible-playbook export_galaxy_for_cluster.yml -b -i inventories/csf/centaurus.yml
+
+This will generate a .tgz archive in the ``assets`` directory, which will
+contain the Galaxy virtualenv to be unpacked and used on the target VM.
+
+Note:
+
+ - To install a CentOS 7 VirtualBox image for the ``csf`` instance use:
+
+   ::
+
+       vagrant box add --name centos/7 https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
 
 Notes on the deployment
 -----------------------
