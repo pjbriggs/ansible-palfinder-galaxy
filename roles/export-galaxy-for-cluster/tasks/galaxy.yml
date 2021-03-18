@@ -1,0 +1,35 @@
+# Install Galaxy
+---
+- name: "Galaxy: create top-level directories"
+  file:
+    path: '{{ item }}'
+    state: 'directory'
+  with_items:
+  - '{{ galaxy_install_dir }}'
+
+- name: "Galaxy: clone source code from GitHub"
+  git:
+    repo: '{{ galaxy_repo }}'
+    version: '{{ galaxy_version_tag }}'
+    dest: '{{ galaxy_install_dir }}/galaxy-src'
+    force: yes
+
+- name: "Galaxy: determine Python executable for setting up virtualenev"
+  set_fact:
+    python_exe: "{{ python_install_dir }}/bin/python{{ python_version.split('.')[:2] | join('.') }}"
+
+- name: "Galaxy: remove previous virtualenv"
+  file:
+    path: '{{ galaxy_install_dir }}/venv'
+    state: absent
+
+- name: "Galaxy: make new virtualenv"
+  command:
+    chdir: '{{ galaxy_install_dir }}'
+    cmd: "{{ python_install_dir }}/bin/virtualenv venv -p {{ python_exe }}"
+    creates: '{{ galaxy_install_dir }}/venv'
+
+- name: "Galaxy: run common_startup.sh --skip-venv to install into virtualenv"
+  shell:
+    cmd: source {{ galaxy_install_dir }}/venv/bin/activate && ./scripts/common_startup.sh --skip-venv
+    chdir: '{{ galaxy_install_dir }}/galaxy-src'

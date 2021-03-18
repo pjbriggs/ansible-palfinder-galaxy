@@ -1,0 +1,15 @@
+---
+# Create the 'galaxy' user and group with specified UID/GIDs
+- name: "Create Galaxy group"
+  group:
+    name: '{{ galaxy_group }}'
+    gid: '{{ galaxy_gid }}'
+    state: present
+
+- name: "Create Galaxy user"
+  user:
+    name: '{{ galaxy_user }}'
+    group: '{{ galaxy_group }}'
+    home: '/home/{{ galaxy_user }}'
+    uid: '{{ galaxy_uid }}'
+    state: present
