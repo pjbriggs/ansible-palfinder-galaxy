@@ -29,18 +29,26 @@
   set_fact:
     python_exe: "{{ python_install_dir }}/bin/python{{ python_version.split('.')[:2] | join('.') }}"
 
+- name: "Galaxy: set name for virtualenv"
+  set_fact:
+    galaxy_venv: "venv_py{{ python_version.split('.')[:2] | join('.') }}"
+
+- name: "Galaxy: show virtualenv name"
+  debug:
+    msg: "Galaxy virtualenv: {{ galaxy_venv }}"
+
 - name: "Galaxy: remove previous virtualenv"
   file:
-    path: '{{ galaxy_install_dir }}/venv'
+    path: '{{ galaxy_install_dir }}/{{ galaxy_venv }}'
     state: absent
 
 - name: "Galaxy: make new virtualenv"
   command:
     chdir: '{{ galaxy_install_dir }}'
-    cmd: "{{ python_install_dir }}/bin/virtualenv venv -p {{ python_exe }}"
+    cmd: "{{ python_install_dir }}/bin/virtualenv {{ galaxy_venv }} -p {{ python_exe }}"
     creates: '{{ galaxy_install_dir }}/venv'
 
 - name: "Galaxy: run common_startup.sh --skip-venv to install into virtualenv"
   shell:
-    cmd: source {{ galaxy_install_dir }}/venv/bin/activate && ./scripts/common_startup.sh --skip-venv
+    cmd: source {{ galaxy_install_dir }}/{{ galaxy_venv }}/bin/activate && ./scripts/common_startup.sh --skip-venv
     chdir: '{{ galaxy_install_dir }}/galaxy-src'
