@@ -1,0 +1,16 @@
+csf:
+  hosts:
+    192.168.60.8
+  vars:
+    # Ansible-specific settings
+    ansible_ssh_user: vagrant
+    ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    # Centaurus Galaxy settings
+    galaxy_name: "centaurus"
+    galaxy_user: "centaurus-galaxy"
+    galaxy_uid: 22223
+    galaxy_group: "galaxy"
+    galaxy_gid: 400
+    # Galaxy and Python versions to target
+    galaxy_version: "19.09"
+    python_version: "3.6.11"
