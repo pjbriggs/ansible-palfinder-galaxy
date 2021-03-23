@@ -13,8 +13,6 @@ palfinder:
     # Job configuration
     enable_jse_drop: yes
     enable_local_jse_drop: yes
-    jsedrop_python3_yum_package: "python34"
-    jsedrop_python3: "/usr/bin/python3.4"
     galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
     galaxy_default_runner: "jse_drop_default"
     galaxy_job_destinations:

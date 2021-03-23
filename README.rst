@@ -219,9 +219,9 @@ Variables for handling special cases:
 
 Versions of installed components:
 
- - ``python_version`` (2.7.10)
+ - ``python_version`` (3.6.11)
  - ``proftpd_version`` (1.3.5a)
- - ``supervisor_version`` (3.2.2)
+ - ``supervisor_version`` (4.2.2)
  - ``git`` (2.20.0)
 
 Playbooks

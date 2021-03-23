@@ -9,7 +9,7 @@
   - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "cetus"
-  - galaxy_version: "release_19.05"
+  - galaxy_version: "release_19.09"
   - galaxy_install_dir: "/mnt/rvmi/cetus/galaxy"
   - galaxy_dir: "/mnt/rvmi/cetus/galaxy/teaching"
   # Database and reference data
@@ -17,7 +17,7 @@
   - galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/job_working_directory"
   - galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/cetus/teaching/tool-data"
   # Galaxy-specific Python installation
-  - galaxy_python_version: "2.7.10"
+  - galaxy_python_version: "3.6.11"
   # Account management
   - allow_user_creation: no
   - allow_user_deletion: no
@@ -36,6 +36,9 @@
       # Colour for navbar/masthead
       - var: "brand-dark"
         value: "#660099"
+      # Colour for text
+      - var: "text-color"
+        value: "#2c3143"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
   # Running jobs
@@ -61,7 +64,7 @@
   - nfslock
   - git
   - selinux
-  - python27
+  - python3
   - nginx
   - postgresql
   - proftpd
