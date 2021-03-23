@@ -1,9 +1,6 @@
 ---
-# Install, configure and start Supervisord on remote server
-#
-# NOTE: we need a newer version of Supervisord than is available
-# via yum on Scientific Linux 6, hence installing it this way
-# rather than pulling in from yum
+# Install, configure and start Supervisord
+
 - name: "Uninstall yum version of Supervisor"
   yum:
     name: 'supervisor'
