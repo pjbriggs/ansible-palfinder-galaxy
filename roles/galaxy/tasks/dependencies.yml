@@ -11,6 +11,7 @@
       - 'samtools'
       - 'python2-pyyaml'
       - 'net-tools'
+      - 'hg'
     state: latest
   register: installed_dependencies
 
