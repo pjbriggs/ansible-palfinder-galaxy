@@ -75,6 +75,27 @@
     dest='{{ galaxy_root }}/config/galaxy.yml'
     src=galaxy-config.yml.j2
 
+# Deal with possible bug when Galaxy installs Mercurial in
+# the virtualenv without execute permission
+- name: "Check for Galaxy Mercurial"
+  stat:
+    path: '{{ galaxy_root }}/.venv/bin/hg'
+  register: galaxy_hg
+  become: yes
+  become_user: "{{ galaxy_user }}"
+
+- name: "Add execute permission to Galaxy Mercurial"
+  file:
+    path='{{ galaxy_root }}/.venv/bin/hg'
+    state='file'
+    mode='u+rwx,go+rx'
+  become: yes
+  become_user: "{{ galaxy_user }}"
+  when:
+    - galaxy_tools|default(None) != None
+    - galaxy_hg.stat.exists == True
+    - galaxy_hg.stat.executable == False
+
 # Import or create tool_conf files
 - name: "Import base tool_conf.xml"
   copy:

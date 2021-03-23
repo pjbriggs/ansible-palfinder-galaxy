@@ -6,24 +6,6 @@
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
-- name: "Check if Galaxy Mercurial is executable"
-  stat:
-    path: '{{ galaxy_root }}/.venv/bin/hg'
-  register: galaxy_hg
-  become: yes
-  become_user: "{{ galaxy_user }}"
-
-- name: "Add execute permission to Galaxy Mercurial"
-  file:
-    path='{{ galaxy_root }}/.venv/bin/hg'
-    state='file'
-    mode='u+rwx,go+rx'
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when:
-    - galaxy_tools|default(None) != None
-    - galaxy_hg.stat.executable == False
-
 - name: "Install tools from Galaxy toolshed"
   block:
     - name: "Activate Galaxy master API key for tool installation"
