@@ -6,6 +6,8 @@
   vars:
     python_version: "{{ galaxy_python_version }}"
     install_dir: "{{ galaxy_python_dir }}"
+    ansible_become: yes
+    ansible_become_user: "{{ galaxy_user }}"
   when: galaxy_python_version.startswith("2.7")
 
 - name: "Install Galaxy-specific Python 3"
@@ -14,4 +16,6 @@
   vars:
     python_version: "{{ galaxy_python_version }}"
     install_dir: "{{ galaxy_python_dir }}"
+    ansible_become: yes
+    ansible_become_user: "{{ galaxy_user }}"
   when: galaxy_python_version.startswith("3.")
