@@ -4,14 +4,14 @@
   vars:
   # Galaxy configuration
   - galaxy_name: "palfinder"
-  - galaxy_version: "release_19.05"
+  - galaxy_version: "release_19.09"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - enable_require_login: yes
   - enable_quotas: yes
   - enable_ftp_upload: yes
   - enable_reports: yes
   # Galaxy-specific Python installation
-  - galaxy_python_version: "2.7.10"
+  - galaxy_python_version: "3.6.11"
   # GDPR compliance
   - enable_beta_gdpr: yes
   # Welcome page etc
@@ -94,7 +94,7 @@
   - nfslock
   - git
   - selinux
-  - python27
+  - python3
   - nginx
   - postgresql
   - proftpd
