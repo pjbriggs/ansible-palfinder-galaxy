@@ -82,7 +82,7 @@ galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"
 galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
 
 # Python for Galaxy
-galaxy_python_version: "2.7.10"
+galaxy_python_version: "3.6.11"
 galaxy_python_dir: '{{ galaxy_dir }}/python/{{ galaxy_python_version }}'
 
 # Toolshed check
