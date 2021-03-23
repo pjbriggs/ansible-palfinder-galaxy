@@ -1,12 +1,6 @@
 ---
 # Install jsedrop.py as a service on the remote host
 
-- name: "Install jsedrop.py dependencies"
-  yum:
-    name:
-      - "{{ jsedrop_python3_yum_package }}"
-    state: present
-
 - name: "Install and start local JSE-Drop service (SL6)"
   block:
     - name: "Install jsedrop.py"
