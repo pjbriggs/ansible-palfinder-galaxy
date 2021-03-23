@@ -6,7 +6,7 @@
 - name: Install latest setuptools
   pip:
     name="setuptools"
-    executable='{{ python_install_dir }}/bin/pip'
+    executable='{{ python_install_dir }}/bin/pip3'
     state=latest
 
 - name: Install dependencies for utilities
@@ -14,13 +14,13 @@
     name:
       - "psycopg2==2.6.2"
       - "pyyaml"
-    executable: '{{ python_install_dir }}/bin/pip'
+    executable: '{{ python_install_dir }}/bin/pip3'
     state: present
 
 - name: Install Nebulizer
   pip:
     name='https://github.com/pjbriggs/nebulizer/archive/v{{ nebulizer_version }}.tar.gz'
-    executable='{{ python_install_dir }}/bin/pip'
+    executable='{{ python_install_dir }}/bin/pip3'
     extra_args='--prefix {{ galaxy_utils_dir }} --no-binary :all:'
     state=present
 
