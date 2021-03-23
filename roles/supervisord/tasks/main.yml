@@ -16,7 +16,7 @@
 
 - name: "Determine if Supervisor should be installed"
   set_fact:
-    install_supervisor: not supervisord.stat.exists
+    install_supervisor: "{{ not supervisord.stat.exists }}"
 
 - name: "Determine if Supervisor should be reinstalled"
   block:
@@ -41,6 +41,7 @@
       name: 'supervisord'
       enabled: false
       state: stopped
+    when: supervisord.stat.exists
 
   - name: "Determine the user home directory"
     shell:
@@ -112,6 +113,11 @@
         option: 'files'
         value: '/usr/local/etc/supervisord.d/*.ini'
     notify: "Restart Supervisord"
+
+  - name: "Check existence of Supervisord init.d script"
+    stat:
+      path: "/etc/init.d/supervisord"
+    register: init_d
 
   - name: "Create init.d script for Supervisord"
     copy:
