@@ -9,7 +9,7 @@
   - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "mintaka"
-  - galaxy_version: "release_19.05"
+  - galaxy_version: "release_19.09"
   - galaxy_install_dir: "/mnt/rvmi/mintaka/galaxy"
   - galaxy_dir: "{{ galaxy_install_dir }}/production"
   # Database and reference data
@@ -17,7 +17,7 @@
   - galaxy_job_working_dir: "{{ galaxy_dir }}/job_working_directory"
   - galaxy_data_manager_data_path: "{{ galaxy_dir }}/tool-data"
   # Galaxy-specific Python installation
-  - galaxy_python_version: "2.7.10"
+  - galaxy_python_version: "3.6.11"
   # Account management
   - allow_user_creation: yes
   - allow_user_deletion: yes
@@ -41,6 +41,9 @@
       # Colour for navbar/masthead
       - var: "brand-dark"
         value: "#660099"
+      # Colour for text
+      - var: "text-color"
+        value: "#2c3143"
   # Users
   - galaxy_admin_user: "admin@galaxy.org"
   - galaxy_users:
@@ -168,8 +171,6 @@
   # (Always uses a local JSE-Drop service)
   - enable_jse_drop: yes
   - enable_local_jse_drop: yes
-  - jsedrop_python3_yum_package: "python34"
-  - jsedrop_python3: "/usr/bin/python3.4"
   - galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-local"
   - galaxy_default_runner: "jse_drop_serial"
   - galaxy_job_destinations:
@@ -203,7 +204,7 @@
   - nfslock
   - git
   - selinux
-  - python27
+  - python3
   - nginx
   - postgresql
   - proftpd
