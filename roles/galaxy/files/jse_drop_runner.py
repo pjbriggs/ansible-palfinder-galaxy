@@ -369,7 +369,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             # Exit code
             exit_code = job_state.read_exit_code()
             # Stdout
-            outputs_directory = job_wrapper.working_directory
+            outputs_directory = os.path.join(job_wrapper.working_directory,
+                                             "outputs")
             tool_stdout_path = os.path.join(outputs_directory,"tool_stdout")
             if os.path.exists(tool_stdout_path):
                 log.debug("finish_job %s: reading stdout from %s" %
