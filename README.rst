@@ -297,6 +297,7 @@ virtual machines for testing the deployment.
 
 The following servers are defined in the ``Vagrantfile``:
 
+ - ``centaurus``: CentOS Linux 8 VM (http://192.168.60.3)
  - ``palfinder``: Scientific Linux 6 VM (uses the address
    http://192.168.60.4)
  - ``cetus``: Scientific Linux 7 VM (uses the address
@@ -430,6 +431,7 @@ The following Vagrant VirtualBox images are recommended for use with the
 playbooks:
 
  - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
+ - **CentOS 8**: ``centos/8`` https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/virtualbox.box
 
 To install a VirtualBox image for use with Vagrant, do:
 
@@ -441,7 +443,6 @@ For example:
 
 ::
    vagrant box add --name centos/7 https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
-
 
 Known Issues
 ------------

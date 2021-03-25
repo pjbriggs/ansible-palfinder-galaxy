@@ -17,6 +17,16 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     v.cpus = 4
     v.linked_clone = true
   end
+  # Centaurus VM
+  config.vm.define "centaurus" do |centaurus|
+    centaurus.vm.box = "centos/8"
+    centaurus.vm.hostname = "centaurus"
+    centaurus.vm.network :private_network, ip: "192.168.60.3"
+    centaurus.vm.provision "shell", inline: <<-SHELL
+    mkdir -p /mnt/rvmi
+    chmod ugo+rwX /mnt/rvmi/
+  SHELL
+  end
   # Palfinder VM
   config.vm.define "palfinder" do |palfinder|
     palfinder.vm.box = "ringo/scientific-linux-6.5"
