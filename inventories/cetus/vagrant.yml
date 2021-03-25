@@ -20,6 +20,8 @@ cetus:
     galaxy_job_destinations:
       - id: "jse_drop_serial"
         runner: "jse_drop"
+    # Job cleanup
+    galaxy_cleanup_job: "never"
     # Postfix/email configuration
     enable_smtp: no
     # Audit report
