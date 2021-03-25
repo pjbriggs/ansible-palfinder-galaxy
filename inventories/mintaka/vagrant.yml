@@ -9,7 +9,9 @@ mintaka:
     mintaka_secrets: vagrant.yml
     # Server configuration
     galaxy_server_name: 192.168.60.6
+    # Galaxy configuration
     enable_user_activation: no
+    galaxy_cleanup_job: "never"
     # Postfix/email configuration
     enable_smtp: no
     # SSL configuration
