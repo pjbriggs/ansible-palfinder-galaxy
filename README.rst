@@ -347,14 +347,6 @@ instance do e.g.:
 This will generate a .tgz archive in the ``assets`` directory, which will
 contain the Galaxy virtualenv to be unpacked and used on the target VM.
 
-Note:
-
- - To install a CentOS 7 VirtualBox image for the ``csf`` instance use:
-
-   ::
-
-       vagrant box add --name centos/7 https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
-
 Notes on the deployment
 -----------------------
 
@@ -431,6 +423,26 @@ Notes on the deployment
    * Options to use with ``qsub`` when submitting jobs can be
      specified via the ``jse_drop_qsub_options`` parameter.
 
+Vagrant Boxes
+-------------
+
+The following Vagrant VirtualBox images are recommended for use with the
+playbooks:
+
+ - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
+
+To install a VirtualBox image for use with Vagrant, do:
+
+::
+
+   vagrant box add --name NAME URL
+
+For example:
+
+::
+   vagrant box add --name centos/7 https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
+
+
 Known Issues
 ------------
 
@@ -445,3 +457,8 @@ Known Issues
    blocking the port used by ``uWSGI``/``Galaxy``. Why this is the
    case is not clear, so for now the ``galaxyctl.sh`` utility
    script has been added to work around this problem.
+
+ - SSH keys can change when recreating a Vagrant VM for testing,
+   in which case you should use e.g. ``ssh-keygen -R "192.168.60.5"``
+   (or the IP address of the appropriate instance, see above) to
+   remove the old keys before running the playbooks.
