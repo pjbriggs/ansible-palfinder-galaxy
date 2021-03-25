@@ -2,7 +2,7 @@
 
 - name: "Build tgz archive for export"
   shell:
-    cmd: tar czf {{ galaxy_root_dir }}/shared/{{ archive_name }}.tgz -C {{ galaxy_root_dir }}/shared csf/galaxy/{{ galaxy_version }} csf/python/{{ python_version }}
+    cmd: tar czf {{ galaxy_root_dir }}/shared/{{ archive_name }}.tgz -C {{ galaxy_root_dir }}/shared csf/galaxy/{{ galaxy_version }}/{{ galaxy_venv }} csf/python/{{ python_version }}
 
 - name: "Export tgz from remote"
   fetch:
