@@ -29,7 +29,7 @@
   set_fact:
     python_exe: "{{ python_install_dir }}/bin/python{{ python_version.split('.')[:2] | join('.') }}"
 
-- name: "Galaxy: set name for virtualenv"
+- name: "Galaxy: set base name for virtualenv"
   set_fact:
     galaxy_venv: "venv_py{{ python_version.split('.')[:2] | join('.') }}"
 
@@ -46,7 +46,7 @@
   command:
     chdir: '{{ galaxy_install_dir }}'
     cmd: "{{ python_install_dir }}/bin/virtualenv {{ galaxy_venv }} -p {{ python_exe }}"
-    creates: '{{ galaxy_install_dir }}/venv'
+    creates: '{{ galaxy_install_dir }}/{{ galaxy_venv }}'
 
 - name: "Galaxy: run common_startup.sh --skip-venv to install into virtualenv"
   shell:
