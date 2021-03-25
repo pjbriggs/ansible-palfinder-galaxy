@@ -14,16 +14,12 @@
 # tag using the 'git' module, but this doesn't seem to
 # work in practice (cloned repository contains modified
 # files which break the subsequent checkout)
-- name: "Galaxy: clone source code from GitHub"
-  git:
-    repo: '{{ galaxy_repo }}'
-    dest: '{{ galaxy_install_dir }}/galaxy-src'
-    force: yes
-
-- name: "Galaxy: checkout required version"
+#
+# Instead clone directly to the required branch
+- name: "Galaxy: clone source code from branch from GitHub"
   shell:
-    chdir: '{{ galaxy_install_dir }}/galaxy-src'
-    cmd: git fetch origin && git checkout {{ galaxy_version_tag }} && git pull --ff-only origin {{ galaxy_version_tag }}
+    chdir: '{{ galaxy_install_dir }}'
+    cmd: git clone -b {{ galaxy_version_tag }} {{ galaxy_repo }} galaxy-src
 
 - name: "Galaxy: determine Python executable for setting up virtualenev"
   set_fact:
