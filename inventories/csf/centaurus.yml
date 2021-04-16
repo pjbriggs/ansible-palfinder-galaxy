@@ -12,5 +12,5 @@ csf:
     galaxy_group: "galaxy"
     galaxy_gid: 400
     # Galaxy and Python versions to target
-    galaxy_version: "20.01"
+    galaxy_version: "20.05"
     python_version: "3.6.11"
