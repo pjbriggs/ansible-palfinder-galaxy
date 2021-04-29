@@ -73,10 +73,6 @@ server {
         alias {{ galaxy_root }}/static;
         expires 24h;
     }
-    location {{ galaxy_proxy_prefix }}/static/style {
-        alias {{ galaxy_root }}/static/style/blue;
-        expires 24h;
-    }
     location {{ galaxy_proxy_prefix }}/favicon.ico {
         alias {{ galaxy_root }}/static/favicon.ico;
         expires 24h;
