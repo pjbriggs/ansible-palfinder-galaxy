@@ -199,7 +199,11 @@ class JSEDrop(object):
         # Try qacct
         qacct = self.qacct(name)
         if qacct:
-            return qacct['jobnumber']
+            try:
+                return qacct['jobnumber']
+            except KeyError:
+                # Unable to extract job number
+                pass
         # Fallback to qstat
         qstat = self.qstat(name)
         if qstat:
