@@ -421,7 +421,9 @@ STDERR:
                 self._write_qfile(job,"qstat",output)
             else:
                 # Job has completed, write qacct file
-                self._write_qfile(job,"qacct",output)
+                self._write_qfile(job,"qacct",
+                                  """Job accounting (hostname, jobname, end_time, etc) info can be obtained by running: qacct -j \"{job_id}\"
+""".format(job_id=job_id))
                 self.log("-- Job '%s' has completed" % job)
         
     def process(self):
