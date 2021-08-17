@@ -334,11 +334,23 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 log.warn("%s: no such job in JSE-drop?" % job_name)
                 message = "%s: no such job in JSE-drop?" % job_name
             job_state.fail_message = message
-            self.fail_job(job_state)
+            try:
+               self.fail_job(job_state)
+            except Exception as ex:
+               log.warn("%s: JSE-drop status '%s': exception from "
+                        "fail_job (ignored): %s" % (job_name,
+                                                    jse_drop_status,
+                                                    ex))
             # Remove the JSE-drop files
-            cleanup_job = self.app.config.cleanup_job
-            if cleanup_job == "always":
-                jse_drop.cleanup(job_name)
+            try:
+               cleanup_job = self.app.config.cleanup_job
+               if cleanup_job == "always":
+                   jse_drop.cleanup(job_name)
+            except Exception as ex:
+               log.warn("%s: JSE-drop status '%s': exception from "
+                        "jse_drop.cleanup (ignored): %s" % (job_name,
+                                                            jse_drop_status,
+                                                            ex))
             return None
         if jse_drop_status == JSEDropStatus.RUNNING and not job_state.running:
             # Job started running
