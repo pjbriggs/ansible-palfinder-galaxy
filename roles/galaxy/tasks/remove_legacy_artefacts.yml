@@ -24,3 +24,11 @@
     - 'Clean up empty directories from job working directory'
     - 'Delete old datasets'
     - 'Email audit report'
+
+# NB using certbot SSL certificate renewal is performed automatically
+# so this task simply removes any existing legacy cronjob
+- name: "Remove legacy cron job for SSL certificate renewal"
+  cron:
+    user="root"
+    name="Renew SSL certificate from Lets Encrypt"
+    state=absent
