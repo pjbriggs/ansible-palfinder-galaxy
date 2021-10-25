@@ -71,7 +71,7 @@
   - supervisord
   - role: postfix-null-client
     when: enable_smtp
-  - lets-encrypt-client
+  - certbot
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
     when: enable_local_jse_drop
