@@ -1,47 +1,8 @@
 ---
-# Install certbot using snapd
-# https://certbot.eff.org/lets-encrypt/nginx
+# Install certbot
 
-# Install and configure 'snapd'
-- name: "Install system dependencies for certbot"
-  yum:
-    name:
-      - "snapd"
-    state: present
+- include: install_with_snap.yml
+  when: certbot_install_using == "snap"
 
-- name: "Enable main snap communication socket"
-  systemd:
-    name: snapd.socket
-    enabled: True
-    state: started
-
-- name: "Make symlink to /snap to enable classic snap"
-  file:
-    path: "/snap"
-    src: "/var/lib/snapd/snap"
-    state: link
-
-- name: "Install snap core is up to date"
-  command:
-    cmd: "snap install core"
-
-- name: "Refresh snap core"
-  command:
-    cmd: "snap refresh core"
-
-# Get rid of old certbot-auto
-- name: "Remove old certbot-auto"
-  file:
-    path: "/usr/local/bin/certbot-auto"
-    state: absent
-
-# Install and configure 'certbot'
-- name: "Install certbox via snap"
-  command:
-    cmd:  "snap install --classic certbot"
-
-- name: "Create symlink to certbot"
-  file:
-    path: "/usr/local/bin/certbot"
-    src: "/snap/bin/certbot"
-    state: link
+- include: install_with_pip.yml
+  when: certbot_install_using == "pip"
