@@ -1,0 +1,10 @@
+---
+# How to install certbot
+# Options are "snap" or "pip"
+certbot_install_using: "pip"
+
+# Location to link certbox exe from
+certbot_dir: /usr/local/bin
+
+# Defaults for "pip" installation only
+certbot_venv_dir: /opt/certbot
