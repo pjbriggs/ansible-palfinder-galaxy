@@ -67,7 +67,8 @@ galaxy_repo: https://github.com/galaxyproject/galaxy.git
 # Galaxy installation directories
 galaxy_install_dir: "/home/galaxy/galaxies"
 galaxy_dir: "{{ galaxy_install_dir }}/{{ galaxy_name }}"
-galaxy_root: "{{ galaxy_dir }}/galaxy"
+galaxy_clone_dir: "galaxy"
+galaxy_root: "{{ galaxy_dir }}/{{ galaxy_clone_dir }}"
 galaxy_tool_dependency_dir: '{{ galaxy_dir }}/tool_dependencies'
 galaxy_database_dir: '{{ galaxy_root }}/database'
 
