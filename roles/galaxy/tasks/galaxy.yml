@@ -63,10 +63,33 @@
   set_fact:
     python_exe: "{{ galaxy_python_dir }}/bin/python{{ galaxy_python_version.split('.')[:2] | join('.') }}"
 
-- name: "Remove existing virtualenv from Galaxy root"
-  file:
-    path: '{{ galaxy_root }}/.venv'
-    state: absent
+- name: "Check if Galaxy virtualenv already exists"
+  stat:
+    path: "{{ galaxy_root }}/.venv"
+  register: galaxy_venv
+
+- name: "Deal with existing virtualenv in Galaxy root"
+  block:
+    - name: "Get external Python version"
+      shell:
+        "{{ python_exe }} --version"
+      register: external_python_version
+
+    - name: "Get virtualenv Python version"
+      shell:
+        "{{ galaxy_root }}/.venv/bin/python --version"
+      register: venv_python_version
+
+    - name: "Report Python versions"
+      debug:
+        msg: "Python: external version {{ external_python_version.stdout }}, venv version {{ venv_python_version.stdout }}"
+
+    - name: "Remove existing virtualenv from Galaxy root"
+      file:
+        path: '{{ galaxy_root }}/.venv'
+        state: absent
+      when: venv_python_version.stdout != external_python_version.stdout
+  when: galaxy_venv.stat.exists
 
 - name: "Make virtualenv in Galaxy root"
   command:
