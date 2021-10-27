@@ -218,12 +218,6 @@
     "PGPASSWORD={{ galaxy_db_password }} psql -c '\\dt' '{{ galaxy_db }}' {{ galaxy_db_user }}"
   register: dbstatus
 
-#- name: "Run create_db.py to initialise the Galaxy database"
-#  command:
-#    chdir='{{ galaxy_root }}'
-#    .venv/bin/python scripts/create_db.py
-#  when: dbstatus.stdout == "No relations found."
-
 - name: "Initialise Galaxy database from template SQL"
   block:
     - name: "Make tmp directory for template Galaxy DB SQL"
