@@ -1,5 +1,9 @@
 # Install and configure Galaxy
 ---
+- name: "Report Galaxy version being installed"
+  debug:
+    msg: "Installing Galaxy version '{{ galaxy_version }}'"
+
 - name: Create top-level Galaxy directories
   file:
     path='{{ item }}'
@@ -59,10 +63,33 @@
   set_fact:
     python_exe: "{{ galaxy_python_dir }}/bin/python{{ galaxy_python_version.split('.')[:2] | join('.') }}"
 
-- name: "Remove existing virtualenv from Galaxy root"
-  file:
-    path: '{{ galaxy_root }}/.venv'
-    state: absent
+- name: "Check if Galaxy virtualenv already exists"
+  stat:
+    path: "{{ galaxy_root }}/.venv"
+  register: galaxy_venv
+
+- name: "Deal with existing virtualenv in Galaxy root"
+  block:
+    - name: "Get external Python version"
+      shell:
+        "{{ python_exe }} --version"
+      register: external_python_version
+
+    - name: "Get virtualenv Python version"
+      shell:
+        "{{ galaxy_root }}/.venv/bin/python --version"
+      register: venv_python_version
+
+    - name: "Report Python versions"
+      debug:
+        msg: "Python: external version {{ external_python_version.stdout }}, venv version {{ venv_python_version.stdout }}"
+
+    - name: "Remove existing virtualenv from Galaxy root"
+      file:
+        path: '{{ galaxy_root }}/.venv'
+        state: absent
+      when: venv_python_version.stdout != external_python_version.stdout
+  when: galaxy_venv.stat.exists
 
 - name: "Make virtualenv in Galaxy root"
   command:
@@ -191,12 +218,6 @@
     "PGPASSWORD={{ galaxy_db_password }} psql -c '\\dt' '{{ galaxy_db }}' {{ galaxy_db_user }}"
   register: dbstatus
 
-#- name: "Run create_db.py to initialise the Galaxy database"
-#  command:
-#    chdir='{{ galaxy_root }}'
-#    .venv/bin/python scripts/create_db.py
-#  when: dbstatus.stdout == "No relations found."
-
 - name: "Initialise Galaxy database from template SQL"
   block:
     - name: "Make tmp directory for template Galaxy DB SQL"
@@ -231,8 +252,30 @@
       shell:
         "PGPASSWORD={{ galaxy_db_password }} pg_dump -U {{ galaxy_db_user }} {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
 
-    - name: "Update the Galaxy database"
+    - name: "Get current database schema version"
+      shell:
+        "{{ galaxy_root }}/manage_db.sh db_version | tail -n 1"
+      register: current_db_version
+
+    - name: "Get new database schema version"
+      shell:
+        "{{ galaxy_root }}/manage_db.sh version | tail -n 1"
+      register: new_db_version
+
+    - name: "Report database schema versions"
+      debug:
+        msg: "DB schema versions: current {{ current_db_version.stdout }} -> new {{ new_db_version.stdout }}"
+
+    - name: "Update the Galaxy database schema"
       command:
-        chdir='{{ galaxy_root }}'
-        ./manage_db.sh upgrade
+        cmd: "./manage_db.sh upgrade"
+        chdir: '{{ galaxy_root }}'
+      when: new_db_version.stdout|int > current_db_version.stdout|int
+
+    # Not possible to downgrade database from a version that is
+    # higher than the one supported by the current Galaxy release
+    - name: "Downgrade the Galaxy database schema"
+      fail:
+        msg: "!!! Database schema needs to be downgraded manually from a higher Galaxy version using './manage_db.sh downgrade {{ new_db_version.stdout }}' but for this you need a newer version of Galaxy !!!"
+      when: new_db_version.stdout|int < current_db_version.stdout|int
   when: dbstatus.stdout != "No relations found."
