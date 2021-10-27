@@ -258,8 +258,30 @@
       shell:
         "PGPASSWORD={{ galaxy_db_password }} pg_dump -U {{ galaxy_db_user }} {{ galaxy_db}} > {{ galaxy_dir}}/backups/{{ galaxy_db }}.$(date +%Y-%m-%d-%H%M%S).sql"
 
-    - name: "Update the Galaxy database"
+    - name: "Get current database schema version"
+      shell:
+        "{{ galaxy_root }}/manage_db.sh db_version | tail -n 1"
+      register: current_db_version
+
+    - name: "Get new database schema version"
+      shell:
+        "{{ galaxy_root }}/manage_db.sh version | tail -n 1"
+      register: new_db_version
+
+    - name: "Report database schema versions"
+      debug:
+        msg: "DB schema versions: current {{ current_db_version.stdout }} -> new {{ new_db_version.stdout }}"
+
+    - name: "Update the Galaxy database schema"
       command:
-        chdir='{{ galaxy_root }}'
-        ./manage_db.sh upgrade
+        cmd: "./manage_db.sh upgrade"
+        chdir: '{{ galaxy_root }}'
+      when: new_db_version.stdout|int > current_db_version.stdout|int
+
+    # Not possible to downgrade database from a version that is
+    # higher than the one supported by the current Galaxy release
+    - name: "Downgrade the Galaxy database schema"
+      fail:
+        msg: "!!! Database schema needs to be downgraded manually from a higher Galaxy version using './manage_db.sh downgrade {{ new_db_version.stdout }}' but for this you need a newer version of Galaxy !!!"
+      when: new_db_version.stdout|int < current_db_version.stdout|int
   when: dbstatus.stdout != "No relations found."
