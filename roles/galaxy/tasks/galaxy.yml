@@ -1,5 +1,9 @@
 # Install and configure Galaxy
 ---
+- name: "Report Galaxy version being installed"
+  debug:
+    msg: "Installing Galaxy version '{{ galaxy_version }}'"
+
 - name: Create top-level Galaxy directories
   file:
     path='{{ item }}'
