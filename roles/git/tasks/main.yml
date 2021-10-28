@@ -8,6 +8,7 @@
   yum:
     name: 'git'
     state: absent
+  when: git_remove_system_package
 
 - name: "Check if git is already installed"
   stat:
