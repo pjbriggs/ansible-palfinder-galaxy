@@ -12,6 +12,7 @@
       - 'python2-pyyaml'
       - 'net-tools'
       - 'hg'
+      - 'libffi-devel'
     state: latest
 
 - name: "Install system-package version of git"
