@@ -210,7 +210,9 @@
   file:
     path: '{{ galaxy_root }}/database/compiled_templates/'
     state: absent
-  when: galaxy_python_version.startswith("3.")
+  when:
+    - galaxy_python_version.startswith("3.")
+    - galaxy_version == "release_20.01"
 
 # Setup/update Galaxy
 - name: "Run common_startup.sh to initialise/update Galaxy installation"
