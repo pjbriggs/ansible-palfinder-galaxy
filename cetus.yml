@@ -9,7 +9,7 @@
   - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "cetus"
-  - galaxy_version: "release_19.09"
+  - galaxy_version: "release_20.05"
   - galaxy_install_dir: "/mnt/rvmi/cetus/galaxy"
   - galaxy_dir: "/mnt/rvmi/cetus/galaxy/teaching"
   # Database and reference data
