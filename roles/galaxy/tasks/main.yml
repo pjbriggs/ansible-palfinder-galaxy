@@ -6,8 +6,6 @@
 
 - include: halt_galaxy.yml
 
-- include: python.yml
-
 - include: database.yml
   become: yes
   become_user: postgres
