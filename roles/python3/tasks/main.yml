@@ -36,6 +36,7 @@
           - 'readline-devel'
           - 'sqlite-devel'
           - 'zlib-devel'
+          - 'libffi-devel'
           - 'tkinter'
         state: 'present'
 

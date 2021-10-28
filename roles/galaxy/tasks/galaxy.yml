@@ -92,6 +92,13 @@
       when: venv_python_version.stdout != external_python_version.stdout
   when: galaxy_venv.stat.exists
 
+- name: "Remove futures from pinned-requirements.txt"
+  lineinfile:
+    path: '{{ galaxy_root }}/lib/galaxy/dependencies/pipfiles/default/pinned-requirements.txt'
+    state: absent
+    line: "futures==3.1.1"
+  when: galaxy_version == "release_20.09"
+
 - name: "Make virtualenv in Galaxy root"
   command:
     chdir: '{{ galaxy_root }}'
@@ -203,7 +210,9 @@
   file:
     path: '{{ galaxy_root }}/database/compiled_templates/'
     state: absent
-  when: galaxy_python_version.startswith("3.")
+  when:
+    - galaxy_python_version.startswith("3.")
+    - galaxy_version == "release_20.01"
 
 # Setup/update Galaxy
 - name: "Run common_startup.sh to initialise/update Galaxy installation"
