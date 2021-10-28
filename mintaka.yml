@@ -202,7 +202,6 @@
   - galaxy-user
   - epel-repo
   - nfslock
-  - git
   - selinux
   - python3
   - nginx

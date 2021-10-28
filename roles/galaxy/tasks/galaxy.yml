@@ -19,13 +19,14 @@
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
 
-- name: Clone Galaxy source
+- name: "Clone Galaxy source"
   git:
-    executable='/usr/local/bin/git'
-    repo='{{ galaxy_repo }}'
-    version='{{ galaxy_version }}'
-    dest={{ galaxy_root }}
-    force=yes
+    repo: '{{ galaxy_repo }}'
+    version: '{{ galaxy_version }}'
+    dest: '{{ galaxy_root }}'
+    force: yes
+  environment:
+    PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
 
 - name: Create additional Galaxy directories
   file:
