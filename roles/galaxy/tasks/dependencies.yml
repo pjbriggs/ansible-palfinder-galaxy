@@ -13,7 +13,13 @@
       - 'net-tools'
       - 'hg'
     state: latest
-  register: installed_dependencies
+
+- name: "Install git"
+  yum:
+    name:
+      - 'git'
+    state: latest
+  when: ansible_distribution_major_version != "6"
 
 - name: "Install galaxyctl.sh script"
   copy:
