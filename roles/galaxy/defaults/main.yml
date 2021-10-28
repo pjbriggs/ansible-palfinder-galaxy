@@ -77,6 +77,13 @@ galaxy_job_working_dir: "{{ galaxy_database_dir }}/jobs_directory"
 galaxy_file_path: "{{ galaxy_database_dir }}/files"
 galaxy_new_file_path: "{{ galaxy_database_dir }}/tmp"
 
+# Database SQL file
+# Set to a pg_dump SQL file from a previous Galaxy DB
+# to reload data from that DB
+# NB only used when creating a new DB (will not overwrite
+# an existing database)
+galaxy_new_db_sql:
+
 # Tool data locations
 galaxy_tool_data_path: "{{ galaxy_root }}/tool-data"
 galaxy_shed_tool_data_path: "{{ galaxy_tool_data_path }}"

@@ -219,27 +219,39 @@
     "PGPASSWORD={{ galaxy_db_password }} psql -c '\\dt' '{{ galaxy_db }}' {{ galaxy_db_user }}"
   register: dbstatus
 
-- name: "Initialise Galaxy database from template SQL"
+- name: "Initialise Galaxy database from SQL file"
   block:
-    - name: "Make tmp directory for template Galaxy DB SQL"
+
+    - name: "Make tmp directory for Galaxy DB SQL file"
       file:
         path: "{{ galaxy_install_dir }}/tmp"
         state: "directory"
 
-    - name: "Copy template Galaxy database SQL"
+    - name: "Copy default template Galaxy database SQL file"
       copy:
         src: 'galaxy_database-v153.sql'
-        dest: '{{ galaxy_install_dir }}/tmp/galaxy_database-v153.sql'
+        dest: '{{ galaxy_install_dir }}/tmp/galaxy_database.sql'
+        remote_src: no
+        force: yes
+      when: galaxy_new_db_sql|default(None) == None
 
-    - name: "Update Galaxy database user in template SQL"
+    - name: "Copy user Galaxy database SQL file"
+      copy:
+        src: '{{ galaxy_new_db_sql }}'
+        dest: '{{ galaxy_install_dir }}/tmp/galaxy_database.sql'
+        remote_src: yes
+        force: yes
+      when: galaxy_new_db_sql|default(None) != None
+
+    - name: "Update Galaxy database user in DB SQL"
       replace:
-        path: '{{ galaxy_install_dir }}/tmp/galaxy_database-v153.sql'
+        path: '{{ galaxy_install_dir }}/tmp/galaxy_database.sql'
         regexp: "__GALAXY_DB_USER__"
         replace: "{{ galaxy_db_user }}"
 
     - name: "Import empty Galaxy database from template SQL"
       shell:
-        "PGPASSWORD={{ galaxy_db_password }} psql -U {{ galaxy_db_user }} {{ galaxy_db}} < {{ galaxy_install_dir }}/tmp/galaxy_database-v153.sql"
+        "PGPASSWORD={{ galaxy_db_password }} psql -U {{ galaxy_db_user }} {{ galaxy_db}} < {{ galaxy_install_dir }}/tmp/galaxy_database.sql"
 
     - name: "Update the Galaxy database"
       command:
