@@ -54,7 +54,7 @@
 
 - name: "Set up custom colours in SCSS file"
   replace:
-    path: '{{ galaxy_root }}/client/galaxy/style/scss/theme/blue.scss'
+    path: '{{ galaxy_root }}/client/src/style/scss/theme/blue.scss'
     regexp: "^\\$({{ item.var }}): (.*);"
     replace: "${{ item.var }}: {{ item.value }};"
   with_items: "{{ galaxy_custom_scss }}"
