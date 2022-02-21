@@ -59,6 +59,10 @@ cetus:
     ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
     # Users
     galaxy_admin_user: "peter.briggs@manchester.ac.uk"
+    # Concurrent jobs
+    galaxy_registered_user_concurrent_jobs: 2
+    galaxy_unregistered_user_concurrent_jobs: 0
+    galaxy_concurrent_jobs: 8
     # Whitelisted tools for rendering HTML correctly
     galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.70"
