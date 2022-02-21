@@ -62,7 +62,7 @@ cetus:
     # Concurrent jobs
     galaxy_registered_user_concurrent_jobs: 2
     galaxy_unregistered_user_concurrent_jobs: 0
-    galaxy_concurrent_jobs: 8
+    galaxy_concurrent_jobs: 24
     # Whitelisted tools for rendering HTML correctly
     galaxy_sanitize_whitelist_tools:
       - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.70"
