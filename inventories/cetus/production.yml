@@ -39,6 +39,8 @@ cetus:
         destination: "jse_drop_smp_4"
       - id: "bowtie2"
         destination: "jse_drop_smp_4"
+      - id: "freebayes"
+        destination: "jse_drop_smp_8"
       - id: "tophat"
         destination: "jse_drop_smp_12"
       - id: "trimmomatic"
