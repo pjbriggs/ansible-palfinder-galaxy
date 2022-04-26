@@ -8,8 +8,6 @@ Manchester:
  * ``pal_finder``: a public instance for running Pal_finder
  * ``cetus``: a local instance for teaching clinical
    bioinformatics
- * ``mintaka``: a public instance for running some of the BCF
-   tools
 
 Roles
 -----
@@ -230,8 +228,6 @@ Playbooks
  - ``palfinder.yml``: playbook for setting up the Palfinder Galaxy
    instance
  - ``cetus.yml``: playbook for setting up the Cetus Galaxy instance
- - ``mintaka.yml``: playbook for setting up the Mintaka Galaxy
-   instance
 
 Nb the playbooks include the passwords for the various accounts in
 the ``palfinder_passwds.yml`` file, which have been encrypted using
@@ -261,8 +257,6 @@ instances defined in this repository:
    Palfinder service
  - ``inventories/cetus/``: contains inventory files for the Cetus
    service
- - ``inventories/mintaka/``: contains inventory files for the
-   Mintaka service
 
 Within each subdirectory there should be two inventory files:
 
@@ -302,8 +296,6 @@ The following servers are defined in the ``Vagrantfile``:
    http://192.168.60.4)
  - ``cetus``: Scientific Linux 7 VM (uses the address
    http://192.168.60.5)
- - ``mintaka``: Scientific Linux 7 VM (uses the address
-   http://192.168.60.6)
 
 An additional VM is used to build Galaxy virtual environment for
 deployment on the compute cluster:
