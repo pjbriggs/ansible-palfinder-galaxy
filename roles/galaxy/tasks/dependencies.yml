@@ -13,6 +13,7 @@
       - 'net-tools'
       - 'hg'
       - 'libffi-devel'
+      - 'ca-certificates'
     state: latest
 
 - name: "Install system-package version of git"
