@@ -67,7 +67,7 @@ galaxy_tool_data_tables: null
 galaxy_loc_file_data: null
 
 # Galaxy installation location
-galaxy_root: "{{ galaxy_dir }}/galaxy"
+galaxy_root: "{{ galaxy_dir }}/{{ galaxy_clone_dir }}"
 
 # Is https enabled
 enable_https: no

@@ -24,7 +24,7 @@ galaxy_utils_dir: "/usr/local"
 galaxy_users: null
 
 # Galaxy installation location
-galaxy_root: "{{ galaxy_dir }}/galaxy"
+galaxy_root: "{{ galaxy_dir }}/{{ galaxy_clone_dir }}"
 
 # Postgresql database
 galaxy_db: "galaxy_{{ galaxy_name }}"
