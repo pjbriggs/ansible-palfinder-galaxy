@@ -15,6 +15,13 @@
   - '{{ galaxy_dir }}/logs'
   - '{{ galaxy_dir }}/backups'
 
+- name: "Stop if proxy prefix is set but is missing leading slash"
+  fail:
+    msg: "'galaxy_proxy_prefix' is missing a leading slash (currently set to '{{ galaxy_proxy_prefix }}')"
+  when:
+    - galaxy_proxy_prefix|default(None) != None
+    - galaxy_proxy_prefix is not regex("^/.*")
+
 - name: Set Galaxy URL
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
