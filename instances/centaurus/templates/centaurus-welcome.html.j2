@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.or
+g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style/base.css" type="text/css" />
+</head>
+<body class="m-0">
+    <div class="jumbotron rounded-0">
+        <div class="container">
+	  <h1>Welcome to the Centaurus Galaxy Server</h1>
+          <p><strong>Galaxy for the University of Manchester at the
+	      Faculty of Biology, Medicine and Health (FBMH)</strong></p>
+	  <p><em>Centaurus is a customised version of Galaxy primarily for
+	    use by researchers within the University of Manchester. The
+	    service is managed jointly by the
+	    <a href="https://www.intranet.ls.manchester.ac.uk/facilities/research/bioinformatics/default.aspx">Bioinformatics Core Facility</a> (BCF)
+	    within the Faculty of Biology, Medicine and Health (FBMH),
+	    and by <a href="http://www.itservices.manchester.ac.uk/">IT
+	      Services</a>.</em></p>
+	</div>
+{% if centaurus_motd is defined and centaurus_motd %}
+      <div class="infomessagelarge">
+        {{ centaurus_motd }}
+      </div>
+{% endif %}
+   </div>
+   <div class="container">
+     <h2>Using Centaurus</h2>
+     <p>Please complete the following online form to request a new
+       account on Centaurus:</p>
+     <ul>
+       <li><a href="https://drive.google.com/open?id=11SBW87DwUvxzY697RF4OB-XJlHHS3NGmVWoIsOWRfO8" target="_blank">Request an account on Centaurus Galaxy</a>
+	 (Google form)</li>
+     </ul>
+     <p>Accounts are only available to users with a University of
+       Manchester email address</p>
+     <h3>Disk quotas</h3>
+     <p>The default quota for each user is <b>{{ default_quota_gb }} Gb</b>.
+       Please contact the administrators if this is not sufficient for your
+       needs.</p>
+     <p><b>Note that you are solely responsible for managing and backing up
+	 any data
+	 that you upload or create on this service.</b></p>
+     <h3>Uploading data</h3>
+     <p>In principle files of any size can now be uploaded to this service
+       directly via your web browser using the
+       <em>Get Data -&gt; Upload File</em> tool.</p>
+{% if enable_ftp_upload %}
+     <p>Alterntively if you are uploading data from a computer on the
+       university campus network then you can use the FTP server: connect
+       to<br />
+       <a href="ftp://{{ galaxy_server_name }}">{{ galaxy_server_name }}</a><br />
+       using your Galaxy credentials (i.e. email address and Galaxy password)
+       to login. Files uploaded to the FTP server can then be imported via the
+       <em>Get Data -&gt; Upload File</em> tool.
+       (NB files left on the FTP server for longer than 5 days without being
+       imported into Galaxy will be removed.)</p>
+{% endif %}
+     <p>It is also possible to import your data files from a web-based file
+       hosting service (e.g. Dropbox) and then upload them by selecting the
+       <em>Paste/Fetch data</em> option in the upload tool and pasting the
+       public URLs of your files into the box that appears.</p>
+     <p><b>It is not possible to upload data hosted on the BCF's 'bartzabel'
+	 web server. This is a limitation imposed by the network configuration
+	 used by Research IT. Please contact us if you wish to upload data
+	 provided by the BCF via 'bartzabel'.</b></p>
+     <h3>Mailing list</h3>
+     <p>The FLS-GALAXY-USERS@listserv.manchester.ac.uk mailing list is used for
+       announcements about downtime, upgrades etc to this service.</p>
+     <p>Unless you opted out you will have been subscribed to this list when
+       your account was created; visit the University's ListServ page at
+       <a href="https://listserv.manchester.ac.uk/index.shtml">https://listserv.manchester.ac.uk/index.shtml</a>
+       to manage or unsubscribe.</p>
+     <h3>News &amp; Recent Changes</h3>
+     <p>See <a href="centaurus_news.html">Centaurus Galaxy Server News</a> for
+       details of recent and upcoming changes</p>
+     <h3>Contact</h3>
+     <p>Please contact <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a> with questions, problems or requests.</p>
+     <hr/>
+     <h3>Acceptable Use</h3>
+     <p>Please note that passwords for this system are separate from those used
+       to access other university services but should be treated with the same
+       level of care. Passwords can be changed via
+       <em>User -&gt; Preferences -&gt; Manage your information</em>.</p>
+     <p>Centaurus uses computation and storage hardware provided and maintained
+       by the <a href="http://ri.itservices.manchester.ac.uk/">IT Services
+	 Research Infrastructure Team</a>, and usage of the service is subject
+       to the University's policy on Acceptable Use of IT Facilities and
+       Services.</p>
+     <p><b>Each user is responsible for ensuring that their usage of the
+	 service is acceptable, and is accountable for all actions undertaken
+	 using their credentials (i.e. username and password)</b>.</p>
+     <p>For more information on the University's acceptable use policy see
+       <a href="http://documents.manchester.ac.uk/DocuInfo.aspx?DocID=16277">here</a>.</p>
+     <hr/>
+     <h3>Acknowledgement of Centaurus Galaxy use</h3>
+     <p>Please reference both the BCF and IT Services in any research
+       journal or publication that requires citation of any author's work.
+       The recognition of BCF and IT Services support is important to ensure
+       the sustainability of the service. The minimal content of a citation
+       should include:</p>
+     <blockquote>
+       <em>"The authors would like to acknowledge the use of the
+	 local Galaxy service provided by the Bioinformatics Core Facility
+	 and IT Services at the University of Manchester."</em>
+     </blockquote>
+     <p>In addition please see <a href="https://wiki.galaxyproject.org/CitingGalaxy">https://wiki.galaxyproject.org/CitingGalaxy</a>
+       for general information on citing Galaxy. The documentation of any
+       specific tools you used will also list citation information, if
+       relevant.</p>
+     <p>Please let us know when you publish so we can add you to our
+       publications list.</p>
+   </div>
+</body>
+</html>
