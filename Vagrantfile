@@ -19,12 +19,14 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
   end
   # Centaurus VM
   config.vm.define "centaurus" do |centaurus|
-    centaurus.vm.box = "centos/8"
+    centaurus.vm.box = "centos/7"
     centaurus.vm.hostname = "centaurus"
     centaurus.vm.network :private_network, ip: "192.168.60.3"
     centaurus.vm.provision "shell", inline: <<-SHELL
     mkdir -p /mnt/rvmi
+    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy
     chmod ugo+rwX /mnt/rvmi/
+    chmod ugo+rwX /mnt/bmh01-rvmi/bcf-galaxy/
   SHELL
   end
   # Palfinder VM
