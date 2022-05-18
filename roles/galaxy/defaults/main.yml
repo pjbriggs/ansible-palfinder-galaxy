@@ -90,6 +90,8 @@ enable_tool_shed_check: no
 
 # Conda options
 galaxy_conda_auto_install: yes
+galaxy_conda_auto_init: yes
+galaxy_conda_copy_dependencies: no
 
 # Dependency caching options
 galaxy_use_cached_depedency_manager: no
