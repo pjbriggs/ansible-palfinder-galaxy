@@ -153,6 +153,12 @@ galaxy_jse_drop_cleanup_grace_period: "600"
 # Define entries as a dictionary with:
 # - id     (destination ID)
 # - runner (target runner)
+# - jse_drop_qsub_options (optional, JSE-drop 'qsub_options')
+# - jse_drop_slots (optional, JSE-drop 'galaxy_slots')
+# - envs (optional dictionary defining <env...> elements)
+# 'envs' should be a dictionary with:
+# - id     (ID for env element)
+# - value  (corresponding env value)
 galaxy_job_destinations:
 
 # Tool destinations
