@@ -36,6 +36,11 @@
 {% if dest.jse_drop_slots is defined %}
 	  <param id="galaxy_slots">{{ dest.jse_drop_slots }}</param>
 {% endif %}
+{% if dest.envs is defined %}
+{% for env in dest.envs %}
+	  <env id="{{ env.id }}">{{ env.value }}</env>
+{% endfor %}
+{% endif %}
 	</destination>
 {% endfor %}
 {% endif %}
