@@ -6,8 +6,7 @@ centaurus:
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
     # Server configuration
-    galaxy_server_name: 192.168.60.3
-    galaxy_proxy_prefix: "/{{ galaxy_name }}"
+    galaxy_server_name: centaurus.hosszu.lan
     # Secrets
     centaurus_secrets: vagrant.yml
     # uWSGI and handler configuration
@@ -17,10 +16,7 @@ centaurus:
     enable_jse_drop: yes
     enable_local_jse_drop: yes
     galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
-    galaxy_default_runner: "jse_drop_serial"
-    galaxy_job_destinations:
-      - id: "jse_drop_serial"
-        runner: "jse_drop"
+    galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
     # Job cleanup
     galaxy_cleanup_job: "never"
     # Postfix/email configuration
@@ -39,11 +35,3 @@ centaurus:
     # Contact info
     # Default quota
     default_quota_gb: 5
-    # Tools and toolshed
-    galaxy_tools:
-      - tool: "fastqc"
-        owner: "devteam"
-        section: "NGS: QC and manipulation"
-    # Whitelisted tools for rendering HTML correctly
-    galaxy_sanitize_whitelist_tools:
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.73+galaxy0"

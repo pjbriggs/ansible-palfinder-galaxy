@@ -25,6 +25,10 @@
   - allow_user_deletion: no
   - enable_require_login: yes
   - enable_user_activation: no
+  # uWSGI sockets and ports
+  - galaxy_http_port: "8080"
+  - galaxy_uwsgi_socket: "4001"
+  - galaxy_reports_uwsgi_socket: "9001"
   # Quotas
   - enable_quotas: yes
   # FTP upload
@@ -32,18 +36,10 @@
   # Reporting interface
   - enable_reports: yes
   # Welcome page etc
-  - galaxy_welcome_template: "instances/{{ galaxy_name }}/templates/{{ galaxy_name }}-welcome.html.j2"
+  - galaxy_welcome_template: "instances/centaurus/templates/{{ galaxy_name }}-welcome.html.j2"
   - galaxy_extra_static_content:
       - src: "instances/centaurus/files/centaurus_news.html"
         dest: "{{ galaxy_dir }}/{{ galaxy_clone_dir }}/static/centaurus_news.html"
-  # Custom colours
-  - galaxy_custom_scss:
-      # Colour for navbar/masthead
-      - var: "brand-dark"
-        value: "#660099"
-      # Colour for text
-      - var: "text-color"
-        value: "#2c3143"
   # uWSGI and handler configuration
   # Set number of uWSGI & handler processes in inventory file
   # Running jobs
@@ -60,15 +56,16 @@
   - galaxy_message: "{{ lookup('file', 'instances/{{ galaxy_name }}/files/message', errors='warn') }}"
   # Tools
   - galaxy_tool_conf_file: "instances/{{ galaxy_name }}/files/{{ galaxy_name }}-tool_conf.xml"
-  # Local tools
-  - local_galaxy_tools:
-      - name: "venn_diagram"
-        tool_files:
-          - "tools/venn_diagram/cistrome_venn_diagram.xml"
-          - "tools/venn_diagram/cistrome_venn_diagram.py"
 
   vars_files:
   - instances/centaurus/{{ centaurus_secrets }}
+  - instances/centaurus/custom_scss.yml
+  - instances/centaurus/job_conf.yml
+  - instances/centaurus/shed_tools.yml
+  - instances/centaurus/local_tools.yml
+  - instances/centaurus/resolvers.yml
+  - instances/centaurus/tool_data.yml
+  - instances/centaurus/sanitize_whitelist.yml
 
   roles:
   # Configure host VM

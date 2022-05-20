@@ -321,6 +321,19 @@ these are not as fully-featured as the production versions), e.g.::
 Point your browser at the appropriate address to access the local
 test instance once it has been deployed.
 
+.. note::
+
+   For ``centaurus`` the Vagrant VM is aliased as
+
+   ``centaurus.hosszu.lan``
+
+   and this can be added to the ``/etc/hosts`` file on the host
+   machine, so that the browser can be pointed to this address
+   (instead of ``192.168.60.3``) for testing.
+
+   (See e.g. https://www.tecmint.com/setup-local-dns-using-etc-hosts-file-in-linux/
+   for details of how to modify ``/etc/hosts``.)
+
 Building Galaxy virtualenvs for the cluster system
 --------------------------------------------------
 
