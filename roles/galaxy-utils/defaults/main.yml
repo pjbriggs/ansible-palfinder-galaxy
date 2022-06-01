@@ -2,4 +2,4 @@
 # Default location to install the utilities
 python_install_dir: '/usr/local'
 galaxy_utils_dir: '/usr/local'
-nebulizer_version: '0.6.0'
+nebulizer_version: '0.7.1'
