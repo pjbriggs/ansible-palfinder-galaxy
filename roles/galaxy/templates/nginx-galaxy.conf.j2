@@ -27,7 +27,7 @@ server {
         allow all;
     }
 {% else %}
-    listen 80 default;
+    listen 80;
 {% endif %}
     client_body_temp_path {{ nginx_client_body_temp_path }};
     client_max_body_size {{ nginx_client_max_body_size }};
