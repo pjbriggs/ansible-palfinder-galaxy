@@ -9,7 +9,7 @@
 	<plugin id="jse_drop" type="runner" load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner">
 	  <param id="drop_dir">{{ galaxy_jse_drop_dir }}</param>
 	  <param id="virtual_env">{{ galaxy_jse_drop_virtual_env }}</param>
-{% if galaxy_jse_drop_name is defined %}
+{% if galaxy_jse_drop_id is defined %}
 	  <param id="galaxy_id">{{ galaxy_jse_drop_galaxy_id }}</param>
 {% endif %}
         </plugin>
