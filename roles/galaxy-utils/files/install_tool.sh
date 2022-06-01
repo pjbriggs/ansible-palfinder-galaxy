@@ -29,11 +29,11 @@ done
 NEBULIZER=$(dirname $0)/nebulizer
 
 function tool_installed() {
-    $NEBULIZER -k $APIKEY list_installed_tools $URL --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installed$" | head -n 1 | cut -f1
+    $NEBULIZER -k $APIKEY list_tools $URL --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installed$" | head -n 1 | cut -f1
 }
 
 function tool_installing() {
-    $NEBULIZER -k $APIKEY list_installed_tools $URL --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installing$" | head -n 1 | cut -f1
+    $NEBULIZER -k $APIKEY list_tools $URL --name "$TOOL" | grep -w $SHED | grep -w $OWNER | grep -w "Installing$" | head -n 1 | cut -f1
 }
 
 echo RUN
