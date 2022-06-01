@@ -79,7 +79,6 @@ function stop_galaxy() {
 	    if [ ! -z "$children" ] ; then
 		extra_procs="$extra_procs $children"
 	    fi
-	    extra_procs="$extra_procs $galaxy_proc"
 	done
 	galaxy_procs="$galaxy_procs $extra_procs"
 	echo Stopping using supervisord
@@ -88,7 +87,7 @@ function stop_galaxy() {
 	sleep 30
 	if [ ! -z "$galaxy_procs" ] ; then
 	    echo Manually removing leftover processes
-    	    for galaxy_proc in $PROCESSES ; do
+    	    for galaxy_proc in $galaxy_procs ; do
 		if [ ! -z "$(ps --pid $galaxy_proc)" ] ; then
 		    echo ...sending SIG$_SIGNAL to $galaxy_proc
 		    kill -s $_SIGNAL $galaxy_proc
@@ -211,6 +210,7 @@ case $COMMAND in
 	exit 1
 	;;
 esac
+echo Finished: $status
 exit $status
 ##
 #
