@@ -8,6 +8,10 @@
 - name: "Create and activate Galaxy user accounts"
   block:
     # Create the accounts
+    - name: "Show command line for restarting Galaxy with master API key"
+      debug:
+        msg: "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+
     - name: "Activate Galaxy master API key for user creation"
       command:
         "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
