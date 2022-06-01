@@ -3,11 +3,6 @@
 #
 # TODO
 # - add compression/caching
-#
-# if using more than one upstream, disable nginx's round-robin
-# scheme to prevent it from submitting POST requests more than
-# once (this is unsafe)
-proxy_next_upstream off;
 
 {% if enable_https %}
 server {

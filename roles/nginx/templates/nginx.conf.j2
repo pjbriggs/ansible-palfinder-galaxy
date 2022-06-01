@@ -30,6 +30,11 @@ http {
     include             {{ nginx_conf_dir }}/mime.types;
     default_type        application/octet-stream;
 
+    # if using more than one upstream, disable nginx's round-robin
+    # scheme to prevent it from submitting POST requests more than
+    # once (this is unsafe)
+    proxy_next_upstream off;
+
     # Load modular configuration files from the /etc/nginx/conf.d directory.
     # See http://nginx.org/en/docs/ngx_core_module.html#include
     # for more information.
