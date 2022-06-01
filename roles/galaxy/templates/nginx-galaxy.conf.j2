@@ -3,11 +3,6 @@
 #
 # TODO
 # - add compression/caching
-#
-# if using more than one upstream, disable nginx's round-robin
-# scheme to prevent it from submitting POST requests more than
-# once (this is unsafe)
-proxy_next_upstream off;
 
 {% if enable_https %}
 server {
@@ -32,7 +27,7 @@ server {
         allow all;
     }
 {% else %}
-    listen 80 default;
+    listen 80;
 {% endif %}
     client_body_temp_path {{ nginx_client_body_temp_path }};
     client_max_body_size {{ nginx_client_max_body_size }};
