@@ -1,0 +1,6 @@
+---
+# Galaxy user and group on system
+galaxy_user: "centaurus-galaxy"
+galaxy_uid: 22223
+galaxy_group: "galaxy"
+galaxy_gid: 400
