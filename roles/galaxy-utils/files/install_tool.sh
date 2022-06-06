@@ -48,9 +48,9 @@ fi
 
 # Install the tool
 if [ -z "$SECTION" ] ; then
-    $NEBULIZER -k $APIKEY install_tool $URL $SHED $OWNER $TOOL
+    $NEBULIZER -k $APIKEY install_tool -y $URL $SHED $OWNER $TOOL
 else
-    $NEBULIZER -k $APIKEY install_tool --tool-panel-section "$SECTION" $URL $SHED $OWNER $TOOL
+    $NEBULIZER -k $APIKEY install_tool -y --tool-panel-section "$SECTION" $URL $SHED $OWNER $TOOL
 fi
 retcode=$?
 echo Tool installation returned $retcode
