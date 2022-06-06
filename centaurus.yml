@@ -2,11 +2,6 @@
 - hosts: centaurus
 
   vars:
-  # Host configuration
-  - galaxy_user: "centaurus-galaxy"
-  - galaxy_uid: 22223
-  - galaxy_group: "galaxy"
-  - galaxy_gid: 400
   # Galaxy configuration
   - galaxy_name: "centaurus"
   - galaxy_version: "release_20.09"
@@ -59,6 +54,7 @@
 
   vars_files:
   - instances/centaurus/{{ centaurus_secrets }}
+  - instances/centaurus/galaxy_user.yml
   - instances/centaurus/custom_scss.yml
   - instances/centaurus/job_conf.yml
   - instances/centaurus/shed_tools.yml
