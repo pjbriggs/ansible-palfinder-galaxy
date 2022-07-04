@@ -1,0 +1,14 @@
+---
+# Install JSEDrop service using init.d script
+
+- name: "Create init.d script for jsedrop"
+  template:
+    src="jsedrop.init.j2"
+    dest="/etc/init.d/jsedrop"
+    mode='ugo+x'
+
+- name: "(Re)start jsedrop.service"
+  service:
+    name="jsedrop"
+    enabled=yes
+    state=restarted

@@ -1,45 +1,18 @@
 ---
 # Install jsedrop.py as a service on the remote host
 
-- name: "Install and start local JSE-Drop service (SL6)"
-  block:
-    - name: "Install jsedrop.py"
-      copy:
-        src="jsedrop.py"
-        dest="{{ jsedrop_install_dir }}/jsedrop.py"
-        mode="ugo+x"
+- name: "Install jsedrop.py"
+  copy:
+    src="jsedrop.py"
+    dest="{{ jsedrop_install_dir }}/jsedrop.py"
+    mode="ugo+x"
 
-    - name: "Create init.d script for jsedrop"
-      template:
-        src="jsedrop.init.j2"
-        dest="/etc/init.d/jsedrop"
-        mode='ugo+x'
+- include: "jsedrop_initd.yml"
+  when: ansible_distribution == "Scientific" and ansible_distribution_major_version == "6"
 
-    - name: "(Re)start jsedrop.service"
-      service:
-        name="jsedrop"
-        enabled=yes
-        state=restarted
-  when: ansible_distribution_major_version == "6"
+- include: "jsedrop_service.yml"
+  when: (ansible_distribution == "Scientific" or ansible_distribution == "CentOS") and ansible_distribution_major_version == "7"
 
-- name: "Install and start local JSE-Drop service (SL7)"
-  block:
-    - name: "Install jsedrop.py"
-      copy:
-        src="jsedrop.py"
-        dest="{{ jsedrop_install_dir }}/jsedrop.py"
-        mode="ugo+x"
+- include: "jsedrop_service.yml"
+  when: ansible_distribution == "Ubuntu"
 
-    - name: "Create service file for jsedrop.service"
-      template:
-        src="jsedrop.service.j2"
-        dest="/lib/systemd/system/jsedrop.service"
-      notify:
-        - "Restart jsedrop.service"
-
-    - name: "(Re)start jsedrop.service"
-      systemd:
-        name="jsedrop"
-        enabled=yes
-        state=restarted
-  when: ansible_distribution_major_version == "7"
