@@ -1,0 +1,6 @@
+---
+- name: "Install certbot dependencies for Ubuntu"
+  apt:
+    pkg:
+      - 'python3'
+    state: 'present'
