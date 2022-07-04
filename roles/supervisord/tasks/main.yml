@@ -1,10 +1,11 @@
 ---
 # Install, configure and start Supervisord
 
-- name: "Uninstall yum version of Supervisor"
-  yum:
-    name: 'supervisor'
-    state: absent
+- include: "dependencies_redhat.yml"
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
+
+- include: "dependencies_ubuntu.yml"
+  when: ansible_distribution == "Ubuntu"
 
 - name: "Check if Supervisor is already installed"
   stat:
@@ -81,7 +82,7 @@
     shell: >-
       {{ supervisor_install_dir }}/bin/echo_supervisord_conf > {{ supervisor_install_dir }}/etc/supervisord.conf
       creates={{ supervisor_install_dir }}/etc/supervisord.conf
-    notify: "Restart Supervisord"
+    notify: "Restart supervisord.service"
 
   - name: "Create supervisord.d directory"
     file:
@@ -109,24 +110,11 @@
       - section: 'include'
         option: 'files'
         value: '/usr/local/etc/supervisord.d/*.ini'
-    notify: "Restart Supervisord"
-
-  - name: "Check existence of Supervisord init.d script"
-    stat:
-      path: "/etc/init.d/supervisord"
-    register: init_d
-
-  - name: "Create init.d script for Supervisord"
-    copy:
-      dest: '/etc/init.d/supervisord'
-      src: 'supervisord.init.sh'
-      mode: 'ugo+x'
-    when: not init_d.stat.exists
-    notify: "Restart Supervisord"
+    notify: "Restart supervisord.service"
   when: install_supervisor == True
 
-- name: "Start Supervisord service"
-  service:
-    name: 'supervisord'
-    enabled: on
-    state: started
+- include: "supervisord_initd.yml"
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
+
+- include: "supervisord_service.yml"
+  when: ansible_distribution == "Ubuntu"
