@@ -1,4 +1,6 @@
 ---
 # Handlers for supervisord role
-- name: Restart Supervisord
-  service: name=supervisord state=restarted
+- name: "Restart supervisord.service"
+  service:
+    name: 'supervisord'
+    state: restarted

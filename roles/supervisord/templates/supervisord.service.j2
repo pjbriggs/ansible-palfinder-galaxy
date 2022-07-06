@@ -1,0 +1,15 @@
+[Unit]
+Description=Supervisor process control system for UNIX
+Documentation=http://supervisord.org
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/supervisord -n -c {{ supervisor_install_dir }}/etc/supervisord.conf -j /var/run/supervisord.pid
+ExecStop=/usr/local/bin/supervisorctl $OPTIONS shutdown
+ExecReload=/usr/local/bin/supervisorctl $OPTIONS reload
+KillMode=process
+Restart=on-failure
+RestartSec=20s
+
+[Install]
+WantedBy=multi-user.target
