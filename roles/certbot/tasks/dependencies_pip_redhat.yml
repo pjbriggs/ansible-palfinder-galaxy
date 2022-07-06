@@ -1,0 +1,7 @@
+---
+- name: "Install certbot dependencies for RedHat"
+  yum:
+    name:
+      - 'python3'
+      - 'augeas-libs'
+    state: 'present'

@@ -8,12 +8,11 @@
     path: "/usr/local/bin/certbot-auto"
     state: absent
 
-- name: "Install dependencies for certbot"
-  yum:
-    name:
-      - python3
-      - augeas-libs
-    state: present
+- include: "dependencies_pip_redhat.yml"
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
+
+- include: "dependencies_pip_ubuntu.yml"
+  when: ansible_distribution == "Ubuntu"
 
 - name: "Make virtualenv for certbot"
   command:
