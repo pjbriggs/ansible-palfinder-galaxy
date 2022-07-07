@@ -1,0 +1,50 @@
+---
+- hosts: centaurus
+
+  vars:
+  # Galaxy user and group on system
+  - galaxy_user: "centaurus-galaxy"
+  - galaxy_uid: 22223
+  - galaxy_group: "galaxy"
+  - galaxy_gid: 400
+  # Base installation directory
+  - galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
+
+  vars_files:
+  # Instance-specific variables
+  - instances/centaurus/{{ centaurus_galaxy_config }}
+  - instances/centaurus/{{ centaurus_secrets }}
+  # Variables common to instances
+  - instances/centaurus/custom_scss.yml
+  - instances/centaurus/job_conf.yml
+  - instances/centaurus/shed_tools.yml
+  - instances/centaurus/local_tools.yml
+  - instances/centaurus/resolvers.yml
+  - instances/centaurus/tool_data.yml
+  - instances/centaurus/sanitize_whitelist.yml
+
+  roles:
+  # Configure host VM
+  - galaxy-user
+  - epel-repo
+  - nfslock
+  - selinux
+  - python3
+  - nginx
+  - postgresql
+  - supervisord
+  - role: postfix-null-client
+    when: enable_smtp
+  - certbot
+  - role: jsedrop
+    jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
+    when: enable_local_jse_drop
+
+  # Install and configure Galaxy
+  - galaxy-utils
+  - galaxy
+
+  # Set up users, tools etc
+  - galaxy-create-users
+  - galaxy-install-tools
+  - galaxy-set-default-quota

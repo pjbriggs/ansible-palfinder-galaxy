@@ -13,18 +13,23 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
   config.ssh.insert_key = false
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provider :virtualbox do |v|
+    # Uncomment this when Vagrant/VirtualBox complains that
+    # the hostname is too long
+    #v.name = "galaxyvm"
     v.memory = 4096
     v.cpus = 4
     v.linked_clone = true
   end
   # Centaurus VM
   config.vm.define "centaurus" do |centaurus|
-    centaurus.vm.box = "centos/8"
+    centaurus.vm.box = "centos/7"
     centaurus.vm.hostname = "centaurus"
     centaurus.vm.network :private_network, ip: "192.168.60.3"
     centaurus.vm.provision "shell", inline: <<-SHELL
     mkdir -p /mnt/rvmi
+    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy
     chmod ugo+rwX /mnt/rvmi/
+    chmod ugo+rwX /mnt/bmh01-rvmi/bcf-galaxy/
   SHELL
   end
   # Palfinder VM

@@ -1,0 +1,9 @@
+---
+# Custom colours
+galaxy_custom_scss:
+  # Colour for navbar/masthead
+  - var: "brand-dark"
+    value: "#660099"
+  # Colour for text
+  - var: "text-color"
+    value: "#2c3143"

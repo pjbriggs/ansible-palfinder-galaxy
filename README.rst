@@ -2,12 +2,12 @@ ansible-palfinder-galaxy
 ========================
 
 ``ansible`` playbook and roles for deploying BCF Galaxy instances
-on Scientific Linux virtual machines at the University of
-Manchester:
+on virtual machines at the University of Manchester:
 
  * ``pal_finder``: a public instance for running Pal_finder
  * ``cetus``: a local instance for teaching clinical
    bioinformatics
+ * ``centaurus``: a local instance for researchers
 
 Roles
 -----
@@ -228,6 +228,8 @@ Playbooks
  - ``palfinder.yml``: playbook for setting up the Palfinder Galaxy
    instance
  - ``cetus.yml``: playbook for setting up the Cetus Galaxy instance
+ - ``centaurus.yml``: playbook for setting up the Centaurus Galaxy
+   'production' and 'devel' instance
 
 Nb the playbooks include the passwords for the various accounts in
 the ``palfinder_passwds.yml`` file, which have been encrypted using
@@ -257,13 +259,23 @@ instances defined in this repository:
    Palfinder service
  - ``inventories/cetus/``: contains inventory files for the Cetus
    service
+ - ``inventories/centaurus/``: contains inventory files for the
+   Centaurus service
 
-Within each subdirectory there should be two inventory files:
+For Palfinder and Cetus, each subdirectory has two inventory files:
 
  - ``production.yml``: inventory for the production instance of the
    service
  - ``vagrant.yml``: inventory for local testing of the service with
    Vagrant
+
+For Centaurus, there are four inventory files:
+
+ - ``production.yml``: main production instance
+ - ``devel.yml``: test instance
+ - ``vagrant-production``: local Vagrant version of the production
+   instance
+ - ``vagrant-devel``: local Vagrant version of the test instance
 
 These inventories are intended to be used as an alternative to the
 central inventory file (typically ``/etc/ansible/hosts``).
@@ -291,7 +303,7 @@ virtual machines for testing the deployment.
 
 The following servers are defined in the ``Vagrantfile``:
 
- - ``centaurus``: CentOS Linux 8 VM (http://192.168.60.3)
+ - ``centaurus``: CentOS Linux 7 VM (http://192.168.60.3)
  - ``palfinder``: Scientific Linux 6 VM (uses the address
    http://192.168.60.4)
  - ``cetus``: Scientific Linux 7 VM (uses the address
@@ -316,6 +328,19 @@ these are not as fully-featured as the production versions), e.g.::
 
 Point your browser at the appropriate address to access the local
 test instance once it has been deployed.
+
+.. note::
+
+   For ``centaurus`` the Vagrant VM is aliased as
+
+   ``centaurus.hosszu.lan``
+
+   and this can be added to the ``/etc/hosts`` file on the host
+   machine, so that the browser can be pointed to this address
+   (instead of ``192.168.60.3``) for testing.
+
+   (See e.g. https://www.tecmint.com/setup-local-dns-using-etc-hosts-file-in-linux/
+   for details of how to modify ``/etc/hosts``.)
 
 Building Galaxy virtualenvs for the cluster system
 --------------------------------------------------

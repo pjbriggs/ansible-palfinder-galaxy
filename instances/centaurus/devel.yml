@@ -1,0 +1,71 @@
+---
+# Galaxy configuration
+galaxy_name: "centaurus-dev"
+galaxy_version: "release_20.09"
+galaxy_dir: "{{ galaxy_install_dir }}/devel"
+galaxy_clone_dir: "galaxy-dist"
+
+# Database and reference data
+galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/database/files"
+galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/job_working_directory"
+galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/tool-data"
+
+# Galaxy-specific Python installation
+galaxy_python_version: "3.6.11"
+
+# Account management
+allow_user_creation: no
+allow_user_deletion: no
+enable_require_login: yes
+enable_user_activation: no
+
+# uWSGI sockets and ports
+galaxy_http_port: "9080"
+galaxy_uwsgi_socket: "5001"
+
+# Users
+galaxy_admin_user: "centaurusadmin@galaxy.org"
+galaxy_users:
+  - email: "{{ galaxy_admin_user }}"
+    password: "{{ galaxy_admin_passwd }}"
+
+# Job configuration
+enable_jse_drop: yes
+galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
+galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
+
+# Running jobs
+galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
+
+# Quotas
+enable_quotas: yes
+
+# Email
+galaxy_outgoing_email_addr: "Centaurus Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+galaxy_incoming_email_addr: "{{ galaxy_admin_user }}"
+
+# FTP upload
+enable_ftp_upload: no
+
+# Reporting interface
+enable_reports: no
+
+# Welcome page etc
+##- galaxy_welcome_template: "instances/centaurus/templates/{{ galaxy_name }}-welcome.html.j2"
+##- galaxy_extra_static_content:
+##    - src: "instances/centaurus/files/centaurus_news.html"
+##      dest: "{{ galaxy_dir }}/{{ galaxy_clone_dir }}/static/centaurus_news.html"
+
+# Check toolshed for updates
+enable_tool_shed_check: yes
+
+# Message of the day to display on the front page and message
+# to display under masthead
+# -- for ansible <2.6 "errors=..." option is not supported so
+#    an empty placeholder file is required to stop the playbook
+#    failing
+##- centaurus_motd: "{{ lookup('file', 'instances/{{ galaxy_name }}/files/motd', errors='warn') }}"
+##- galaxy_message: "{{ lookup('file', 'instances/{{ galaxy_name }}/files/message', errors='warn') }}"
+
+# Tools conf base XML
+galaxy_tool_conf_file: "instances/centaurus/files/centaurus-tool_conf.xml"

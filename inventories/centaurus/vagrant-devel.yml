@@ -1,0 +1,28 @@
+centaurus:
+  hosts:
+    192.168.60.3
+  vars:
+    # Ansible-specific settings
+    ansible_ssh_user: vagrant
+    ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    # Server name
+    galaxy_server_name: centaurus-dev.hosszu.lan
+    # Galaxy configuation
+    centaurus_galaxy_config: devel.yml
+    # Secrets
+    centaurus_secrets: vagrant.yml
+    # uWSGI and handler configuration
+    galaxy_uwsgi_processes: 1
+    galaxy_handler_processes: 1
+    # JSE-Drop service
+    enable_local_jse_drop: yes
+    # Job cleanup
+    galaxy_cleanup_job: "never"
+    # Postfix/email configuration
+    enable_smtp: no
+    # Audit report
+    email_audit_report_to: None
+    # SSL configuration
+    enable_https: no
+    # Default quota
+    default_quota_gb: 5
