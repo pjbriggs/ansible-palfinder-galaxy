@@ -229,7 +229,7 @@ Playbooks
    instance
  - ``cetus.yml``: playbook for setting up the Cetus Galaxy instance
  - ``centaurus.yml``: playbook for setting up the Centaurus Galaxy
-   instance
+   'production' and 'devel' instance
 
 Nb the playbooks include the passwords for the various accounts in
 the ``palfinder_passwds.yml`` file, which have been encrypted using
@@ -262,12 +262,20 @@ instances defined in this repository:
  - ``inventories/centaurus/``: contains inventory files for the
    Centaurus service
 
-Within each subdirectory there should be two inventory files:
+For Palfinder and Cetus, each subdirectory has two inventory files:
 
  - ``production.yml``: inventory for the production instance of the
    service
  - ``vagrant.yml``: inventory for local testing of the service with
    Vagrant
+
+For Centaurus, there are four inventory files:
+
+ - ``production.yml``: main production instance
+ - ``devel.yml``: test instance
+ - ``vagrant-production``: local Vagrant version of the production
+   instance
+ - ``vagrant-devel``: local Vagrant version of the test instance
 
 These inventories are intended to be used as an alternative to the
 central inventory file (typically ``/etc/ansible/hosts``).
