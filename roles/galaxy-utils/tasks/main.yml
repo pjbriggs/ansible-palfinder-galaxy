@@ -7,7 +7,7 @@
 # Need latest setuptools to install nebulizer
 # Error looks like the one reported here:
 # - https://github.com/rm-hull/luma.examples/issues/45
-- name: Install latest setuptools
+- name: "Install latest setuptools"
   pip:
     name="setuptools"
     executable='{{ python_install_dir }}/bin/pip3'
@@ -21,14 +21,14 @@
     executable: '{{ python_install_dir }}/bin/pip3'
     state: present
 
-- name: Install Nebulizer
+- name: "Install Nebulizer"
   pip:
     name='https://github.com/pjbriggs/nebulizer/archive/v{{ nebulizer_version }}.tar.gz'
     executable='{{ python_install_dir }}/bin/pip3'
     extra_args='--prefix {{ galaxy_utils_dir }} --no-binary :all:'
     state=present
 
-- name: Install utility scripts
+- name: "Install utility scripts"
   copy:
     src={{ item }}
     dest='{{ galaxy_utils_dir }}/bin/{{ item }}'
