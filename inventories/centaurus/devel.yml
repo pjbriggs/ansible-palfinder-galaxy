@@ -1,0 +1,25 @@
+centaurus:
+  hosts:
+    130.88.97.245
+  vars:
+    # Server name
+    galaxy_server_name: "centaurus-dev.itservices.manchester.ac.uk"
+    # Galaxy configuation
+    centaurus_galaxy_config: devel.yml
+    # Secrets
+    centaurus_secrets: devel_secrets.yml
+    # uWSGI and handler configuration
+    galaxy_uwsgi_processes: 2
+    galaxy_handler_processes: 2
+    # JSE-Drop service
+    enable_local_jse_drop: yes
+    # Job cleanup
+    galaxy_cleanup_job: "onsuccess"
+    # Postfix/email configuration
+    enable_smtp: yes
+    # Audit report
+    email_audit_report_to: "{{ galaxy_admin_user }}"
+    # SSL configuration
+    enable_https: yes
+    # Default quota
+    default_quota_gb: 100
