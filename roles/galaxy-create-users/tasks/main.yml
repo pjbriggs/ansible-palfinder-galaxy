@@ -10,11 +10,11 @@
     # Create the accounts
     - name: "Show command line for restarting Galaxy with master API key"
       debug:
-        msg: "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+        msg: "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
 
     - name: "Activate Galaxy master API key for user creation"
       command:
-        "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+        "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
 
     - name: "Create Galaxy user accounts"
       command:
@@ -23,7 +23,7 @@
 
     - name: "Deactivate Galaxy master API key"
       command:
-        "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
+        "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
 
     # Activate accounts
     - name: "Activate Galaxy user accounts"
