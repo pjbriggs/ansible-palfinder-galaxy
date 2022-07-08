@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Script for (re)starting/stopping Galaxy
 
@@ -58,7 +58,20 @@ function start_galaxy() {
 }
 
 function stop_galaxy() {
-    # Attempts to stop Galaxy
+    # Check on status
+    local waiting=$($_SUPERVISORCTL status "${GALAXY}:*" | grep "STARTING\|STOPPING\|BACKOUT")
+    local ntries=0
+    while [ ! -z "$waiting" ] ; do
+	if [ $ntries -lt 300 ] ; then
+	    ntries=$((ntries+1))
+	    sleep 1
+	    waiting=$($_SUPERVISORCTL status "${GALAXY}:*" | grep "STARTING\|STOPPING\|BACKOUT")
+	else
+	    echo "!!!One or more processes stuck 'STARTING' or 'STOPPING!!!"
+	    return 1
+	fi
+    done
+    # Attempt to stop Galaxy
     echo "*** Stopping ${GALAXY} ***"
     # Get Galaxy processes from supervisor
     local galaxy_procs=$($_SUPERVISORCTL status "${GALAXY}:*" | grep RUNNING | awk '{print $4}' | cut -d, -f1)
