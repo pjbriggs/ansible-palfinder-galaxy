@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Flag all 'old' datasets in the Galaxy database as deleted
 #

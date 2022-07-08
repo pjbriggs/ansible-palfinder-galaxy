@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Set the default quota for registered users
 

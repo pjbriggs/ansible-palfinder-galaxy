@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Create user using nebulizer & Galaxy API
 

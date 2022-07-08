@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Clean out histories for specified user in the Galaxy database
 #
