@@ -1,38 +1,34 @@
 # Install utilities
 ---
 
-- name: "Install system packages for utility scripts"
-  yum:
-    name:
-      - 'libpqxx'
-      - 'libpqxx-devel'
-    state: latest
+- include: "dependencies_redhat.yml"
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
 
 # Need latest setuptools to install nebulizer
 # Error looks like the one reported here:
 # - https://github.com/rm-hull/luma.examples/issues/45
-- name: Install latest setuptools
+- name: "Install latest setuptools"
   pip:
     name="setuptools"
     executable='{{ python_install_dir }}/bin/pip3'
     state=latest
 
-- name: Install dependencies for utilities
+- name: "Install pip dependencies for utilities"
   pip:
     name:
-      - "psycopg2==2.6.2"
+      - "psycopg2-binary"
       - "pyyaml"
     executable: '{{ python_install_dir }}/bin/pip3'
     state: present
 
-- name: Install Nebulizer
+- name: "Install Nebulizer"
   pip:
     name='https://github.com/pjbriggs/nebulizer/archive/v{{ nebulizer_version }}.tar.gz'
     executable='{{ python_install_dir }}/bin/pip3'
     extra_args='--prefix {{ galaxy_utils_dir }} --no-binary :all:'
     state=present
 
-- name: Install utility scripts
+- name: "Install utility scripts"
   copy:
     src={{ item }}
     dest='{{ galaxy_utils_dir }}/bin/{{ item }}'

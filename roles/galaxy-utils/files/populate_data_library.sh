@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Create and populate data library using nebulizer & Galaxy API
 

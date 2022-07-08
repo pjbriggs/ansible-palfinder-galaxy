@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Install tool using nebulizer & Galaxy API
 
