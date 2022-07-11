@@ -2,6 +2,15 @@
 # Build and install Python 3 on the remote host
 # Also installs pip and virtualenv packages
 
+- name: "Get current user name"
+  command:
+    id -u -n
+  register: python_user_id
+
+- name: "Report current user name"
+  debug:
+    msg: "User from 'id' is {{ python_user_id.stdout }}"
+
 - name: "Set major.minor Python version"
   set_fact:
     python_major_minor_version: "{{ python_version.split('.')[:2] | join('.') }}"
