@@ -21,3 +21,4 @@
       - 'libffi-devel'
       - 'tkinter'
     state: 'present'
+  when: python_user_id == "root"
