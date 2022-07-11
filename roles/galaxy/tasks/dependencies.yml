@@ -29,10 +29,10 @@
   vars:
     git_install_dir: '/usr/local'
 
-- name: "Install galaxyctl.sh script"
+- name: "Install gxctl.sh script"
   copy:
-    src: 'galaxyctl.sh'
-    dest: '{{ galaxy_utils_dir }}/bin/galaxyctl.sh'
+    src: 'gxctl.sh'
+    dest: '{{ galaxy_utils_dir }}/bin/gxctl.sh'
     mode: 'ugo+rx'
 
 - name: "Install Galaxy-specific Python 2.7"

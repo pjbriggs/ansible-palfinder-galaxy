@@ -10,7 +10,7 @@
   block:
     - name: "Activate Galaxy master API key for tool installation"
       command:
-        "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+        "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
 
     - name: "Install tools from Galaxy toolshed"
       command:
@@ -19,7 +19,7 @@
 
     - name: "Deactivate Galaxy master API key"
       command:
-          "{{ galaxy_utils_dir }}/bin/galaxyctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
+          "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
   when: galaxy_tools|default(None) != None
 
 # Local tools

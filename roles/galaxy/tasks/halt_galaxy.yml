@@ -2,8 +2,8 @@
 ---
 - name: "Command to halt running Galaxy"
   debug:
-    msg: "{{ galaxy_utils_dir }}/bin/galaxyctl.sh stop {{ galaxy_name }}"
+    msg: "{{ galaxy_utils_dir }}/bin/gxctl.sh stop {{ galaxy_name }}"
 
 - name: "Halt running Galaxy"
   command:
-    "{{ galaxy_utils_dir }}/bin/galaxyctl.sh stop {{ galaxy_name }}"
+    "{{ galaxy_utils_dir }}/bin/gxctl.sh stop {{ galaxy_name }}"
