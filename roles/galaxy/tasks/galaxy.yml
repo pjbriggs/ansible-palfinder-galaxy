@@ -237,7 +237,6 @@
 
 - name: "Initialise Galaxy database from SQL file"
   block:
-
     - name: "Make tmp directory for Galaxy DB SQL file"
       file:
         path: "{{ galaxy_install_dir }}/tmp"
@@ -273,7 +272,7 @@
       command:
         cmd: "./manage_db.sh upgrade"
         chdir: "{{ galaxy_root }}"
-  when: dbstatus.stdout == "No relations found."
+  when: dbstatus.stdout == "No relations found." or dbstatus.stderr == "Did not find any relations."
 
 - name: "Update existing Galaxy database"
   block:
@@ -307,4 +306,4 @@
       fail:
         msg: "!!! Database schema needs to be downgraded manually from a higher Galaxy version using './manage_db.sh downgrade {{ new_db_version.stdout }}' but for this you need a newer version of Galaxy !!!"
       when: new_db_version.stdout|int < current_db_version.stdout|int
-  when: dbstatus.stdout != "No relations found."
+  when: dbstatus.stdout != "No relations found." and dbstatus.stderr != "Did not find any relations."
