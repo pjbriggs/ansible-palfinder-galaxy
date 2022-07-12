@@ -24,7 +24,7 @@
               - "postgresql-server-dev-{{ postgresql_version }}"
               - "postgresql-contrib"
             state: present
-      - when: ansible_distribution == "Ubuntu"
+      when: ansible_distribution == "Ubuntu"
 
     - name: "Set up PostgreSQL user authentication (pg_hba.conf)"
       copy:
