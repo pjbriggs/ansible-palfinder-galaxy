@@ -112,6 +112,30 @@
     cmd: "{{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ python_exe }}"
     creates: '{{ galaxy_root }}/.venv'
 
+- name: "Check if conda is already installed"
+  stat:
+    path: "{{ galaxy_tool_dependency_dir }}/_conda/bin/conda"
+  register: galaxy_conda
+
+- name: "Install conda"
+  block:
+    # See https://docs.conda.io/en/latest/miniconda.html#linux-installers
+    - name: "Fetch Miniconda installer"
+      get_url:
+        url: 'https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh'
+        dest: '{{ galaxy_tool_dependency_dir }}/miniconda.sh'
+        force: true
+
+    - name: "Install conda using Miniconda"
+      command:
+        "bash {{ galaxy_tool_dependency_dir }}/miniconda.sh -b -p {{ galaxy_tool_dependency_dir }}/_conda"
+
+    - name: "Remove Miniconda installer"
+      file:
+        path: '{{ galaxy_tool_dependency_dir }}/miniconda.sh'
+        state: absent
+  when: galaxy_conda.stat.exists == False
+
 - name: Create Galaxy configuration file
   template:
     dest='{{ galaxy_root }}/config/galaxy.yml'
