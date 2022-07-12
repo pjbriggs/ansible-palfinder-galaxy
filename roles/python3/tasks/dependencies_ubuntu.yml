@@ -22,3 +22,4 @@
       - 'zlib1g-dev'
     state: 'present'
     update_cache: yes
+  when: python_user_id.stdout == "root"
