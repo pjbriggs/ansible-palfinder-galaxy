@@ -1,6 +1,10 @@
 ---
 # Install, configure and start PostgreSQL on remote server
 
+- name: "Report PostgreSQL version"
+  debug:
+    msg: "PostgreSQL version: '{{ postgresql_version }}'"
+
 - name: "Install PostgreSQL server"
   block:
     - name: "Install PostgreSQL server (Ubuntu)"
