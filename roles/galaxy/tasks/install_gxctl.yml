@@ -1,0 +1,7 @@
+# Install gxctl.sh utility script
+
+- name: "Install gxctl.sh script"
+  copy:
+    src: 'gxctl.sh'
+    dest: '{{ galaxy_utils_dir }}/bin/gxctl.sh'
+    mode: 'ugo+rx'

@@ -1,5 +1,7 @@
 ---
 
+- include: install_gxctl.yml
+
 - include: halt_galaxy.yml
 
 - include: remove_legacy_artefacts.yml
