@@ -1,47 +1,88 @@
 ---
 # Install, configure and start PostgreSQL on remote server
-- name: Install PostgreSQL server
-  yum:
-    name:
-      - postgresql
-      - postgresql-server
-    state: present
-  register: postgresql_installed
 
-- name: Check if PostgreSQL is initialised
-  stat: path=/var/lib/pgsql/data/postgresql.conf
-  register: postgresql_conf
+- name: "Install PostgreSQL server"
+  block:
+    - name: "Install PostgreSQL server (Ubuntu)"
+      block:
+        - name: "Install PostgreSQL signing key (Ubuntu)"
+          apt_key:
+            url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            id: ACCC4CF8
 
-# ansible wants us to use the 'service' module for
-# this but it doesn't work for 'initdb'
-- name: Initialise PostgreSQL cluster
-  command:
-    service postgresql initdb
-  when: postgresql_conf.stat.exists == False
-  register: postgresql_initialised
+        - name: "Get PostgreSQL repository (Ubuntu)"
+          apt_repository:
+            repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+            update_cache: yes
 
-- name: Update PostgreSQL authentication for postgres user
-  lineinfile:
-    dest=/var/lib/pgsql/data/pg_hba.conf
-    line='local\tall\t    postgres\t\t\t      ident'
-    insertafter='^# "local" is for Unix domain socket connections only'
-    backup=yes
-  notify:
-    Restart PostgreSQL
+        - name: "Install PostgreSQL server (Ubuntu)"
+          apt:
+            pkg:
+              - "postgresql-client-{{ postgresql_version }}"
+              - "postgresql-{{ postgresql_version }}"
+              - "libpq-dev"
+              - "postgresql-server-dev-{{ postgresql_version }}"
+              - "postgresql-contrib"
+            state: present
+      - when: ansible_distribution == "Ubuntu"
 
-- name: Update PostgreSQL authentication for all other users
-  replace:
-    dest=/var/lib/pgsql/data/pg_hba.conf
-    regexp='^([^\s]+\s+all\s+all\s+.*)ident$'
-    replace='\1md5'
-  notify:
-    Restart PostgreSQL
+    - name: "Set up PostgreSQL user authentication (pg_hba.conf)"
+      copy:
+        src: 'pg_hba.conf'
+        dest: '/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf'
 
-- name: Start PostgreSQL service and enable on boot
-  service:
-    name=postgresql
-    state=started
-    enabled=yes
-  when: postgresql_initialised is success
-  register: postgresql_started
+    - name: "Start PostgreSQL service"
+      systemd:
+        name: "postgresql"
+        state: "restarted"
+        enabled: yes
+  when: postgresql_version != "legacy"
 
+- name: "Install PostgreSQL server (legacy)"
+  block:
+    - name: "Install PostgreSQL server (legacy version)"
+      yum:
+        name:
+          - "postgresql"
+          - "postgresql-server"
+        state: present
+      register: postgresql_installed
+      when: (ansible_distribution == "Scientific" or ansible_distribution == "CentOS") and ansible_distribution_major_version == "7"
+
+    - name: "Check if PostgreSQL is initialised"
+      stat: path="/var/lib/pgsql/data/postgresql.conf"
+      register: postgresql_conf
+
+    # ansible wants us to use the 'service' module for
+    # this but it doesn't work for 'initdb'
+    - name: "Initialise PostgreSQL database cluster"
+      command:
+        "service postgresql initdb"
+      when: postgresql_conf.stat.exists == False
+      register: postgresql_initialised
+
+    - name: "Update PostgreSQL authentication for postgres user"
+      lineinfile:
+        dest="/var/lib/pgsql/data/pg_hba.conf"
+        line='local\tall\t    postgres\t\t\t      ident'
+        insertafter='^# "local" is for Unix domain socket connections only'
+        backup=yes
+      notify:
+        "Restart PostgreSQL"
+
+    - name: "Update PostgreSQL authentication for all other users"
+      replace:
+        dest="/var/lib/pgsql/data/pg_hba.conf"
+        regexp='^([^\s]+\s+all\s+all\s+.*)ident$'
+        replace='\1md5'
+      notify:
+        "Restart PostgreSQL"
+
+    - name: "Start PostgreSQL service and enable on boot"
+      service:
+        name=postgresql
+        state=started
+        enabled=yes
+      when: postgresql_initialised is success
+      register: postgresql_started
+  when: postgresql_version == "legacy"

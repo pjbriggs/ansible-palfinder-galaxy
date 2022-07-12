@@ -1,0 +1,7 @@
+---
+# Set version to 'legacy' to install unversioned
+# PostgreSQL server
+# Otherwise set a specific version, see
+# https://www.postgresql.org/support/versioning/
+# for supported versions
+postgresql_version: "legacy"
