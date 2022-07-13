@@ -20,9 +20,9 @@
   # Variables common to instances
   - instances/centaurus/custom_scss.yml
   - instances/centaurus/job_conf.yml
-  - instances/centaurus/shed_tools.yml
-  - instances/centaurus/local_tools.yml
   - instances/centaurus/resolvers.yml
+  - instances/centaurus/shed_tools_minimal.yml
+  - instances/centaurus/local_tools.yml
   - instances/centaurus/tool_data_tables.yml
   - instances/centaurus/tool_data_minimal.yml
   - instances/centaurus/sanitize_whitelist.yml
