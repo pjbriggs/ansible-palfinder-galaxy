@@ -31,9 +31,14 @@ galaxy_tools: null
 #        tool_files:
 #          - "tools/venn_diagram/cistrome_venn_diagram.xml"
 #          - "tools/venn_diagram/cistrome_venn_diagram.py"
+#        section:
+#          name: "ChIP-seq"
+#          id: "ngs-chip-seq"
 #      - name: ...
-#        tool_file:
+#        tool_files:
 #          - ... etc
+# NB the 'section' is optional; if omitted then the tool
+# will appear in the top-level of the tool panel
 local_galaxy_tools: null
 
 # Data tables
