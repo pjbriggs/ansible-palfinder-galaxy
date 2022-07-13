@@ -7,6 +7,9 @@
   - galaxy_uid: 22223
   - galaxy_group: "galaxy"
   - galaxy_gid: 400
+  # System Python and PostgreSQL versions
+  - python_version: "3.6.11"
+  - postgresql_version: "14"
   # Base installation directory
   - galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
 
