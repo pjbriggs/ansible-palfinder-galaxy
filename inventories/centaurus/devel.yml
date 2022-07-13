@@ -12,7 +12,7 @@ centaurus:
     galaxy_uwsgi_processes: 2
     galaxy_handler_processes: 2
     # JSE-Drop service
-    enable_local_jse_drop: yes
+    enable_local_jse_drop: no
     # Job cleanup
     galaxy_cleanup_job: "onsuccess"
     # Postfix/email configuration
