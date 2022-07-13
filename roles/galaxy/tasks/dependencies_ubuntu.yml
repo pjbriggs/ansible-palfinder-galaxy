@@ -1,0 +1,15 @@
+# Install dependencies
+---
+- name: "Install Galaxy system-package dependencies (Ubuntu)"
+  apt:
+    pkg:
+      - 'acl'
+      - 'git'
+      - 'mercurial'
+      - 'python3-psycopg2'
+      - 'default-jre'
+      - 'net-tools'
+      - 'ca-certificates'
+      - 'python3-passlib'
+    state: latest
+    update_cache: yes

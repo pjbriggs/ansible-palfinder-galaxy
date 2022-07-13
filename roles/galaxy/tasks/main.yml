@@ -1,10 +1,36 @@
 ---
 
-- include: remove_legacy_artefacts.yml
-
-- include: dependencies.yml
+- include: install_gxctl.yml
 
 - include: halt_galaxy.yml
+
+- include: remove_legacy_artefacts.yml
+
+- include: "dependencies_redhat.yml"
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
+
+- include: "dependencies_ubuntu.yml"
+  when: ansible_distribution == "Ubuntu"
+
+- name: "Install Galaxy-specific Python 2.7"
+  include_role:
+    name: python27
+  vars:
+    python_version: "{{ galaxy_python_version }}"
+    install_dir: "{{ galaxy_python_dir }}"
+    ansible_become: yes
+    ansible_become_user: "{{ galaxy_user }}"
+  when: galaxy_python_version.startswith("2.7")
+
+- name: "Install Galaxy-specific Python 3"
+  include_role:
+    name: python3
+  vars:
+    python_version: "{{ galaxy_python_version }}"
+    install_dir: "{{ galaxy_python_dir }}"
+    ansible_become: yes
+    ansible_become_user: "{{ galaxy_user }}"
+  when: galaxy_python_version.startswith("3.")
 
 - include: database.yml
   become: yes

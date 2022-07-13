@@ -1,0 +1,30 @@
+# Install dependencies
+---
+- name: "Install Galaxy system-package dependencies (RedHat)"
+  yum:
+    name:
+      - 'python-psycopg2'
+      - 'libtool'
+      - 'libtool-ltdl'
+      - 'libtool-ltdl-devel'
+      - 'java-1.8.0-openjdk'
+      - 'samtools'
+      - 'python2-pyyaml'
+      - 'net-tools'
+      - 'hg'
+      - 'libffi-devel'
+      - 'ca-certificates'
+    state: latest
+
+- name: "Install system-package version of git"
+  yum:
+    name:
+      - 'git'
+    state: latest
+  when: ansible_distribution_major_version != "6"
+
+- name: "Install git from source into /usr/local"
+  include_role:
+    name: git
+  vars:
+    git_install_dir: '/usr/local'
