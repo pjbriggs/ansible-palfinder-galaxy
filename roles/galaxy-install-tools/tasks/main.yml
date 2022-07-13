@@ -23,57 +23,62 @@
   when: galaxy_tools|default(None) != None
 
 # Local tools
-- name: "Create directories for local tool files"
-  file:
-    path='{{ galaxy_dir }}/local_tools/{{ item.name }}'
-    state=directory
-    mode='ugo+rX'
-  with_items: "{{ local_galaxy_tools }}"
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: local_galaxy_tools|default(None) != None
+- name: "Install local tools"
+  block:
+    - name: "Create directories for local tool files"
+      file:
+        path='{{ galaxy_dir }}/local_tools/{{ item.name }}'
+        state=directory
+        mode='ugo+rX'
+      with_items: "{{ local_galaxy_tools }}"
+      become: yes
+      become_user: "{{ galaxy_user }}"
+      when: local_galaxy_tools|default(None) != None
 
-- name: "Install local tool files"
-  copy:
-    src='{{ item.1 }}'
-    dest='{{ galaxy_dir }}/local_tools/{{ item.0.name }}/{{ item.1 | basename }}'
-  with_subelements:
-    - '{{ local_galaxy_tools }}'
-    - 'tool_files'
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: local_galaxy_tools|default(None) != None
+    - name: "Install local tool files"
+      copy:
+        src='{{ item.1 }}'
+        dest='{{ galaxy_dir }}/local_tools/{{ item.0.name }}/{{ item.1 | basename }}'
+      with_subelements:
+        - '{{ local_galaxy_tools }}'
+        - 'tool_files'
+      become: yes
+      become_user: "{{ galaxy_user }}"
+      when: local_galaxy_tools|default(None) != None
 
-- name: "Build tool_conf XML file for local tools"
-  template:
-    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
-    src=local_tool_conf.xml.j2
+    - name: "Build tool_conf XML file for local tools"
+      template:
+        dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+        src=local_tool_conf.xml.j2
+      notify:
+        - "Restart Galaxy"
   become: yes
   become_user: "{{ galaxy_user }}"
   when: local_galaxy_tools|default(None) != None
 
 # Create .loc files from samples
-- name: "Create loc files from sample versions"
-  copy:
-    src='{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
-    dest='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
-    remote_src=True
-  with_items:
-    - '{{ galaxy_loc_file_data }}'
-  become: yes
-  become_user: "{{ galaxy_user }}"
-  when: galaxy_loc_file_data|default(None) != None
+- name: "Create and populate loc files"
+  block:
+    - name: "Create loc files from sample versions"
+      copy:
+        src='{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
+        dest='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
+        remote_src=True
+      with_items:
+        - '{{ galaxy_loc_file_data }}'
 
-# Update the reference data
-- name: "Update tool data in loc files"
-  lineinfile:
-    path='{{ galaxy_root }}/tool-data/{{ item.0.loc_file }}'
-    state=present
-    create=no
-    line="{{ item.1 }}"
-  with_subelements:
-    - '{{ galaxy_loc_file_data }}'
-    - 'data'
+    # Update the reference data
+    - name: "Update tool data in loc files"
+      lineinfile:
+        path='{{ galaxy_root }}/tool-data/{{ item.0.loc_file }}'
+        state=present
+        create=no
+        line="{{ item.1 }}"
+      with_subelements:
+        - '{{ galaxy_loc_file_data }}'
+        - 'data'
+      notify:
+        - "Restart Galaxy"
   become: yes
   become_user: "{{ galaxy_user }}"
   when: galaxy_loc_file_data|default(None) != None
