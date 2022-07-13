@@ -1,7 +1,17 @@
 # Install and configure postfix as null client for outgoing email
 ---
-- name: Install Postfix yum packages
-  yum: name=postfix state=present
+- name: "Install Postfix yum packages (RedHat)"
+  yum:
+    name: 'postfix'
+    state: present
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
+
+- name: "Install Postfix apt packages (Ubuntu)"
+  apt:
+    pkg: 'postfix'
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
 
 - name: Check if backup of Postfix configuration is present
   stat: path=/etc/postfix/main.cf.bak
