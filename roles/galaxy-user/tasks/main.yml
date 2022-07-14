@@ -10,4 +10,5 @@
     group={{ galaxy_group }}
     home=/home/{{ galaxy_user }}
     uid={{ galaxy_uid }}
+    shell="/bin/bash"
     state=present
