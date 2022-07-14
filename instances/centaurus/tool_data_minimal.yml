@@ -1,0 +1,30 @@
+---
+# Reference data for .loc files
+# This is a minimal set for testing deployments
+galaxy_loc_file_data:
+  # Alignment data (.nib/.2bit data)
+  - loc_file: "alignseq.loc"
+    data:
+      - "seq\thg38\t/mnt/data-sets/bcf/genomeIndexes/hg38_analysisSet/2bit/hg38.analysisSet.2bit"
+      - "seq\thg19\t/mnt/data-sets/bcf/genomeIndexes/hg19_GRCh37_random_chrM/seq"
+      - "seq\thg18\t/mnt/data-sets/bcf/genomeIndexes/hg18_random_chrM/seq"
+      - "seq\tmm10\t/mnt/data-sets/bcf/genomeIndexes/mm10_random_chrM_chrUn/seq"
+      - "seq\tmm9\t/mnt/data-sets/bcf/genomeIndexes/mm9_random_chrM_chrUn/seq"
+      - "seq\tdm3\t/mnt/data-sets/bcf/genomeIndexes/dm3_het_chrM_chrU/seq"
+  # CEAS annotations
+  #- loc_file: "ceas.loc"
+  #  data:
+  #    - "hg38.knownGene\thg38\tHuman (hg38)\t/mnt/data-sets/bcf/softwareData/ceas/hg38.knownGene"
+  #    - "hg19.refGene\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/ceas/hg19.refGene"
+  #    - "hg18.refGene\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/ceas/hg18.refGene"
+  #    - "mm10.refGene\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/ceas/mm10.refGene"
+  #    - "mm9.refGene\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/ceas/mm9.refGene"
+  #    - "dm3.refGene\tdm3\tFly (dm3)\t/mnt/data-sets/bcf/softwareData/ceas/dm3.refGene"
+  # RnaChipIntegrator canonical genes
+  - loc_file: "rnachipintegrator_canonical_genes.loc"
+    data:
+      - "Gencode24_knownCanonical_hg38\thg38\tHuman (hg38)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/Gencode24_knownCanonical_hg38.tsv"
+      - "knownCanonical_30072012_hg19\thg19\tHuman (hg19)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_30072012_hg19.tsv"
+      - "knownCanonical_18082011_hg18\thg18\tHuman (hg18)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18082011_hg18.tsv"
+      - "knownCanonical_18072013_mm10\tmm10\tMouse (mm10)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_18072013_mm10.tsv"
+      - "knownCanonical_10102011_mm9_updated\tmm9\tMouse (mm9)\t/mnt/data-sets/bcf/softwareData/RnaChipIntegrator/canonical_genes/knownCanonical_10102011_mm9_updated.tsv"

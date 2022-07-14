@@ -120,7 +120,6 @@
     <tool file="extract/liftOver_wrapper.xml" />
   </section>
   <section id="fetchSeq" name="Fetch Sequences">
-    <tool file="extract/extract_genomic_dna.xml" />
   </section>
   <section id="fetchAlignSeq" name="Fetch Alignments/Sequences">
     <tool file="maf/interval2maf_pairwise.xml" />
