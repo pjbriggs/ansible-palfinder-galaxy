@@ -11,7 +11,7 @@ galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/job_working_
 galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/tool-data"
 
 # Galaxy-specific Python installation
-galaxy_python_version: "3.6.11"
+galaxy_python_version: "3.8.13"
 
 # Account management
 allow_user_creation: no
