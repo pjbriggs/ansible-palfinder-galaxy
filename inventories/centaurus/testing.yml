@@ -1,0 +1,25 @@
+centaurus:
+  hosts:
+    10.99.97.201
+  vars:
+    # Server name
+    galaxy_server_name: "10.99.97.201"
+    # Galaxy configuation
+    centaurus_galaxy_config: testing.yml
+    # Secrets
+    centaurus_secrets: vagrant.yml
+    # uWSGI and handler configuration
+    galaxy_uwsgi_processes: 2
+    galaxy_handler_processes: 2
+    # JSE-Drop service
+    enable_local_jse_drop: no
+    # Job cleanup
+    galaxy_cleanup_job: "onsuccess"
+    # Postfix/email configuration
+    enable_smtp: yes
+    # Audit report
+    email_audit_report_to: "{{ galaxy_admin_user }}"
+    # SSL configuration
+    enable_https: yes
+    # Default quota
+    default_quota_gb: 100
