@@ -41,6 +41,8 @@ galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
 enable_quotas: yes
 
 # Email
+postfix_host_name: "{{ galaxy_server_name }}"
+postfix_relay_host: "[smtp.manchester.ac.uk]"
 galaxy_outgoing_email_addr: "Centaurus Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
 galaxy_incoming_email_addr: "{{ galaxy_admin_user }}"
 
