@@ -4,7 +4,10 @@
 galaxy_tools:
   - tool: "fastqc"
     owner: "devteam"
-    section: "NGS: QC and manipulation"
+    section: "FASTA/FASTQ"
+  - tool: "trimmomatic"
+    owner: "pjbriggs"
+    section: "FASTA/FASTQ"
   #- tool: "ceas"
   #  owner: "pjbriggs"
   #  section: "ChIP-seq"
