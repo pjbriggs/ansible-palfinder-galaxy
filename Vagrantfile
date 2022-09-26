@@ -15,6 +15,7 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
   config.vm.provider :virtualbox do |v|
     # Uncomment this when Vagrant/VirtualBox complains that
     # the hostname is too long
+    # See e.g. https://github.com/hashicorp/vagrant/issues/9524
     #v.name = "galaxyvm"
     v.memory = 4096
     v.cpus = 4
