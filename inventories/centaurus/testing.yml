@@ -1,9 +1,9 @@
 centaurus:
   hosts:
-    10.99.97.201
+    130.88.41.210
   vars:
     # Server name
-    galaxy_server_name: "10.99.97.201"
+    galaxy_server_name: "130.88.41.210"
     # Galaxy configuation
     centaurus_galaxy_config: testing.yml
     # Secrets
@@ -11,6 +11,8 @@ centaurus:
     # uWSGI and handler configuration
     galaxy_uwsgi_processes: 2
     galaxy_handler_processes: 2
+    # Virtalenv for running jobs
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/centaurus/galaxy/shared/csf/galaxy/20.09/venv_py3.8"
     # JSE-Drop service
     enable_local_jse_drop: no
     # Job cleanup
@@ -20,6 +22,6 @@ centaurus:
     # Audit report
     email_audit_report_to: "{{ galaxy_admin_user }}"
     # SSL configuration
-    enable_https: yes
+    enable_https: no
     # Default quota
     default_quota_gb: 100
