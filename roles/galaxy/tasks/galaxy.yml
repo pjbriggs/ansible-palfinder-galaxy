@@ -121,11 +121,11 @@
   block:
     - name: "Move existing conda environments directory"
       shell:
-        test -d {{ galaxy_tool_dependency_dir }}/_conda/envs && test ! -d {{ galaxy_tool_dependency_dir }}/conda_envs.bak && mv {{ galaxy_tool_dependency_dir }}/_conda/envs {{ galaxy_tool_dependency_dir }}/conda_envs.bak
+        "test -d {{ galaxy_tool_dependency_dir }}/_conda/envs && test ! -d {{ galaxy_tool_dependency_dir }}/conda_envs.bak && mv {{ galaxy_tool_dependency_dir }}/_conda/envs {{ galaxy_tool_dependency_dir }}/conda_envs.bak"
 
     - name: "Move existing conda packages directory"
       shell:
-        test -d {{ galaxy_tool_dependency_dir }}/_conda/pkgs && test ! -d {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak && mv {{ galaxy_tool_dependency_dir }}/_conda/pkgs {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak
+        "test -d {{ galaxy_tool_dependency_dir }}/_conda/pkgs && test ! -d {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak && mv {{ galaxy_tool_dependency_dir }}/_conda/pkgs {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak"
 
     - name: "Remove existing conda installation"
       file:
@@ -156,15 +156,15 @@
   block:
     - name: "Reinstate old conda environments"
       shell:
-        test -d {{ galaxy_tool_dependency_dir }}/conda_envs.bak && rmdir {{ galaxy_tool_dependency_dir }}/_conda/envs && mv {{ galaxy_tool_dependency_dir }}/conda_envs.bak {{ galaxy_tool_dependency_dir }}/_conda/envs
+        "test -d {{ galaxy_tool_dependency_dir }}/conda_envs.bak && rmdir {{ galaxy_tool_dependency_dir }}/_conda/envs && mv {{ galaxy_tool_dependency_dir }}/conda_envs.bak {{ galaxy_tool_dependency_dir }}/_conda/envs"
 
     - name: "Reinstate old conda packages"
       shell:
-        test -d {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak && rm -rf {{ galaxy_tool_dependency_dir }}/_conda/pkgs && mv {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak {{ galaxy_tool_dependency_dir }}/_conda/pkgs
+        "test -d {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak && rm -rf {{ galaxy_tool_dependency_dir }}/_conda/pkgs && mv {{ galaxy_tool_dependency_dir }}/conda_pkgs.bak {{ galaxy_tool_dependency_dir }}/_conda/pkgs"
 
     - name: "Update the reinstated packages"
       shell:
-        {{ galaxy_tool_dependency_dir }}/_conda/bin/conda update -y --all
+        "{{ galaxy_tool_dependency_dir }}/_conda/bin/conda update -y --all"
   when: galaxy_conda.stat.exists == True and galaxy_reinstall_conda == True
 
 - name: "Add environment setup file"
