@@ -30,6 +30,9 @@ galaxy_welcome_template: "welcome.html.j2"
 galaxy_terms:
 galaxy_citations:
 
+# Environment setup file
+galaxy_environment_setup_file:
+
 # (S)CSS styles/custom colours
 # Define entries as a dictionary with:
 # - var   (SCSS variable e.g. 'brand-primary')

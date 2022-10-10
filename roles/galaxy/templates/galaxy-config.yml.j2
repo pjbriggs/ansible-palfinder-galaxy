@@ -1680,7 +1680,11 @@ galaxy:
   # prior to running tools.  This can be especially useful for running
   # jobs as the actual user, to remove the need to configure each user's
   # environment individually.
+{% if galaxy_environment_setup_file|default(None) != None %}
+  environment_setup_file: {{ galaxy_dir }}/environment_setup.sh
+{% else %}
   #environment_setup_file: null
+{% endif %}
 
   # Optional file containing job resource data entry fields definition.
   # These fields will be presented to users in the tool forms and allow
