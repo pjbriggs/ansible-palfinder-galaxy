@@ -136,6 +136,12 @@
         state: absent
   when: galaxy_conda.stat.exists == False
 
+- name: "Add environment setup file"
+  copy:
+    dest='{{ galaxy_dir }}/environment_setup.sh'
+    src='{{ galaxy_environment_setup_file }}'
+  when: galaxy_environment_setup_file|default(None) != None
+
 - name: Create Galaxy configuration file
   template:
     dest='{{ galaxy_root }}/config/galaxy.yml'
