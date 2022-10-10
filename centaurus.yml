@@ -47,7 +47,8 @@
   - nginx
   - postgresql
   - supervisord
-  - certbot
+  - role: certbot
+    when: enable_https
 
   # Postfix mail client
   - role: postfix-null-client
