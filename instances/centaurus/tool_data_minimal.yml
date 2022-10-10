@@ -11,6 +11,10 @@ galaxy_loc_file_data:
       - "seq\tmm10\t/mnt/data-sets/bcf/genomeIndexes/mm10_random_chrM_chrUn/seq"
       - "seq\tmm9\t/mnt/data-sets/bcf/genomeIndexes/mm9_random_chrM_chrUn/seq"
       - "seq\tdm3\t/mnt/data-sets/bcf/genomeIndexes/dm3_het_chrM_chrU/seq"
+  # STAR versioned indices
+  - loc_file: "rnastar_index2x_versioned.loc"
+    data:
+      - "#hg19_random_chrM_hap\thg19\tHuman (hg19_random_chrM-hap)\t/mnt/data-sets/bcf/genomeIndexes/hg19_GRCh37_random_chrM/STAR_2.7.8a_75bp_gencode41\t1\t2.7.8a"
   # CEAS annotations
   #- loc_file: "ceas.loc"
   #  data:
