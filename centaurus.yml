@@ -10,6 +10,10 @@
   - galaxy_uid: 22223
   - galaxy_group: "galaxy"
   - galaxy_gid: 400
+  # Extra groups to add Galaxy user to
+  - extra_groups:
+      - group: "ls-bcf"
+        gid: 337111
   # System Python and PostgreSQL versions
   - python_version: "3.10.5"
   - postgresql_version: "14"
