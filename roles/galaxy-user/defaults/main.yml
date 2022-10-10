@@ -4,3 +4,11 @@ galaxy_user: "galaxy"
 galaxy_uid: 400
 galaxy_group: "{{ galaxy_user }}"
 galaxy_gid: 400
+
+# Additional groups to create and add Galaxy user to
+# If set then should be a list with each item being
+# a dictionary with keys 'group' and 'gid' e.g.
+# extra_groups:
+#      - group: "ls-bcf"
+#        gid: 337111
+extra_groups:

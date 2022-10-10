@@ -12,3 +12,19 @@
     uid={{ galaxy_uid }}
     shell="/bin/bash"
     state=present
+
+- name: "Create additional groups"
+  group:
+    name: "{{ item.group }}"
+    gid: "{{ item.gid }}"
+    state: present
+  with_items: "{{ extra_groups }}"
+  when: extra_groups|default(None) != None
+
+- name: "Add Galaxy user to additional groups"
+  user:
+    name: "{{ galaxy_user }}"
+    groups: "{{ item.group }}"
+    append: yes
+  with_items: "{{ extra_groups }}"
+  when: extra_groups|default(None) != None
