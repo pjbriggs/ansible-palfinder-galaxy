@@ -100,6 +100,7 @@ galaxy_python_dir: '{{ galaxy_dir }}/python/{{ galaxy_python_version }}'
 enable_tool_shed_check: no
 
 # Conda options
+galaxy_reinstall_conda: no
 galaxy_conda_auto_install: yes
 
 # Dependency caching options
