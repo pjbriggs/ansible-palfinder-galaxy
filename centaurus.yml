@@ -43,12 +43,6 @@
   roles:
   # Configure host VM
   - galaxy-user
-  - role: epel-repo
-    when: ansible_os_family == "RedHat"
-  - role: nfslock
-    when: ansible_os_family == "RedHat"
-  - role: selinux
-    when: ansible_os_family == "RedHat"
   - python3
   - nginx
   - postgresql
