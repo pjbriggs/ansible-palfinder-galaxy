@@ -42,3 +42,4 @@
   - populate_data_library.sh
   - clean_out_user_data.sh
   - audit_report.py
+  - gx_dump_database.py
