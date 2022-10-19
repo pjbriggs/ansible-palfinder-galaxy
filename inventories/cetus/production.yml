@@ -18,22 +18,27 @@ cetus:
       - id: "jse_drop_serial"
         runner: "jse_drop"
         jse_drop_qsub_options: "-V -j n"
+        total_concurrent_jobs: 12
       - id: "jse_drop_smp_4"
         runner: "jse_drop"
         jse_drop_qsub_options: "-V -j n -pe smp.pe 4"
         jse_drop_slots: "4"
+        total_concurrent_jobs: 12
       - id: "jse_drop_smp_6"
         runner: "jse_drop"
         jse_drop_qsub_options: "-V -j n -pe smp.pe 6"
         jse_drop_slots: "6"
+        total_concurrent_jobs: 8
       - id: "jse_drop_smp_8"
         runner: "jse_drop"
         jse_drop_qsub_options: "-V -j n -pe smp.pe 8"
         jse_drop_slots: "8"
+        total_concurrent_jobs: 4
       - id: "jse_drop_smp_12"
         runner: "jse_drop"
         jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
         jse_drop_slots: "12"
+        total_concurrent_jobs: 2
     galaxy_tool_destinations:
       - id: "bowtie_wrapper"
         destination: "jse_drop_smp_4"

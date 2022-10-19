@@ -159,7 +159,11 @@ galaxy_jse_drop_cleanup_grace_period: "600"
 # - runner (target runner)
 # - jse_drop_qsub_options (optional, JSE-drop 'qsub_options')
 # - jse_drop_slots (optional, JSE-drop 'galaxy_slots')
-# - envs (optional dictionary defining <env...> elements)
+# - envs (optional dictionary defining <env...> elements, see below)
+# - user_concurrent_jobs (optional; sets maximum number of concurrent
+#                         jobs per user for this destination)
+# - total_concurrent_jobs (optional; sets total maximum number of
+#                          concurrent jobs for this destination))
 # 'envs' should be a dictionary with:
 # - id     (ID for env element)
 # - value  (corresponding env value)
