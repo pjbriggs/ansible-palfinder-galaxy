@@ -53,9 +53,23 @@
     </tools>
 {% endif %}
     <limits>
-        <limit type="registered_user_concurrent_jobs">{{ galaxy_registered_user_concurrent_jobs }}</limit>
-        <limit type="unregistered_user_concurrent_jobs">{{ galaxy_unregistered_user_concurrent_jobs }}</limit>
-        <limit type="job_walltime">24:00:00</limit>
-        <limit type="concurrent_jobs" id="local">{{ galaxy_concurrent_jobs }}</limit>
+{% if galaxy_job_destinations %}
+{% for dest in galaxy_job_destinations %}
+{% if dest.user_concurrent_jobs is defined %}
+      <limit type="destination_user_concurrent_jobs" id="{{ dest.id }}">{{ dest.user_concurrent_jobs }}</limit>
+{% endif %}
+{% if dest.total_concurrent_jobs is defined %}
+      <limit type="destination_total_concurrent_jobs" id="{{ dest.id }}">{{ dest.total_concurrent_jobs }}</limit>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if galaxy_registered_user_concurrent_jobs is defined %}
+      <limit type="registered_user_concurrent_jobs">{{ galaxy_registered_user_concurrent_jobs }}</limit>
+{% endif %}
+{% if galaxy_unregistered_user_concurrent_jobs is defined %}
+      <limit type="unregistered_user_concurrent_jobs">{{ galaxy_unregistered_user_concurrent_jobs }}</limit>
+{% endif %}
+      <limit type="job_walltime">24:00:00</limit>
+      <limit type="concurrent_jobs" id="local">{{ galaxy_concurrent_jobs }}</limit>
     </limits>
 </job_conf>
