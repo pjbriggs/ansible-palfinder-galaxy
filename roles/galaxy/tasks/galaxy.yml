@@ -167,6 +167,19 @@
         "{{ galaxy_tool_dependency_dir }}/_conda/bin/conda update -y --all"
   when: galaxy_conda.stat.exists == True and galaxy_reinstall_conda == True
 
+- name: "Use mamba to resolve conda dependencies"
+  block:
+    - name: "Check if mamba is already installed"
+      stat:
+        path: '{{ galaxy_tool_dependency_dir }}/_conda/bin/mamba'
+      register: mamba
+
+    - name: "Install mamba into conda base environment"
+      shell:
+        "{{ galaxy_tool_dependency_dir }}/_conda/bin/conda install -y mamba -n base -c conda-forge"
+      when: mamba.stat.exists == False
+  when: galaxy_conda_use_mamba == True
+
 - name: "Add environment setup file"
   copy:
     dest='{{ galaxy_dir }}/environment_setup.sh'
