@@ -233,7 +233,11 @@ galaxy:
 
   # Override the Conda executable to use, it will default to the one on
   # the PATH (if available) and then to <conda_prefix>/bin/conda
+{% if galaxy_conda_use_mamba %}
+  conda_exec: {{ galaxy_tool_dependency_dir }}/_conda/bin/mamba
+{% else %}
   #conda_exec: null
+{% endif %}
 
   # Pass debug flag to conda commands.
   #conda_debug: false
