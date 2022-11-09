@@ -387,3 +387,21 @@
         msg: "!!! Database schema needs to be downgraded manually from a higher Galaxy version using './manage_db.sh downgrade {{ new_db_version.stdout }}' but for this you need a newer version of Galaxy !!!"
       when: new_db_version.stdout|int < current_db_version.stdout|int
   when: dbstatus.stdout != "No relations found." and dbstatus.stderr != "Did not find any relations."
+
+# Run monitor script to write basic (static) status page
+- name: "Write status to static page periodically"
+  cron:
+    name: "{{ galaxy_name }} generate static status page"
+    user: "{{ galaxy_user }}"
+    weekday: "*"
+    hour: "*"
+    minute: "*/1"
+    job: "/usr/local/bin/python3 /usr/local/bin/gx_monitor.py -c {{ galaxy_root }}/config/galaxy.yml --html >{{ galaxy_root }}/static/status.html 2>&1"
+    state: present
+  when: galaxy_generate_status_page == True
+
+- name: "Disable static status page generation"
+  cron:
+    name: "{ galaxy_name }} generate static status page"
+    state: absent
+  when: galaxy_generate_status_page == False

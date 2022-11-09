@@ -30,6 +30,9 @@ galaxy_welcome_template: "welcome.html.j2"
 galaxy_terms:
 galaxy_citations:
 
+# Generate user-accessible "status" page
+galaxy_generate_status_page: no
+
 # Environment setup file
 galaxy_environment_setup_file:
 
