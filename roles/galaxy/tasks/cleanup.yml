@@ -38,10 +38,14 @@
     state: present
   with_items:
     - { name: "{{ galaxy_name }} clean up files from job working directory",
-        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +28 -exec rm -rf {} \\;",
+        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;",
+        hour: 00,
+        minute: 10 }
+    - { name: "{{ galaxy_name }} clean up links from job working directory",
+        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type l -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;",
         hour: 00,
         minute: 10 }
     - { name: "{{ galaxy_name }} clean up empty directories from job working directory",
-        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +28 -empty -exec rmdir {} \\;",
+        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +{{ galaxy_clean_up_cron_interval }} -empty -exec rmdir {} \\;",
         hour: 00,
         minute: 15 }

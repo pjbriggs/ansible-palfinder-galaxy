@@ -129,6 +129,10 @@ galaxy_tool_conf_file:
 # Should be 'always', 'onsuccess', or 'never'
 galaxy_cleanup_job: "always"
 
+# Number of days before artefacts in job working
+# directory are removed by cron jobs
+galaxy_clean_up_cron_interval: 28
+
 # Allow admins to paste filesystem paths during upload
 galaxy_allow_path_paste: no
 

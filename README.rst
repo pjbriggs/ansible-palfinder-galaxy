@@ -185,6 +185,10 @@ Other configuration settings:
  - ``email_audit_reports_to``: list of space-separated email
    to send weekly audit reports to (default: don't send
    reports to anyone)
+ - ``galaxy_clean_up_cron_interval``: sets the time interval
+   (in days) before files, links and directories are removed
+   from the job working directory (and JSE-Drop directory,
+   if in use) (default: 28 days)
 
 Tools:
 

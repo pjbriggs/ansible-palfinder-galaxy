@@ -22,7 +22,7 @@
     name='Remove old JSE-drop .qsub files'
     hour=05
     minute=00
-    job='find {{ galaxy_jse_drop_dir }} -name "*.qsub" -type f -mtime +28 -exec rm -f {} \;'
+    job='find {{ galaxy_jse_drop_dir }} -name "*.qsub" -type f -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -f {} \;'
     state=present
 
 - name: Clean up other files from JSE-drop directory
@@ -31,7 +31,7 @@
     name='Remove all other old JSE-drop files'
     hour=05
     minute=00
-    job='find {{ galaxy_jse_drop_dir }} -name "*" -type f -mtime +28 -exec rm -f {} \;'
+    job='find {{ galaxy_jse_drop_dir }} -name "*" -type f -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -f {} \;'
     state=present
 
 - name: "Clean up deleted files from JSE-drop directory"
