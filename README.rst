@@ -475,6 +475,16 @@ Notes on the deployment
    * Options to use with ``qsub`` when submitting jobs can be
      specified via the ``jse_drop_qsub_options`` parameter.
 
+Using mamba instead of conda for dependency resolution
+------------------------------------------------------
+
+``mamba`` is a drop-in replacement for ``conda`` (see
+https://mamba.readthedocs.io/en/latest/index.html), which can in
+some cases resolve dependencies that ``conda`` fails on.
+
+To specify ``mamba`` for dependency resolution, set the
+``galaxy_conda_use_mamba`` parameter to ``yes``.
+
 Vagrant Boxes
 -------------
 
