@@ -43,3 +43,4 @@
   - clean_out_user_data.sh
   - audit_report.py
   - gx_dump_database.py
+  - gx_monitor.py
