@@ -515,8 +515,9 @@ Known Issues
    ``supervisorctl`` utility can fail. This appears to be due to
    ``uWSGI`` child processes not being removed, and subsequently
    blocking the port used by ``uWSGI``/``Galaxy``. Why this is the
-   case is not clear, so for now the ``galaxyctl.sh`` utility
-   script has been added to work around this problem.
+   case is not clear, so for now the ``gxctl.sh`` utility
+   script (part of the ``galaxy`` role) has been added to work around
+   this problem.
 
  - SSH keys can change when recreating a Vagrant VM for testing,
    in which case you should use e.g. ``ssh-keygen -R "192.168.60.5"``
