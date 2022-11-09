@@ -378,11 +378,32 @@ instance do e.g.:
 This will generate a .tgz archive in the ``assets`` directory, which will
 contain the Galaxy virtualenv to be unpacked and used on the target VM.
 
+Migrating Galaxy server to a new VM
+-----------------------------------
+
+These notes are for migrating a Galaxy server where the Galaxy source
+code and the database, shed tools and tool dependency directories, are
+all on shared drives on the old VM which can be remounted on the new
+VM with the same paths.
+
+In this case the ``gx_dump_database.py`` utility can be used to get
+an SQL dump of the Postgres Galaxy database on the old VM, e.g.:
+
+::
+
+   gx_dump_database.py -c /PATH/TO/galaxy.yml -o galaxy_db.sql
+
+When the playbook for the server is executed for the first time
+targetting the new VM, then the Postgres Galaxy database can be
+initialised with the SQL dump from the old one by specifying the
+path to the ``.sql`` file via the ``galaxy_new_db_sql`` parameter.
+
+``conda`` can also be reinstalled while preserving any existing
+environments that were installed on the old VM, by setting the
+``galaxy_reinstall_conda`` parameter to ``true``.
+
 Notes on the deployment
 -----------------------
-
- - The playbook specifies Python 2.7.10 as there is a problem with
-   2.7.11 when used with Galaxy 15.10.
 
  - Python is installed under ``/usr/local`` by default, this can be
    changed via the ``python_install_dir`` parameter. This Python
@@ -454,6 +475,16 @@ Notes on the deployment
    * Options to use with ``qsub`` when submitting jobs can be
      specified via the ``jse_drop_qsub_options`` parameter.
 
+Using mamba instead of conda for dependency resolution
+------------------------------------------------------
+
+``mamba`` is a drop-in replacement for ``conda`` (see
+https://mamba.readthedocs.io/en/latest/index.html), which can in
+some cases resolve dependencies that ``conda`` fails on.
+
+To specify ``mamba`` for dependency resolution, set the
+``galaxy_conda_use_mamba`` parameter to ``yes``.
+
 Vagrant Boxes
 -------------
 
@@ -477,8 +508,6 @@ For example:
 Known Issues
 ------------
 
- - ``python27.yml``: fails on the ``pip`` installation step.
-
  - Tool installation can timeout or fail in which case it will need
    to be completed manually.
 
@@ -486,10 +515,20 @@ Known Issues
    ``supervisorctl`` utility can fail. This appears to be due to
    ``uWSGI`` child processes not being removed, and subsequently
    blocking the port used by ``uWSGI``/``Galaxy``. Why this is the
-   case is not clear, so for now the ``galaxyctl.sh`` utility
-   script has been added to work around this problem.
+   case is not clear, so for now the ``gxctl.sh`` utility
+   script (part of the ``galaxy`` role) has been added to work around
+   this problem.
 
  - SSH keys can change when recreating a Vagrant VM for testing,
    in which case you should use e.g. ``ssh-keygen -R "192.168.60.5"``
    (or the IP address of the appropriate instance, see above) to
    remove the old keys before running the playbooks.
+
+ - Vagrant/VirtualBox may complain about the VM name being too long
+   (see e.g. https://github.com/hashicorp/vagrant/issues/9524), in
+   this case uncomment the line:
+
+   ::
+        v.name = "galaxyvm"
+
+   in the ``Vagrantfile``.
