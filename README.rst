@@ -523,3 +523,12 @@ Known Issues
    in which case you should use e.g. ``ssh-keygen -R "192.168.60.5"``
    (or the IP address of the appropriate instance, see above) to
    remove the old keys before running the playbooks.
+
+ - Vagrant/VirtualBox may complain about the VM name being too long
+   (see e.g. https://github.com/hashicorp/vagrant/issues/9524), in
+   this case uncomment the line:
+
+   ::
+        v.name = "galaxyvm"
+
+   in the ``Vagrantfile``.
