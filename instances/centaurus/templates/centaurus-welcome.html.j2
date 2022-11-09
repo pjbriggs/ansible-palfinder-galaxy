@@ -45,27 +45,37 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	 that you upload or create on this service.</b></p>
      <h3>Uploading data</h3>
      <p>In principle files of any size can now be uploaded to this service
-       directly via your web browser using the
+       directly from your computer via a web browser by using the
        <em>Get Data -&gt; Upload File</em> tool.</p>
+     <p>There are also the following alternative upload options:</p>
+     <ul>
 {% if enable_ftp_upload %}
-     <p>Alterntively if you are uploading data from a computer on the
-       university campus network then you can use the FTP server: connect
-       to<br />
+     <li><b>FTP server:</b> if you're uploading data from a computer on the
+       university campus network then you can use the FTP server by
+       connecting to<br />
        <a href="ftp://{{ galaxy_server_name }}">{{ galaxy_server_name }}</a><br />
        using your Galaxy credentials (i.e. email address and Galaxy password)
        to login. Files uploaded to the FTP server can then be imported via the
        <em>Get Data -&gt; Upload File</em> tool.
        (NB files left on the FTP server for longer than 5 days without being
-       imported into Galaxy will be removed.)</p>
+       imported into Galaxy will be removed.)</li>
 {% endif %}
-     <p>It is also possible to import your data files from a web-based file
-       hosting service (e.g. Dropbox) and then upload them by selecting the
-       <em>Paste/Fetch data</em> option in the upload tool and pasting the
-       public URLs of your files into the box that appears.</p>
-     <p><b>It is not possible to upload data hosted on the BCF's 'bartzabel'
-	 web server. This is a limitation imposed by the network configuration
-	 used by Research IT. Please contact us if you wish to upload data
-	 provided by the BCF via 'bartzabel'.</b></p>
+     <li><b>Web-based hosting service:</b> you can import your data files
+       from a file hosting service (e.g. Dropbox) and then upload them by
+       selecting the <em>Paste/Fetch data</em> option in the upload tool and
+       pasting the public URLs of your files into the box that appears.</li>
+     <li><b>Galaxy upload utility:</b> files can be uploaded using the
+       <a href="https://github.com/galaxyproject/galaxy-upload" target="_blank">galaxy-upload command-line utility</a>
+       which allows data to be transferred from systems where for example
+       a web browser isn't available.<br/>
+       Details of how to use it with Galaxy main as an example can be found
+       <a href="https://help.galaxyproject.org/t/the-usegalaxy-org-ftp-service-will-be-decommissioned-on-august-12-2022/8318">here</a>.</li>
+     </ul>
+     <p><b>Warning: it is not possible to directly upload data that is
+         hosted on the BCF's 'bartzabel' web server. This is a limitation
+	 imposed by the network configuration used by Research IT. Please
+	 contact us if you wish to upload data provided by the BCF via
+	 'bartzabel'.</b></p>
      <h3>Mailing list</h3>
      <p>The FLS-GALAXY-USERS@listserv.manchester.ac.uk mailing list is used for
        announcements about downtime, upgrades etc to this service.</p>
@@ -76,9 +86,10 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
      <h3>News &amp; Recent Changes</h3>
      <p>See <a href="centaurus_news.html">Centaurus Galaxy Server News</a> for
        details of recent and upcoming changes</p>
-     <h3>Contact</h3>
+     <h3>Support and contact</h3>
      <p>Please contact <a href="mailto:{{ galaxy_incoming_email_addr }}">{{ galaxy_incoming_email_addr }}</a> with questions, problems or requests.</p>
-     <hr/>
+     <p>Support for this service is provided on a 'reasonable effort'
+       basis.</p>
      <h3>Acceptable Use</h3>
      <p>Please note that passwords for this system are separate from those used
        to access other university services but should be treated with the same
@@ -112,6 +123,13 @@ g/TR/xhtml1/DTD/xhtml1-transitional.dtd">
        relevant.</p>
      <p>Please let us know when you publish so we can add you to our
        publications list.</p>
+     <hr />
+{% if galaxy_generate_status_page %}
+     <h2>Current status</h2>
+     <p>The current status of the server can be found
+       <a href="status.html">here</a></p>
+     <hr />
+{% endif %}
    </div>
 </body>
 </html>
