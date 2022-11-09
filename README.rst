@@ -405,9 +405,6 @@ environments that were installed on the old VM, by setting the
 Notes on the deployment
 -----------------------
 
- - The playbook specifies Python 2.7.10 as there is a problem with
-   2.7.11 when used with Galaxy 15.10.
-
  - Python is installed under ``/usr/local`` by default, this can be
    changed via the ``python_install_dir`` parameter. This Python
    installation is used by other system software (e.g. supervisord).
@@ -500,8 +497,6 @@ For example:
 
 Known Issues
 ------------
-
- - ``python27.yml``: fails on the ``pip`` installation step.
 
  - Tool installation can timeout or fail in which case it will need
    to be completed manually.
