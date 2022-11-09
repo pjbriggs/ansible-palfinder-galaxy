@@ -378,6 +378,30 @@ instance do e.g.:
 This will generate a .tgz archive in the ``assets`` directory, which will
 contain the Galaxy virtualenv to be unpacked and used on the target VM.
 
+Migrating Galaxy server to a new VM
+-----------------------------------
+
+These notes are for migrating a Galaxy server where the Galaxy source
+code and the database, shed tools and tool dependency directories, are
+all on shared drives on the old VM which can be remounted on the new
+VM with the same paths.
+
+In this case the ``gx_dump_database.py`` utility can be used to get
+an SQL dump of the Postgres Galaxy database on the old VM, e.g.:
+
+::
+
+   gx_dump_database.py -c /PATH/TO/galaxy.yml -o galaxy_db.sql
+
+When the playbook for the server is executed for the first time
+targetting the new VM, then the Postgres Galaxy database can be
+initialised with the SQL dump from the old one by specifying the
+path to the ``.sql`` file via the ``galaxy_new_db_sql`` parameter.
+
+``conda`` can also be reinstalled while preserving any existing
+environments that were installed on the old VM, by setting the
+``galaxy_reinstall_conda`` parameter to ``true``.
+
 Notes on the deployment
 -----------------------
 
