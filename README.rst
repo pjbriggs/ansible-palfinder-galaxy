@@ -169,6 +169,15 @@ Custom colour scheme:
    tutorial presentation:
    https://training.galaxyproject.org/training-material/topics/admin/tutorials/advanced-galaxy-customisation/slides.html#20)
 
+Static status page:
+
+ - ``galaxy_generate_status_page``: if true then sets up a
+   cron job to run the ``gx_monitor.py`` utility to generate
+   a ``status.html`` file in Galaxy's ``static`` directory
+   and update it every minute. This page then can be
+   accessed to give a basic overview of jobs and disk usage
+   (default: status page is not enabled).
+
 Other configuration settings:
 
  - ``default_quota_gb``: quota in Gb for registered users
