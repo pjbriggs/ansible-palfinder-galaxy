@@ -98,6 +98,7 @@ galaxy_data_manager_data_path: "{{ galaxy_tool_data_path }}"
 # Python for Galaxy
 galaxy_python_version: "3.6.11"
 galaxy_python_dir: '{{ galaxy_dir }}/python/{{ galaxy_python_version }}'
+galaxy_force_reinstall_python: no
 
 # Toolshed check
 enable_tool_shed_check: no
