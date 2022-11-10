@@ -11,6 +11,12 @@ centaurus:
     centaurus_galaxy_config: testing.yml
     # Secrets
     centaurus_secrets: vagrant.yml
+    # Shed tools
+    centaurus_shed_tools: shed_tools_minimal.yml
+    # Tool data
+    centaurus_tool_data: tool_data_minimal.yml
+    # Welcome page template
+    galaxy_welcome_template: "instances/centaurus/templates/centaurus-welcome.html.j2"
     # uWSGI and handler configuration
     galaxy_uwsgi_processes: 1
     galaxy_handler_processes: 1

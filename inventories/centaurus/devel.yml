@@ -8,6 +8,12 @@ centaurus:
     centaurus_galaxy_config: devel.yml
     # Secrets
     centaurus_secrets: devel_secrets.yml
+    # Shed tools
+    centaurus_shed_tools: shed_tools_minimal.yml
+    # Tool data
+    centaurus_tool_data: tool_data_full.yml
+    # Welcome page template
+    galaxy_welcome_template: "instances/centaurus/templates/centaurus-devel-welcome.html.j2"
     # uWSGI and handler configuration
     galaxy_uwsgi_processes: 2
     galaxy_handler_processes: 2
