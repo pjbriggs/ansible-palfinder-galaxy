@@ -27,6 +27,11 @@
   - galaxy_generate_status_page: yes
   # Working directory clean up interval (days)
   - galaxy_clean_up_cron_interval: 14
+  ## Options for migrating to a new VM
+  #- galaxy_new_db_sql: "/PATH/TO/galaxy_db_dump.sql"
+  #- galaxy_force_reinstall_python: yes
+  #- galaxy_force_reinstall_venv: yes
+  #- galaxy_reinstall_conda: yes
   ## Define proxy environment variables if needed
   #- proxy_env:
   #    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
