@@ -32,3 +32,17 @@
     user="root"
     name="Renew SSL certificate from Lets Encrypt"
     state=absent
+
+# Remove Python
+- name: "Remove Galaxy Python installation"
+  file:
+    path: '{{ galaxy_python_dir }}'
+    state: absent
+  when: galaxy_force_reinstall_python == True
+
+# Remove Galaxy virtualenv
+- name: "Remove Galaxy virtual env"
+  file:
+    path: '{{ galaxy_root }}/.venv'
+    state: absent
+  when: galaxy_force_reinstall_venv == True

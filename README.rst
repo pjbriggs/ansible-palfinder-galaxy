@@ -398,9 +398,24 @@ targetting the new VM, then the Postgres Galaxy database can be
 initialised with the SQL dump from the old one by specifying the
 path to the ``.sql`` file via the ``galaxy_new_db_sql`` parameter.
 
+.. note::
+
+   The SQL file should be on the remote machine (where Galaxy is
+   installed), not the local one (where the playbooks are being
+   run from).
+
 ``conda`` can also be reinstalled while preserving any existing
 environments that were installed on the old VM, by setting the
 ``galaxy_reinstall_conda`` parameter to ``true``.
+
+If the new VM is a different OS to the old one then it's also
+recommended to force reinstallation of the Galaxy-specific
+Python and the Galaxy virtual environment, by specifiying:
+
+::
+
+   galaxy_force_reinstall_python: yes
+   galaxy_force_reinstall_venv: yes
 
 Notes on the deployment
 -----------------------
