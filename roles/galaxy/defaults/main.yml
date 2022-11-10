@@ -103,6 +103,9 @@ galaxy_force_reinstall_python: no
 # Toolshed check
 enable_tool_shed_check: no
 
+# Virtualenv options
+galaxy_force_reinstall_venv: no
+
 # Conda options
 galaxy_reinstall_conda: no
 galaxy_conda_auto_install: yes
