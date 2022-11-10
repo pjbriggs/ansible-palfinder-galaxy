@@ -19,6 +19,8 @@
   - postgresql_version: "14"
   # Base installation directory
   - galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
+  # Use mamba for dependency resolution?
+  - galaxy_conda_use_mamba: yes
   # Environment setup file
   - galaxy_environment_setup_file: "instances/centaurus/files/centaurus_environment_setup.sh"
   ## Define proxy environment variables if needed
