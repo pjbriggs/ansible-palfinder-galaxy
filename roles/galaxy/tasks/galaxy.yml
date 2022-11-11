@@ -396,7 +396,7 @@
     weekday: "*"
     hour: "*"
     minute: "*/1"
-    job: "/usr/local/bin/python3 /usr/local/bin/gx_monitor.py -c {{ galaxy_root }}/config/galaxy.yml --html >{{ galaxy_root }}/static/status.html 2>&1"
+    job: "/usr/local/bin/python3 /usr/local/bin/gx_monitor.py -c {{ galaxy_root }}/config/galaxy.yml --html -o {{ galaxy_root }}/static/status.html"
     state: present
   when: galaxy_generate_status_page == True
 
