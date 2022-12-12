@@ -10,7 +10,7 @@ centaurus:
     # Galaxy configuation
     centaurus_galaxy_config: production.yml
     # Secrets
-    centaurus_secrets: vagrant.yml
+    centaurus_secrets: production_secrets.yml
     # Shed tools
     centaurus_shed_tools: shed_tools_minimal.yml
     # Tool data
