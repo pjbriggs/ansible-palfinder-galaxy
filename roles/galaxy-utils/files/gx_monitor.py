@@ -141,6 +141,8 @@ def split_db_connection(database_connection):
     return (name,user,passwd)
 
 def disk_usage(d):
+    if not os.path.exists(d):
+        return "not found"
     usage = shutil.disk_usage(d)
     return "%.1f%% (%s/%s)" % (float(usage.used)/float(usage.total)*100.0,
                                pretty_print_usage(usage.used),
