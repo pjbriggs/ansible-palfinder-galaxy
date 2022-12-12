@@ -5,20 +5,30 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="style/base.css" type="text/css" />
 </head>
-<body>
-    <div class="document">
-        <div class="donemessagelarge">
-        	<!--<img src="http://golem.ls.manchester.ac.uk/galaxy/static/golem2.tif" />-->
-    		<h1>Welcome to centaurus-dev</h1>
-            	Galaxy for the University of Manchester at the Faculty of Life Sciences
-        </div>
-        <!--
-        <img src="images/michael-smith-3web.jpg" alt="Michael Smith Building" style="display: block; margin-left: auto; margin-right: auto;" />
-        -->
-	<h2>About</h2>
-	<p>Developement/testing version of version of Galaxy run by the
-        Bioinformatics Core
-	Facility for use by researchers within the University of Manchester.</p>
+<body class="m-0">
+    <div class="jumbotron rounded-0">
+        <div class="container">
+	  <h1>Welcome to the Centaurus-devel Galaxy Server</h1>
+          <p><strong>Test version of the Centaurus Galaxy service for the
+	      University of Manchester at the Faculty of Biology, Medicine
+	      and Health (FBMH)</strong></p>
+	</div>
+    </div>
+    <div class="container">
+      <h2>About</h2>
+      <p>Developement/testing version of version of Galaxy run by the
+        Bioinformatics Core Facility for use by researchers within the
+	University of Manchester.</p>
+      <hr />
+      <h3>Disk quotas</h3>
+      <p>The default quota for each user is <b>{{ default_quota_gb }} Gb</b>.
+      </p>
+{% if galaxy_generate_status_page %}
+     <h2>Current status</h2>
+     <p>The current status of the server can be found
+       <a href="status.html">here</a></p>
+     <hr />
+{% endif %}
     </div>
 </body>
 </html>
