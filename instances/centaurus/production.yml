@@ -24,7 +24,7 @@ galaxy_http_port: "8080"
 galaxy_uwsgi_socket: "4001"
 
 # Users
-galaxy_admin_user: "centaurusadmin@galaxy.org"
+galaxy_admin_user: "peter.briggs@manchester.ac.uk"
 galaxy_users:
   - email: "{{ galaxy_admin_user }}"
     password: "{{ galaxy_admin_passwd }}"
