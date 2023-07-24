@@ -59,10 +59,6 @@
   - galaxy_unregistered_user_concurrent_jobs: 0
   - galaxy_concurrent_jobs: 8
   # Add tools to whitelist for rendering HTML correctly
-  - galaxy_sanitize_whitelist_tools:
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.71"
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72+galaxy1"
   # Default quota
   - default_quota_gb: 50
   # Automatic dataset deletion
@@ -92,6 +88,7 @@
 
   vars_files:
   - instances/palfinder/{{ palfinder_secrets }}
+  - instances/centaurus/sanitize_whitelist.yml
 
   roles:
   # Dependencies

@@ -1,0 +1,6 @@
+---
+# Whitelisted tools for rendering HTML correctly
+galaxy_sanitize_whitelist_tools:
+  - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.71"
+  - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
+  - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72+galaxy1"
