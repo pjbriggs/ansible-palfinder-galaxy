@@ -34,11 +34,10 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
   end
   # Palfinder VM
   config.vm.define "palfinder" do |palfinder|
-    palfinder.vm.box = "ringo/scientific-linux-6.5"
+    palfinder.vm.box = "ubuntu/focal64"
     palfinder.vm.hostname = "palfinder"
     palfinder.vm.network :private_network, ip: "192.168.60.4"
     palfinder.vm.provision "shell", inline: <<-SHELL
-    service iptables stop
     mkdir -p /mnt/rvmi
     chmod ugo+rwX /mnt/rvmi/
   SHELL
