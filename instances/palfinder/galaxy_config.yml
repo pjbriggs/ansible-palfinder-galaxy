@@ -19,6 +19,10 @@ enable_beta_gdpr: yes
 galaxy_http_port: "8080"
 galaxy_uwsgi_socket: "4001"
 
+# uWSGI and handler configuration
+galaxy_uwsgi_processes: 8
+galaxy_handler_processes: 1
+
 # Users
 galaxy_admin_user: "admin@galaxy.org"
 galaxy_users:
@@ -29,6 +33,11 @@ galaxy_users:
 enable_jse_drop: yes
 galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
 galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
+
+# Concurrent jobs
+galaxy_registered_user_concurrent_jobs: 8
+galaxy_unregistered_user_concurrent_jobs: 0
+galaxy_concurrent_jobs: 8
 
 # Quotas
 enable_quotas: yes

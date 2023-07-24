@@ -15,13 +15,6 @@
   - postgresql_version: "14"
   # Base installation directory
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
-  # uWSGI and handler configuration
-  - galaxy_uwsgi_processes: 8
-  - galaxy_handler_processes: 1
-  # Concurrent jobs
-  - galaxy_registered_user_concurrent_jobs: 8
-  - galaxy_unregistered_user_concurrent_jobs: 0
-  - galaxy_concurrent_jobs: 8
 
   vars_files:
   - instances/palfinder/galaxy_config.yml
