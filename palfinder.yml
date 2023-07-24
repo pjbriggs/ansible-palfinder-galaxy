@@ -80,31 +80,38 @@
   - instances/centaurus/sanitize_whitelist.yml
 
   roles:
-  # Dependencies
+  # Configure host VM
   - galaxy-user
   - epel-repo
+    when: ansible_os_family == "RedHat"
   - nfslock
-  - git
+    when: ansible_os_family == "RedHat"
   - selinux
+    when: ansible_os_family == "RedHat"
   - python3
   - nginx
   - postgresql
   - supervisord
+  - certbot
+
+  # Postfix mail client
   - role: postfix-null-client
     when: enable_smtp
-  - certbot
+
   # Local JSEDrop service
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
     when: enable_local_jse_drop
+
   # Install and configure Galaxy
-  - galaxy
-  # Install utilities
   - galaxy-utils
+  - galaxy
+
   # Set up users, tools etc
   - galaxy-create-users
   - galaxy-install-tools
   - galaxy-set-default-quota
+
   # Additional set up
   - galaxy-add-library-data
   - galaxy-auto-delete-datasets
