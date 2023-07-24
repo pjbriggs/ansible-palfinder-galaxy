@@ -1,0 +1,12 @@
+---
+# Tools from toolshed
+galaxy_tools:
+  - tool: "fastqc"
+    owner: "devteam"
+    section: ""
+  - tool: "trimmomatic"
+    owner: "pjbriggs"
+    section: ""
+  - tool: "pal_finder"
+    owner: "pjbriggs"
+    section: ""

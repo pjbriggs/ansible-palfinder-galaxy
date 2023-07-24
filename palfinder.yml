@@ -13,6 +13,7 @@
   - enable_quotas: yes
   - enable_ftp_upload: no
   - enable_reports: yes
+  - galaxy_tool_conf_file: "instances/palfinder/files/palfinder-tool_conf.xml"
   # System Python and PostgreSQL versions
   - python_version: "3.10.5"
   - postgresql_version: "14"
@@ -41,24 +42,11 @@
   - galaxy_users:
       - email: "{{ galaxy_admin_user }}"
         password: "{{ galaxy_admin_passwd }}"
-  # Tools
-  - galaxy_tool_conf_file: "instances/palfinder/files/palfinder-tool_conf.xml"
-  - galaxy_tools:
-      - tool: "fastqc"
-        owner: "devteam"
-        section: ""
-      - tool: "trimmomatic"
-        owner: "pjbriggs"
-        section: ""
-      - tool: "pal_finder"
-        owner: "pjbriggs"
-        section: ""
   - enable_tool_shed_check: yes
   # Concurrent jobs
   - galaxy_registered_user_concurrent_jobs: 8
   - galaxy_unregistered_user_concurrent_jobs: 0
   - galaxy_concurrent_jobs: 8
-  # Add tools to whitelist for rendering HTML correctly
   # Default quota
   - default_quota_gb: 50
   # Automatic dataset deletion
@@ -88,6 +76,7 @@
 
   vars_files:
   - instances/palfinder/{{ palfinder_secrets }}
+  - instances/centaurus/tools.yml
   - instances/centaurus/sanitize_whitelist.yml
 
   roles:
