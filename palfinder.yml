@@ -2,6 +2,9 @@
 - hosts: palfinder
 
   vars:
+  # Ubuntu doesn't have Python2 by default
+  # See e.g. https://www.toptechskills.com/ansible-tutorials-courses/how-to-fix-usr-bin-python-not-found-error-tutorial/
+  - ansible_python_interpreter: /usr/bin/python3
   # Galaxy configuration
   - galaxy_name: "palfinder"
   - galaxy_version: "release_20.09"
