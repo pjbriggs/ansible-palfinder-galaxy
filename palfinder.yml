@@ -22,17 +22,13 @@
   - galaxy_registered_user_concurrent_jobs: 8
   - galaxy_unregistered_user_concurrent_jobs: 0
   - galaxy_concurrent_jobs: 8
-  # SSL configuration
-  # Enable/disable in inventory file (enable_https)
-  # If enabled then will use the settings below
-  - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
-  - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
 
   vars_files:
   - instances/palfinder/galaxy_config.yml
   - instances/palfinder/{{ palfinder_secrets }}
   - instances/palfinder/tools.yml
   - instances/palfinder/sanitize_whitelist.yml
+  - instances/palfinder/ssl_certs.yml
 
   roles:
   # Configure host VM
