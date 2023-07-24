@@ -8,7 +8,7 @@
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - enable_require_login: yes
   - enable_quotas: yes
-  - enable_ftp_upload: yes
+  - enable_ftp_upload: no
   - enable_reports: yes
   # System Python and PostgreSQL versions
   - python_version: "3.10.5"
