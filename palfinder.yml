@@ -103,7 +103,6 @@
   - python3
   - nginx
   - postgresql
-  - proftpd
   - supervisord
   - role: postfix-null-client
     when: enable_smtp
