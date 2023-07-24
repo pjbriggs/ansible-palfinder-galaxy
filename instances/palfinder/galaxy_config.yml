@@ -1,0 +1,83 @@
+---
+# Galaxy configuration for Palfinder
+galaxy_name: "palfinder"
+galaxy_version: "release_20.09"
+
+# Galaxy-specific Python installation
+galaxy_python_version: "3.8.13"
+
+# Account management
+allow_user_creation: yes
+allow_user_deletion: yes
+enable_require_login: yes
+enable_user_activation: yes
+
+# GDPR compliance
+enable_beta_gdpr: yes
+
+# uWSGI sockets and ports
+galaxy_http_port: "8080"
+galaxy_uwsgi_socket: "4001"
+
+# Users
+galaxy_admin_user: "admin@galaxy.org"
+galaxy_users:
+  - email: "{{ galaxy_admin_user }}"
+    password: "{{ galaxy_admin_passwd }}"
+
+# Job configuration
+enable_jse_drop: yes
+galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
+galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
+
+# Quotas
+enable_quotas: yes
+default_quota_gb: 50
+
+# Automatic dataset deletion
+delete_datasets_after: "30 days"
+
+# Email
+postfix_host_name: "{{ galaxy_server_name }}"
+postfix_relay_host: "[smtp.manchester.ac.uk]"
+galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
+galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+
+# FTP upload
+enable_ftp_upload: no
+
+# Reporting interface
+enable_reports: yes
+##galaxy_reports_uwsgi_socket: "9001"
+
+# Audit report
+email_audit_report_to: "peter.briggs@manchester.ac.uk"
+
+ # Welcome page etc
+galaxy_welcome_template: "instances/palfinder/templates/palfinder-welcome.html.j2"
+galaxy_terms: "instances/palfinder/files/palfinder-terms.html"
+galaxy_citations: "instances/palfinder/files/palfinder-citations.html"
+
+# User manual
+galaxy_extra_static_content:
+  - src: "instances/palfinder/files/palfinder_galaxy_manual_v1.2.pdf"
+    dest: "/usr/share/nginx/html/palfinder_galaxy_manual_v1.2.pdf"
+    link: "/usr/share/nginx/html/manual"
+galaxy_nginx_extra_locations:
+  - location: "^~ /manual"
+    alias: "/usr/share/nginx/html/manual"
+    add_header: "Content-Type application/pdf"
+
+# Check toolshed for updates
+enable_tool_shed_check: yes
+
+# Message of the day to display on the front page and message
+# to display under masthead
+# -- for ansible <2.6 "errors=..." option is not supported so
+#    an empty placeholder file is required to stop the playbook
+#    failing
+palfinder_motd: "{{ lookup('file', 'instances/{{ galaxy_name }}/files/motd', errors='warn') }}"
+galaxy_message: "{{ lookup('file', 'instances/{{ galaxy_name }}/files/message', errors='warn') }}"
+
+# Tools conf base XML
+galaxy_tool_conf_file: "instances/palfinder/files/palfinder-tool_conf.xml"
