@@ -4,7 +4,7 @@
   vars:
   # Galaxy configuration
   - galaxy_name: "palfinder"
-  - galaxy_version: "release_19.09"
+  - galaxy_version: "release_20.09"
   - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
   - enable_require_login: yes
   - enable_quotas: yes
