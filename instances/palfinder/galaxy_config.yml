@@ -10,7 +10,7 @@ galaxy_python_version: "3.8.13"
 allow_user_creation: yes
 allow_user_deletion: yes
 enable_require_login: yes
-enable_user_activation: yes
+# 'enable_user_activation' is set in inventory file
 
 # GDPR compliance
 enable_beta_gdpr: yes
@@ -27,7 +27,7 @@ galaxy_users:
 
 # Job configuration
 enable_jse_drop: yes
-galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
+galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
 galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
 
 # Quotas
