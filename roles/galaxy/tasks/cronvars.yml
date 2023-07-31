@@ -1,0 +1,13 @@
+---
+# Ensure MAILTO and MAILFROM are set in crontab
+# for galaxy user
+
+- name: "Set MAILTO and MAILFROM in cron"
+  cronvar:
+    user: "{{ galaxy_user }}"
+    name: "{{ item }}"
+    value: "{{ galaxy_incoming_email_addr }}"
+  with_items:
+    - MAILTO
+    - MAILFROM
+  when: enable_smtp
