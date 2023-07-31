@@ -301,6 +301,21 @@
     - galaxy_python_version.startswith("3.")
     - galaxy_version == "release_20.01"
 
+# Temp dirs for pip and yarn caches
+- name: "Make temporary pip cache directory"
+  tempfile:
+    path: "/tmp"
+    prefix: "pip.cache."
+    state: directory
+  register: pip_cache_dir
+
+- name: "Make temporary yarn cache directory"
+  tempfile:
+    path: "/tmp"
+    prefix: "yarn.cache."
+    state: directory
+  register: yarn_cache_dir
+
 # Setup/update Galaxy
 - name: "Run common_startup.sh to initialise/update Galaxy installation"
   command:
@@ -308,6 +323,8 @@
     ./scripts/common_startup.sh
   environment:
     PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
+    PIP_CACHE_DIR: '{{ pip_cache_dir.path }}'
+    YARN_CACHE_FOLDER: '{{ yarn_cache_dir.path }}'
 
 # Create or update Galaxy database
 - name: "Check if Galaxy database exists"
