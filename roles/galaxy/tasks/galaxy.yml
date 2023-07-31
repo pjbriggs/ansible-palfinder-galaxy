@@ -304,14 +304,14 @@
 # Temp dirs for pip and yarn caches
 - name: "Make temporary pip cache directory"
   tempfile:
-    path: "/tmp"
+    path: "{{ galaxy_installation_tmp_dir }}"
     prefix: "pip.cache."
     state: directory
   register: pip_cache_dir
 
 - name: "Make temporary yarn cache directory"
   tempfile:
-    path: "/tmp"
+    path: "{{ galaxy_installation_tmp_dir }}"
     prefix: "yarn.cache."
     state: directory
   register: yarn_cache_dir

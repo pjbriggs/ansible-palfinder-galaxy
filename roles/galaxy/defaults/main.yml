@@ -100,6 +100,9 @@ galaxy_python_version: "3.6.11"
 galaxy_python_dir: '{{ galaxy_dir }}/python/{{ galaxy_python_version }}'
 galaxy_force_reinstall_python: no
 
+# Temporary directory to use during installation
+galaxy_installation_tmp_dir: "/tmp"
+
 # Toolshed check
 enable_tool_shed_check: no
 
