@@ -10,7 +10,11 @@ palfinder:
     # Server configuration
     galaxy_server_name: 192.168.60.4
     enable_user_activation: no
+    # Galaxy base installation dir
+    galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
     # Job configuration
+    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
+    galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}_vagrant"
     enable_local_jse_drop: yes
     galaxy_default_runner: "jse_drop_default"
     galaxy_job_destinations:

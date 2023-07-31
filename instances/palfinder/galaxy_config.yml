@@ -7,10 +7,10 @@ galaxy_version: "release_20.09"
 galaxy_python_version: "3.8.13"
 
 # Account management
+# NB 'enable_user_activation' is set in inventory file
 allow_user_creation: yes
 allow_user_deletion: yes
 enable_require_login: yes
-# 'enable_user_activation' is set in inventory file
 
 # GDPR compliance
 enable_beta_gdpr: yes
@@ -30,9 +30,8 @@ galaxy_users:
     password: "{{ galaxy_admin_passwd }}"
 
 # Job configuration
+# NB Drop dir and ID are set in inventory file
 enable_jse_drop: yes
-galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
-galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
 
 # Concurrent jobs
 galaxy_registered_user_concurrent_jobs: 8
