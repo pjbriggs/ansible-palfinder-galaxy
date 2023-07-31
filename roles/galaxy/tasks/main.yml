@@ -61,3 +61,6 @@
 
 - include: static.yml
   when: galaxy_extra_static_content|default(None) != None
+
+- include: cronvars.yml
+  when: enable_smtp
