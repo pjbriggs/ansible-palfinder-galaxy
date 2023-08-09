@@ -248,6 +248,7 @@ galaxy_ftp_password: "{{ galaxy_ftp_user }}"
 
 # Outgoing mail notification settings
 enable_smtp: no
+galaxy_smtp_server: "localhost:25"
 galaxy_outgoing_email_addr: "Galaxy {{ galaxy_name }} <galaxy-no-reply@{{ galaxy_server_name  }}>"
 galaxy_incoming_email_addr: "None"
 
