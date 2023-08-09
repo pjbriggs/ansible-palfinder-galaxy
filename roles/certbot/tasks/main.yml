@@ -1,8 +1,62 @@
 ---
-# Install certbot
+# Install certbot using pip
+# https://certbot.eff.org/lets-encrypt/nginx
 
-- include: install_with_snap.yml
-  when: certbot_install_using == "snap"
+# Get rid of old certbot-auto
+- name: "Remove old certbot-auto"
+  file:
+    path: "/usr/local/bin/certbot-auto"
+    state: absent
 
-- include: install_with_pip.yml
-  when: certbot_install_using == "pip"
+- include: "dependencies_pip_redhat.yml"
+  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
+
+- include: "dependencies_pip_ubuntu.yml"
+  when: ansible_distribution == "Ubuntu"
+
+- name: "Make virtualenv for certbot"
+  command:
+    cmd: "python3 -m venv {{ certbot_venv_dir }}"
+    creates: "{{ certbot_venv_dir }}"
+
+- name: "Update pip in certbot virtualenv"
+  pip:
+    name: "pip"
+    executable: '{{ certbot_venv_dir }}/bin/pip'
+    state: latest
+
+- name: "Install certbot into virtualenv"
+  pip:
+    name:
+      - "certbot"
+      - "certbot-nginx"
+    executable: '{{ certbot_venv_dir }}/bin/pip'
+    state: latest
+
+- name: "Create symlink to certbot"
+  file:
+    path: "{{ certbot_dir }}/certbot"
+    src: "{{ certbot_venv_dir }}/bin/certbot"
+    state: link
+
+# Cron job for certificate renewals
+- name: "Set up automatic certificate renewals"
+  block:
+    - name: "Add cron job to renew SSL certificates"
+      cron:
+        name: "certbot: renew SSL certificates"
+        job: "{{ certbot_venv_dir }}/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew -q"
+        hour: '0,12'
+        minute: '0'
+        state: present
+
+    - name: "Set MAILTO and MAILFROM in cron"
+      cronvar:
+        name: "{{ item }}"
+        value: "{{ certbot_email_addr }}"
+      with_items:
+        - MAILTO
+        - MAILFROM
+      when: certbot_email_addr|default(None) != None
+
+  when: certbot_auto_renew_certs
