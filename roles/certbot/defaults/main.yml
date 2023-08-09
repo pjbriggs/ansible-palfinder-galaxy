@@ -1,10 +1,15 @@
 ---
-# How to install certbot
-# Options are "snap" or "pip"
-certbot_install_using: "pip"
-
 # Location to link certbox exe from
 certbot_dir: /usr/local/bin
 
 # Defaults for "pip" installation only
-certbot_venv_dir: /opt/certbot
+certbot_venv_dir: /usr/local/certbot
+
+# Settings for automatic certificate renewal
+certbot_auto_renew_certs: true
+
+# Send cron logs/to from this address
+certbot_email_addr:
+
+# Rotate logs
+enable_log_rotation: true

@@ -108,10 +108,6 @@ Webserver and proxying:
    - ``ssl_certificate``: points to the ``fullchain.pem`` certificate
      file, and
    - ``ssl_certificate_key``: points to the ``privkey.pem`` file
-   - ``enable_certificate_renewal``: if ``yes`` then a cronjob will be
-     created to automatically renew the SSL certificates from
-     Let's Encrypt (this is the default, turn off if managing
-     certificates externally)
 
 Admin user:
 
