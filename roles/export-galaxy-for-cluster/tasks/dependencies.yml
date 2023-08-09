@@ -20,4 +20,6 @@
       - 'sqlite-devel'
       - 'zlib-devel'
       - 'tkinter'
+      - 'libffi'
+      - 'libffi-devel'
     state: 'present'
