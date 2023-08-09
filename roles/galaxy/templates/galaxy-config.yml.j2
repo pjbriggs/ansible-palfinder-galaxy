@@ -513,7 +513,7 @@ galaxy:
   # Galaxy will automatically try STARTTLS but will continue upon
   # failure.
 {% if enable_smtp %}
-  smtp_server: localhost:25
+  smtp_server: {{ galaxy_smtp_server }}
 {% endif %}
 
   # If your SMTP server requires a username and password, you can
