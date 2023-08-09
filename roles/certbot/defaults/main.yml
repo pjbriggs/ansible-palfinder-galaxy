@@ -10,3 +10,6 @@ certbot_auto_renew_certs: true
 
 # Send cron logs/to from this address
 certbot_email_addr:
+
+# Rotate logs
+enable_log_rotation: true

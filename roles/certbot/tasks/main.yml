@@ -59,4 +59,10 @@
         - MAILFROM
       when: certbot_email_addr|default(None) != None
 
+    - name: "Rotate certbot SSL certificate renewal logs"
+      template:
+        dest='/etc/logrotate.d/lets-encrypt'
+        src='logrotate-lets-encrypt.j2'
+      when: enable_log_rotation
+
   when: certbot_auto_renew_certs
