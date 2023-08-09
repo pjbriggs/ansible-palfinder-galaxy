@@ -2,3 +2,7 @@
 # SSL certificate files
 ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
 ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
+
+# Certbot & certificate renewal
+certbot_auto_renew_certs: true
+certbot_email_addr: "{{ galaxy_incoming_email_addr }}"
