@@ -46,8 +46,7 @@ default_quota_gb: 50
 delete_datasets_after: "30 days"
 
 # Email
-postfix_host_name: "{{ galaxy_server_name }}"
-postfix_relay_host: "[smtp.manchester.ac.uk]"
+galaxy_smtp_server: "smtp.manchester.ac.uk"
 galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
 galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
 
