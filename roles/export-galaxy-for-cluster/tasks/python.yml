@@ -64,7 +64,5 @@
     cmd: '{{ python_install_dir }}/bin/pip3 install --upgrade pip'
 
 - name: "Python: install Virtualenv"
-  pip:
-    name: 'virtualenv'
-    state: 'present'
-    executable: '{{ python_install_dir }}/bin/pip3'
+  command:
+    cmd: '{{ python_install_dir }}/bin/pip3 install --upgrade virtualenv'
