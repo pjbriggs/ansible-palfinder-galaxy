@@ -378,6 +378,13 @@ instance do e.g.:
 This will generate a .tgz archive in the ``assets`` directory, which will
 contain the Galaxy virtualenv to be unpacked and used on the target VM.
 
+.. note::
+
+   If using the JSE-drop job submission mechanism then the
+   ``galaxy_jse_drop_virtual_env`` also needs to be set in the
+   playbooks to point to the unpacked virtual environment to be
+   used.
+
 Migrating Galaxy server to a new VM
 -----------------------------------
 
