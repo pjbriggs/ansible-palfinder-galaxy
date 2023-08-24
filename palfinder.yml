@@ -13,6 +13,9 @@
   # System Python and PostgreSQL versions
   - python_version: "3.10.5"
   - postgresql_version: "14"
+  # Postfix settings
+  - postfix_host_name: "palfinder.ls.manchester.ac.uk"
+  - postfix_relay_host: "smtp.manchester.ac.uk"
   # Base installation directory set in inventory file
   vars_files:
   - instances/palfinder/galaxy_config.yml
