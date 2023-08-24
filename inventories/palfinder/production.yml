@@ -9,6 +9,11 @@ palfinder:
     galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
     # Secrets
     palfinder_secrets: palfinder_passwds.yml
+    # Migrating to new VM
+    ##galaxy_force_reinstall_python: yes
+    ##galaxy_force_reinstall_venv: yes
+    ##galaxy_reinstall_conda: yes
+    ##galaxy_new_db_sql: "/mnt/rvmi/palfinder/galaxy/galaxy_palfinder.dump.2023-07-28.sql"
     # Job configuration
     galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
     galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
@@ -24,6 +29,8 @@ palfinder:
     galaxy_tool_destinations:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
+    # Cluster needs to use its own virtual env
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf/galaxy/20.09/venv_py3.8"
     # Postfix/email configuration
     enable_smtp: yes
     # SSL configuration
