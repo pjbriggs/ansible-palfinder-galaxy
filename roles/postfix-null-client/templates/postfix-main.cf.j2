@@ -9,4 +9,7 @@ inet_interfaces = loopback-only
 inet_interfaces = localhost
 {% endif %}
 mydestination = $myhostname, localhost.localdomain, localhost
+{% if postfix_smtp_generic_maps|default(None) != None %}
+smtp_generic_maps = hash:/etc/postfix/generic_maps
+{% endif %}
 inet_protocols = ipv4
