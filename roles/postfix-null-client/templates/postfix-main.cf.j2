@@ -1,8 +1,12 @@
 # Configuration file for postfix to send activation emails,
 # password resets etc
+# See http://www.postfix.org/STANDARD_CONFIGURATION_README.html
+# for various use cases
 myhostname= {{ postfix_host_name }}
 relayhost = {{ postfix_relay_host }}
+inet_interfaces = loopback-only
 {% if ipv6_supported.stdout == "no" %}
 inet_interfaces = localhost
 {% endif %}
-mydestination = $myhostname, localhost.$mydomain, localhost
+mydestination = $myhostname, localhost.localdomain, localhost
+inet_protocols = ipv4
