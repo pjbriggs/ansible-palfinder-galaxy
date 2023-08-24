@@ -45,7 +45,7 @@
     - name: "Add cron job to renew SSL certificates"
       cron:
         name: "certbot: renew SSL certificates"
-        job: "{{ certbot_venv_dir }}/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew -q"
+        job: "{{ certbot_venv_dir }}/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && {{ certbot_venv_dir }}/bin/certbot renew -q"
         hour: '0,12'
         minute: '0'
         state: present
