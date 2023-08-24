@@ -31,7 +31,10 @@
   - nginx
   - postgresql
   - supervisord
-  - certbot
+
+  # SSL certificates
+  - role: certbot
+    when: enable_https
 
   # Postfix mail client
   - role: postfix-null-client
