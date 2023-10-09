@@ -36,9 +36,10 @@
   - role: certbot
     when: enable_https
 
-  # Postfix mail client
-  - role: postfix-null-client
-    when: enable_smtp
+  # Disabled until role is updated
+  ## Postfix mail client
+  #- role: postfix-null-client
+  #  when: enable_smtp
 
   # Local JSEDrop service
   - role: jsedrop
