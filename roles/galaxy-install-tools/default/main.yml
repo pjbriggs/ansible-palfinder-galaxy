@@ -41,6 +41,24 @@ galaxy_tools: null
 # will appear in the top-level of the tool panel
 local_galaxy_tools: null
 
+# References to local tools which are managed outside
+# the Ansible playbooks
+# These will be added to the tool config XML
+# If defined then should be a list e.g.
+# local_galaxy_tool_references:
+#      - name: "cas13_design"
+#        tool_xml_files:
+#          - "tools/cas13_design/RfxCas13d_GuideScoring.xml"
+#          - "tools/cas13_design/guide_specificity_metrics.xml"
+#          - "tools/cas13_design/pdf_report.xml"
+#        section:
+#          name: "Cas13 Guide Design"
+#          id: "cas13-guide-design"
+#      - name: ...
+#        tool_files:
+#          - ... etc
+local_galaxy_tool_references: null
+
 # Data tables
 # If defined then should be a list e.g.
 # galaxy_tool_data_tables:
