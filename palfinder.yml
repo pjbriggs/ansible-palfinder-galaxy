@@ -2,118 +2,59 @@
 - hosts: palfinder
 
   vars:
-  # Galaxy configuration
-  - galaxy_name: "palfinder"
-  - galaxy_version: "release_19.09"
-  - galaxy_install_dir: "/mnt/rvmi/palfinder/galaxy"
-  - enable_require_login: yes
-  - enable_quotas: yes
-  - enable_ftp_upload: yes
-  - enable_reports: yes
-  # Galaxy-specific Python installation
-  - galaxy_python_version: "3.6.11"
-  # GDPR compliance
-  - enable_beta_gdpr: yes
-  # Welcome page etc
-  - galaxy_welcome_template: "instances/palfinder/templates/palfinder-welcome.html.j2"
-  - galaxy_terms: "instances/palfinder/files/palfinder-terms.html"
-  - galaxy_citations: "instances/palfinder/files/palfinder-citations.html"
-  # User manual
-  - galaxy_extra_static_content:
-      - src: "instances/palfinder/files/palfinder_galaxy_manual_v1.2.pdf"
-        dest: "/usr/share/nginx/html/palfinder_galaxy_manual_v1.2.pdf"
-        link: "/usr/share/nginx/html/manual"
-  - galaxy_nginx_extra_locations:
-      - location: "^~ /manual"
-        alias: "/usr/share/nginx/html/manual"
-        add_header: "Content-Type application/pdf"
-  # uWSGI and handler configuration
-  - galaxy_uwsgi_processes: 8
-  - galaxy_handler_processes: 1
-  # Users
-  - galaxy_admin_user: "admin@galaxy.org"
-  - galaxy_users:
-      - email: "{{ galaxy_admin_user }}"
-        password: "{{ galaxy_admin_passwd }}"
-  # Tools
-  - galaxy_tool_conf_file: "instances/palfinder/files/palfinder-tool_conf.xml"
-  - galaxy_tools:
-      - tool: "fastqc"
-        owner: "devteam"
-        section: ""
-      - tool: "trimmomatic"
-        owner: "pjbriggs"
-        section: ""
-      - tool: "pal_finder"
-        owner: "pjbriggs"
-        section: ""
-  - enable_tool_shed_check: yes
-  # Concurrent jobs
-  - galaxy_registered_user_concurrent_jobs: 8
-  - galaxy_unregistered_user_concurrent_jobs: 0
-  - galaxy_concurrent_jobs: 8
-  # Add tools to whitelist for rendering HTML correctly
-  - galaxy_sanitize_whitelist_tools:
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.71"
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
-      - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72+galaxy1"
-  # Default quota
-  - default_quota_gb: 50
-  # Automatic dataset deletion
-  - delete_datasets_after: "30 days"
-  # Audit report
-  - email_audit_report_to: "peter.briggs@manchester.ac.uk"
-  # Postfix/email configuration
-  # Enable/disable in inventory file (enable_smtp)
-  # If enabled then will use the settings below
-  - postfix_host_name: "{{ galaxy_server_name }}"
-  - postfix_relay_host: "[smtp.manchester.ac.uk]"
-  - galaxy_outgoing_email_addr: "Palfinder Galaxy <galaxy-no-reply@{{ galaxy_server_name  }}>"
-  - galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
-  # SSL configuration
-  # Enable/disable in inventory file (enable_https)
-  # If enabled then will use the settings below
-  - ssl_certificate: "/etc/letsencrypt/live/{{ galaxy_server_name }}/fullchain.pem"
-  - ssl_certificate_key: "/etc/letsencrypt/live/{{ galaxy_server_name }}/privkey.pem"
-  # Palfinder-specific settings
-  # Message of the day to display on the front page and message
-  # to display under masthead
-  # -- for ansible <2.6 "errors=..." option is not supported so
-  #    an empty placeholder file is required to stop the playbook
-  #    failing
-  - palfinder_motd: "{{ lookup('file', 'instances/palfinder/files/motd', errors='warn') }}"
-  - galaxy_message: "{{ lookup('file', 'instances/palfinder/files/message', errors='warn') }}"
-
+  # Ubuntu doesn't have Python2 by default
+  # See e.g. https://www.toptechskills.com/ansible-tutorials-courses/how-to-fix-usr-bin-python-not-found-error-tutorial/
+  - ansible_python_interpreter: /usr/bin/python3
+  # Galaxy user and group on system
+  - galaxy_user: "galaxy"
+  - galaxy_uid: 400
+  - galaxy_group: "galaxy"
+  - galaxy_gid: 400
+  # System Python and PostgreSQL versions
+  - python_version: "3.10.5"
+  - postgresql_version: "14"
+  # Postfix settings
+  - postfix_host_name: "palfinder.ls.manchester.ac.uk"
+  - postfix_relay_host: "smtp.manchester.ac.uk"
+  # Base installation directory set in inventory file
   vars_files:
+  - instances/palfinder/galaxy_config.yml
   - instances/palfinder/{{ palfinder_secrets }}
+  - instances/palfinder/tools.yml
+  - instances/palfinder/sanitize_whitelist.yml
+  - instances/palfinder/ssl_certs.yml
 
   roles:
-  # Dependencies
+  # Configure host VM
   - galaxy-user
-  - epel-repo
-  - nfslock
-  - git
-  - selinux
   - python3
   - nginx
   - postgresql
-  - proftpd
   - supervisord
-  - role: postfix-null-client
-    when: enable_smtp
-  - certbot
+
+  # SSL certificates
+  - role: certbot
+    when: enable_https
+
+  # Disabled until role is updated
+  ## Postfix mail client
+  #- role: postfix-null-client
+  #  when: enable_smtp
+
   # Local JSEDrop service
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"
     when: enable_local_jse_drop
+
   # Install and configure Galaxy
-  - galaxy
-  # Install utilities
   - galaxy-utils
+  - galaxy
+
   # Set up users, tools etc
   - galaxy-create-users
   - galaxy-install-tools
   - galaxy-set-default-quota
+
   # Additional set up
   - galaxy-add-library-data
   - galaxy-auto-delete-datasets
