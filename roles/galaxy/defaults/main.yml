@@ -7,8 +7,15 @@ galaxy_version: 'release_20.09'
 galaxy_user: "galaxy"
 galaxy_group: "{{ galaxy_user }}"
 
-# Galaxy admin user
+# Base Galaxy admin user
 galaxy_admin_user: "admin@galaxy.org"
+
+# Additional admin users
+# If defined then should be a list e.g.
+# galaxy_extra_admins:
+#   - "foo@example.org"
+#   - "bar@example.org"
+galaxy_extra_admins: null
 
 # Postgresql database
 galaxy_db: "galaxy_{{ galaxy_name }}"
