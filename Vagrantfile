@@ -43,18 +43,6 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     chmod ugo+rwX /mnt/rvmi/
   SHELL
   end
-  # Cetus Teaching VM
-  config.vm.define "cetus" do |cetus|
-    cetus.vm.box = "ringo/scientific-linux-7.1"
-    cetus.vm.hostname = "cetus"
-    cetus.vm.network :private_network, ip: "192.168.60.5"
-    cetus.vm.provision "shell", inline: <<-SHELL
-    service firewalld stop
-    mkdir -p /mnt/rvmi
-    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy/
-    chmod ugo+rwX /mnt/rvmi/ /mnt/bmh01-rvmi/bcf-galaxy/
-  SHELL
-  end
   # CSF compute cluster VM
   config.vm.define "csf" do |csf|
     csf.vm.box = "centos/7"
