@@ -307,7 +307,8 @@ virtual machines for testing the deployment.
 
 The following servers are defined in the ``Vagrantfile``:
 
- - ``centaurus``: Ubuntu 20.04 VM (http://192.168.60.3)
+ - ``centaurus``: Ubuntu 20.04 VM (http://192.168.60.2)
+ - ``centaurus_dev``: Ubuntu 20.04 VM (http://192.168.60.3)
  - ``palfinder``: Ubuntu 20.04 VM (http://192.168.60.4)
 
 An additional VM is used to build Galaxy virtual environment for

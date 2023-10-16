@@ -21,12 +21,24 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     v.cpus = 4
     v.linked_clone = true
   end
-  # Centaurus VM
+  # Centaurus production VM
   config.vm.define "centaurus" do |centaurus|
     centaurus.vm.box = "ubuntu/focal64"
     centaurus.vm.hostname = "centaurus"
-    centaurus.vm.network :private_network, ip: "192.168.60.3"
+    centaurus.vm.network :private_network, ip: "192.168.60.2"
     centaurus.vm.provision "shell", inline: <<-SHELL
+    mkdir -p /mnt/rvmi
+    mkdir -p /mnt/bmh01-rvmi/bcf-galaxy
+    chmod ugo+rwX /mnt/rvmi/
+    chmod ugo+rwX /mnt/bmh01-rvmi/bcf-galaxy/
+  SHELL
+  end
+  # Centaurus development VM
+  config.vm.define "centaurus_dev" do |centaurus_dev|
+    centaurus_dev.vm.box = "ubuntu/focal64"
+    centaurus_dev.vm.hostname = "centaurus-devel"
+    centaurus_dev.vm.network :private_network, ip: "192.168.60.3"
+    centaurus_dev.vm.provision "shell", inline: <<-SHELL
     mkdir -p /mnt/rvmi
     mkdir -p /mnt/bmh01-rvmi/bcf-galaxy
     chmod ugo+rwX /mnt/rvmi/
