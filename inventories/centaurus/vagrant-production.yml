@@ -6,29 +6,18 @@ centaurus:
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
     # Server name
-    galaxy_server_name: centaurus.hosszu.lan
-    # Galaxy configuation
-    centaurus_galaxy_config: production.yml
+    galaxy_server_name: 192.168.60.2
+    enable_user_activation: no
+    # Galaxy base installation dir
+    galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
     # Secrets
-    centaurus_secrets: production_secrets.yml
-    # Shed tools
-    centaurus_shed_tools: shed_tools_minimal.yml
-    # Tool data
-    centaurus_tool_data: tool_data_minimal.yml
-    # Welcome page template
-    galaxy_welcome_template: "instances/centaurus/templates/centaurus-welcome.html.j2"
-    # uWSGI and handler configuration
-    galaxy_uwsgi_processes: 1
-    galaxy_handler_processes: 1
-    # JSE-Drop service
+    centaurus_secrets: vagrant_secrets.yml
+    # Local JSE-Drop service
     enable_local_jse_drop: yes
-    # Job cleanup
-    galaxy_cleanup_job: "never"
     # Postfix/email configuration
     enable_smtp: no
-    # Audit report
-    email_audit_report_to: None
     # SSL configuration
     enable_https: no
-    # Default quota
-    default_quota_gb: 5
+    # Threads for uWSGI and handler processes
+    galaxy_uwsgi_processes: 1
+    galaxy_handler_processes: 1
