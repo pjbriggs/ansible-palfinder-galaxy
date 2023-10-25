@@ -43,6 +43,9 @@ galaxy_concurrent_jobs: 8
 # Use mamba for dependency resolution?
 galaxy_conda_use_mamba: no
 
+# Preserve Python environment for tools
+galaxy_preserve_python_env: "legacy_and_local"
+
 # Quotas
 enable_quotas: yes
 default_quota_gb: 100
