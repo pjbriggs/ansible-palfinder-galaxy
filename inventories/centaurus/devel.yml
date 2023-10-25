@@ -21,5 +21,5 @@ centaurus:
     # SSL configuration
     enable_https: yes
     # Threads for uWSGI and handler processes
-    galaxy_uwsgi_processes: 8
-    galaxy_handler_processes: 1
+    galaxy_uwsgi_processes: 4
+    galaxy_handler_processes: 2
