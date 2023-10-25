@@ -1,5 +1,5 @@
 ---
-- hosts: centaurus
+- hosts: centaurus-devel
 
   vars:
   # Ubuntu doesn't have Python2 by default
@@ -18,7 +18,7 @@
   - python_version: "3.10.5"
   - postgresql_version: "14"
   # Postfix settings
-  - postfix_host_name: "centaurus.ls.manchester.ac.uk"
+  - postfix_host_name: "centaurus-dev.ls.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
   # Base installation directory set in inventory file
 
@@ -31,11 +31,11 @@
   ## Define proxy environment variables if needed
   #- proxy_env:
   #    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
-  #    https_proxy: 'https://updateproxy.manchester.ac.uk:3128
+  #    https_proxy: 'https://updateproxy.manchester.ac.uk:3128'
 
   vars_files:
   # Instance-specific variables
-  - instances/centaurus/production_galaxy_config.yml
+  - instances/centaurus/devel_galaxy_config.yml
   - instances/centaurus/{{ centaurus_secrets }}
   # Variables common to production and devel
   - instances/centaurus/shed_tools_minimal.yml
