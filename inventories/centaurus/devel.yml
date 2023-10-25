@@ -1,4 +1,4 @@
-centaurus:
+centaurus-dev:
   hosts:
     130.88.41.201
   vars:
