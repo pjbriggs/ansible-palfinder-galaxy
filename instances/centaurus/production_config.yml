@@ -53,7 +53,7 @@ galaxy_outgoing_email_addr: "Centaurus Galaxy <galaxy-no-reply@{{ galaxy_server_
 galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
 
 # Environment setup file
-galaxy_environment_setup_file: "instances/centaurus/files/centaurus_environment_setup.sh"
+galaxy_environment_setup_file: "instances/centaurus/files/centaurus_environment_setup-production.sh"
 
 # Status monitoring page
 galaxy_generate_status_page: yes
