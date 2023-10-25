@@ -1,5 +1,5 @@
 ---
-- hosts: centaurus-devel
+- hosts: centaurus-dev
 
   vars:
   # Ubuntu doesn't have Python2 by default
