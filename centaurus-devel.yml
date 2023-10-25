@@ -35,7 +35,7 @@
 
   vars_files:
   # Instance-specific variables
-  - instances/centaurus/devel_galaxy_config.yml
+  - instances/centaurus/devel_config.yml
   - instances/centaurus/{{ centaurus_secrets }}
   # Variables common to production and devel
   - instances/centaurus/shed_tools_minimal.yml
