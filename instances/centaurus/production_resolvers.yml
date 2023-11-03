@@ -1,5 +1,5 @@
 ---
-# Dependency resolvers
+# Dependency resolvers for production
 galaxy_dependency_resolvers:
   # Versioned resolvers
   - type: 'tool_shed_packages'
