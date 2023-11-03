@@ -4,18 +4,35 @@ This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 -->
 <toolbox tool_path="../local_tools">
 {% if local_galaxy_tools is not none %}
-  {% for tool in local_galaxy_tools %}
-     {% if "section" in tool %}
-<section id="{{ tool.section.id }}" name="{{ tool.section.name }}">
-     {% endif %}
-     {% for tool_file in tool.tool_files %}
-        {% if tool_file.endswith(".xml") %}
-<tool file="{{ tool.name }}/{{ tool_file | basename }}" />
-        {% endif %}
-     {% endfor %}
-     {%if "section" in tool %}
-</section>
-     {% endif %}
-  {% endfor %}
+{%   for tool in local_galaxy_tools %}
+{%     if "section" in tool %}
+  <section id="{{ tool.section.id }}" name="{{ tool.section.name }}">
+{%     endif %}
+{%     for tool_file in tool.tool_files %}
+{%       if tool_file.endswith(".xml") %}
+    <tool file="{{ tool.name }}/{{ tool_file | basename }}" />
+{%       endif %}
+{%     endfor %}
+{%     if "section" in tool %}
+  </section>
+{%     endif %}
+
+{%   endfor %}
+{% endif %}
+{% if local_galaxy_tool_references is not none %}
+{%   for tool in local_galaxy_tool_references %}
+{%     if "section" in tool %}
+  <section id="{{ tool.section.id }}" name="{{ tool.section.name }}">
+{%     endif %}
+{%     for tool_file in tool.tool_xml_files %}
+{%       if tool_file.endswith(".xml") %}
+    <tool file="{{ tool.name }}/{{ tool_file | basename }}" />
+{%       endif %}
+{%     endfor %}
+{%     if "section" in tool %}
+  </section>
+{%     endif %}
+
+{%   endfor %}
 {% endif %}
 </toolbox>
