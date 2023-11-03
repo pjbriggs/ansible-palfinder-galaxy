@@ -6,6 +6,7 @@
 #
 # - galaxy_name
 # - galaxy_root (or galaxy_dir)
+# - galaxy_proxy_prefix
 # - galaxy_user
 # - master_api_key
 
