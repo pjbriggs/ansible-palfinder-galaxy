@@ -3,8 +3,8 @@
 local_galaxy_tools:
   - name: "venn_diagram"
     tool_files:
-      - "venn_diagram/cistrome_venn_diagram.xml"
-      - "venn_diagram/cistrome_venn_diagram.py"
+      - "tools/venn_diagram/cistrome_venn_diagram.xml"
+      - "tools/venn_diagram/cistrome_venn_diagram.py"
     section:
       name: "ChIP-seq"
       id: "ngs-chip-seq"
