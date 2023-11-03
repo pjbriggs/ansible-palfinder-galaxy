@@ -22,10 +22,13 @@ galaxy_http_port: "8080"
 galaxy_uwsgi_socket: "4001"
 
 # Users
-galaxy_admin_user: "peter.briggs@manchester.ac.uk"
 galaxy_users:
   - email: "{{ galaxy_admin_user }}"
     password: "{{ galaxy_admin_passwd }}"
+galaxy_admin_user: "peter.briggs@manchester.ac.uk"
+#galaxy_extra_admins:
+#  - "foo@manchester.ac.uk"
+#  - "bar@manchester.ac.uk"
 
 # Job configuration
 enable_jse_drop: yes
