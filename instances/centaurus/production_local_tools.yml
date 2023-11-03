@@ -19,7 +19,7 @@ local_galaxy_tool_references:
     section:
       name: "Cas13 Guide Design"
       id: "cas13-guide-design"
-  - name: "amplicon_analysis_pipeline"
+  - name: "local_tools"
     tool_xml_files:
       - "Amplicon_analysis/Amplicon_analysis-galaxy/amplicon_analysis_pipeline.xml"
     section:
