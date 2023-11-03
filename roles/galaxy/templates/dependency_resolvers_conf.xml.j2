@@ -2,7 +2,7 @@
 <dependency_resolvers>
 {% if galaxy_dependency_resolvers %}
 {% for resolver in galaxy_dependency_resolvers %}
-  <{{ resolver.type }}{% if resolver.versionless is defined %} versionless="{{ resolver.versionless }}"{% endif %}{% if resolver.base_path is defined %} base_path="{{ resolver.base_path }}"{% endif %} />
+  <{{ resolver.type }}{% if resolver.base_path is defined %} base_path="{{ resolver.base_path }}"{% endif %}{% if resolver.versionless is defined %} versionless="{{ resolver.versionless }}"{% endif %} />
 {% endfor %}
 {% else %}
   <!-- Defaults -->
