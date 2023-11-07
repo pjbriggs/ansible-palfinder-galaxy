@@ -20,7 +20,7 @@
     - name: "Deactivate Galaxy master API key"
       command:
           "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
-  when: galaxy_tools|default(None) != None
+  when: galaxy_tools | length > 0
 
 # Local tools
 - name: "Install local tools"
@@ -33,7 +33,6 @@
       with_items: "{{ local_galaxy_tools }}"
       become: yes
       become_user: "{{ galaxy_user }}"
-      when: local_galaxy_tools|default(None) != None
 
     - name: "Install local tool files"
       copy:
@@ -44,7 +43,6 @@
         - 'tool_files'
       become: yes
       become_user: "{{ galaxy_user }}"
-      when: local_galaxy_tools|default(None) != None
 
     - name: "Build tool_conf XML file for local tools"
       template:
@@ -54,7 +52,7 @@
         - "Restart Galaxy"
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: local_galaxy_tools|default(None) != None
+  when: local_galaxy_tools | length > 0
 
 # Create .loc files from samples
 - name: "Create and populate loc files"
@@ -81,4 +79,4 @@
         - "Restart Galaxy"
   become: yes
   become_user: "{{ galaxy_user }}"
-  when: galaxy_loc_file_data|default(None) != None
+  when: galaxy_loc_file_data | length > 0
