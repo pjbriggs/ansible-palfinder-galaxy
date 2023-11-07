@@ -88,17 +88,10 @@ galaxy_tool_data_tables: null
 #         - "seq\thg38\t/mnt/data-sets/hg38/2bit/hg38.analysisSet.2bit"
 #         - "seq\thg19\t/mnt/data-sets/hg19_GRCh37_random_chrM/seq"
 #         - ...
-galaxy_loc_file_data: null
+galaxy_loc_file_data: []
 
 # Galaxy installation location
 galaxy_root: "{{ galaxy_dir }}/{{ galaxy_clone_dir }}"
 
 # Is https enabled
 enable_https: no
-
-# Reference data for tool .loc files
-# Define additional entries for .loc files as a
-# dictionary with:
-# - loc_file (name of the .loc file, relative to tool-data)
-# - data     (data to add)
-galaxy_loc_file_data:
