@@ -23,7 +23,7 @@ galaxy_utils_dir: "/usr/local"
 #      - tool: ...
 #        owner: ...
 #        section: ... etc
-galaxy_tools: null
+galaxy_tools: []
 
 # Local tools to be installed
 # If defined then should be a list e.g.
@@ -58,27 +58,15 @@ local_galaxy_tools: null
 #      - name: ...
 #        tool_files:
 #          - ... etc
-local_galaxy_tool_references: null
-
-# Data tables
-# If defined then should be a list e.g.
-# galaxy_tool_data_tables:
-#      - description: "Annotation databases for CEAS"
-#        name: "ceas_annotations"
-#        columns: "value, dbkey, name, path"
-#        file_path: "tool-data/ceas.loc"
-#      - description: ...
-#        name: ...
-#        columns: ...
-#        file_path: ...
-galaxy_tool_data_tables: null
+local_galaxy_tool_references: []
 
 # Reference data for tool .loc files
 #
-# Define additional entries for .loc files as a
-# dictionary with:
+# Specify as a list with additional entries for specific .loc
+# files defined as dictionaries of the form:
+#
 # - loc_file (name of the .loc file, relative to tool-data)
-# - data     (data to add)
+# - data     (data to add, as a list)
 #
 # For example:
 #
