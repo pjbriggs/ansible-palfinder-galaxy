@@ -40,12 +40,21 @@ galaxy_tools: []
 #          - ... etc
 # NB the 'section' is optional; if omitted then the tool
 # will appear in the top-level of the tool panel
-local_galaxy_tools: null
+local_galaxy_tools: []
 
 # References to local tools which are managed outside
 # the Ansible playbooks
 # These will be added to the tool config XML
-# If defined then should be a list e.g.
+#
+# If defined then should be a list of dictionaries, each
+# of the form:
+#
+# - name: internal name for the tool
+# - tool_xml_files: paths to XML files (as a list)
+# - section: dictionary with 'name' and 'id' of target section
+#
+# For example:
+#
 # local_galaxy_tool_references:
 #      - name: "cas13_design"
 #        tool_xml_files:
