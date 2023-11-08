@@ -1,75 +1,81 @@
 <?xml version="1.0"?>
 <job_conf>
+    <!-- Plugins
+    -->
     <plugins workers="4">
+        <!-- Local runner -->
         <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
 {% if enable_drmaa %}
+        <!-- DRMAA runner -->
         <plugin id="drmaa" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner"/>
 {% endif %}
 {% if enable_jse_drop %}
+        <!-- JSE-Drop runner -->
 	<plugin id="jse_drop" type="runner" load="galaxy.jobs.runners.jse_drop_runner:JSEDropJobRunner">
 	  <param id="drop_dir">{{ galaxy_jse_drop_dir }}</param>
 	  <param id="virtual_env">{{ galaxy_jse_drop_virtual_env }}</param>
-{% if galaxy_jse_drop_galaxy_id is defined %}
+{%      if galaxy_jse_drop_galaxy_id is defined %}
 	  <param id="galaxy_id">{{ galaxy_jse_drop_galaxy_id }}</param>
-{% endif %}
+{%      endif %}
         </plugin>
 {% endif %}
     </plugins>
-    <!-- Remove "handlers" section removed for Galaxy 18.05 -->
+    <!-- Destinations
+	 Define details about remote resources and how jobs
+         should be executed on those remote resources
+    -->
     <destinations default="{{ galaxy_default_runner }}">
-        <!-- Destinations define details about remote resources and how jobs
-             should be executed on those remote resources.
-         -->
         <destination id="local" runner="local">
-	  <!-- Need to explicitly specify the virtualenv for production
-	       setting, see
-	       https://docs.galaxyproject.org/en/master/admin/framework_dependencies.html#galaxy-job-handlers
-	  -->
           <env file="{{ galaxy_root }}/.venv/bin/activate" />
 	</destination>
 {% if galaxy_job_destinations %}
-{% for dest in galaxy_job_destinations %}
+{%   for dest in galaxy_job_destinations %}
         <destination id="{{ dest.id }}" runner="{{ dest.runner }}">
-{% if dest.jse_drop_qsub_options is defined %}
+{%      if dest.jse_drop_qsub_options is defined %}
           <param id="qsub_options">{{ dest.jse_drop_qsub_options }}</param>
-{% endif %}
-{% if dest.jse_drop_slots is defined %}
+{%      endif %}
+{%      if dest.jse_drop_slots is defined %}
 	  <param id="galaxy_slots">{{ dest.jse_drop_slots }}</param>
-{% endif %}
-{% if dest.envs is defined %}
-{% for env in dest.envs %}
+{%      endif %}
+{%     if dest.envs is defined %}
+{%        for env in dest.envs %}
 	  <env id="{{ env.id }}">{{ env.value }}</env>
-{% endfor %}
-{% endif %}
+{%        endfor %}
+{%      endif %}
 	</destination>
-{% endfor %}
+{%   endfor %}
 {% endif %}
     </destinations>
 {% if galaxy_tool_destinations %}
+    <!-- Tools
+	 Map tools to target destinations
+    -->
     <tools>
-{% for tool in galaxy_tool_destinations %}
-      <tool id="{{ tool.id }}" destination="{{ tool.destination }}"/>
-{% endfor %}
+{%  for tool in galaxy_tool_destinations %}
+        <tool id="{{ tool.id }}" destination="{{ tool.destination }}"/>
+{%  endfor %}
     </tools>
 {% endif %}
+    <!-- Limits
+    -->
     <limits>
 {% if galaxy_job_destinations %}
-{% for dest in galaxy_job_destinations %}
-{% if dest.user_concurrent_jobs is defined %}
-      <limit type="destination_user_concurrent_jobs" id="{{ dest.id }}">{{ dest.user_concurrent_jobs }}</limit>
-{% endif %}
-{% if dest.total_concurrent_jobs is defined %}
-      <limit type="destination_total_concurrent_jobs" id="{{ dest.id }}">{{ dest.total_concurrent_jobs }}</limit>
-{% endif %}
-{% endfor %}
+{%   for dest in galaxy_job_destinations %}
+{%      if dest.user_concurrent_jobs is defined %}
+        <limit type="destination_user_concurrent_jobs" id="{{ dest.id }}">{{ dest.user_concurrent_jobs }}</limit>
+{%      endif %}
+{%      if dest.total_concurrent_jobs is defined %}
+        <limit type="destination_total_concurrent_jobs" id="{{ dest.id }}">{{ dest.total_concurrent_jobs }}</limit>
+{%      endif %}
+{%   endfor %}
 {% endif %}
 {% if galaxy_registered_user_concurrent_jobs is defined %}
-      <limit type="registered_user_concurrent_jobs">{{ galaxy_registered_user_concurrent_jobs }}</limit>
+        <limit type="registered_user_concurrent_jobs">{{ galaxy_registered_user_concurrent_jobs }}</limit>
 {% endif %}
 {% if galaxy_unregistered_user_concurrent_jobs is defined %}
-      <limit type="unregistered_user_concurrent_jobs">{{ galaxy_unregistered_user_concurrent_jobs }}</limit>
+        <limit type="unregistered_user_concurrent_jobs">{{ galaxy_unregistered_user_concurrent_jobs }}</limit>
 {% endif %}
-      <limit type="job_walltime">24:00:00</limit>
-      <limit type="concurrent_jobs" id="local">{{ galaxy_concurrent_jobs }}</limit>
+        <limit type="job_walltime">24:00:00</limit>
+        <limit type="concurrent_jobs" id="local">{{ galaxy_concurrent_jobs }}</limit>
     </limits>
 </job_conf>
