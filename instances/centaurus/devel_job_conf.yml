@@ -1,0 +1,62 @@
+---
+# job_conf.xml configuration
+
+# Job runners and destinations
+galaxy_default_runner: "jse_drop_serial"
+galaxy_job_destinations:
+  - id: "jse_drop_serial"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n"
+  - id: "jse_drop_smp_4"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 4"
+    jse_drop_slots: "4"
+  - id: "jse_drop_smp_6"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 6"
+    jse_drop_slots: "6"
+  - id: "jse_drop_smp_8"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 8"
+    jse_drop_slots: "8"
+  - id: "jse_drop_smp_12"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
+    jse_drop_slots: "12"
+  # Runner for Amplicon analysis pipeline
+  - id: "jse_drop_amplicon_analysis"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 8 -l mem256"
+    jse_drop_slots: "8"
+    envs:
+      - id: "AMPLICON_ANALYSIS_REF_DATA_PATH"
+        value: "/mnt/data-sets/bcf/softwareData/galaxy/amplicon-analysis-pipeline"
+  # Runner for snp2hla
+  - id: "jse_drop_snp2hla"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n"
+    envs:
+      - id: "ref_panel"
+        value: "/mnt/rvmi/centaurus/galaxy/devel/local_tools/snp2hla/data/REF"
+
+# Tool destinations
+galaxy_tool_destinations:
+  - id: "amplicon_analysis_pipeline"
+    destination: "jse_drop_amplicon_analysis"
+  - id: "bowtie_wrapper"
+    destination: "jse_drop_smp_8"
+  - id: "cuffdiff"
+    destination: "jse_drop_smp_8"
+  - id: "rna_star"
+    destination: "jse_drop_smp_8"
+  - id: "tophat"
+    destination: "jse_drop_smp_12"
+  - id: "trinityrnaseq"
+    destination: "jse_drop_smp_8"
+  - id: "snp2hla_2"
+    destination: "jse_drop_snp2hla"
+
+# Limits
+galaxy_registered_user_concurrent_jobs: 2
+galaxy_unregistered_user_concurrent_jobs: 0
+galaxy_concurrent_jobs: 1
