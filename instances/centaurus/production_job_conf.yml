@@ -23,6 +23,22 @@ galaxy_job_destinations:
     runner: "jse_drop"
     jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
     jse_drop_slots: "12"
+  - id: "jse_drop_smp_16"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 16"
+    jse_drop_slots: "16"
+  # High memory runner
+  - id: "jse_drop_smp_8_mem256"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 8 -l mem256"
+    jse_drop_slots: "8"
+    envs:
+      - id: "GALAXY_MEMORY_MB"
+        value: "131072"
+  # Short serial queue runner for quick jobs (or testing)
+  - id: "jse_drop_short"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-j n -l short"
   # Runner for Amplicon analysis pipeline
   - id: "jse_drop_amplicon_analysis"
     runner: "jse_drop"
@@ -31,7 +47,21 @@ galaxy_job_destinations:
     envs:
       - id: "AMPLICON_ANALYSIS_REF_DATA_PATH"
         value: "/mnt/data-sets/bcf/softwareData/galaxy/amplicon-analysis-pipeline"
-  # High-memory runner for Trinity
+  # Runner for NCBI Blast+
+  - id: "jse_drop_ncbi_blast_plus"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 16 -l mem256"
+    jse_drop_slots: "16"
+  # Runner for Trinity (high memory)
+  #
+  # 31/10/2022: High memory node on CSF3 gives 32G per core
+  # Trinity docs suggest CPUs <= 12 so 384G available
+  # Also docs for Trinity tool are wrong, so set
+  # GALAXY_MEMORY_MB=380*1024=389120 (no units)
+  #
+  # 12/02/2020: Also need to explicitly set _JAVA_OPTIONS to
+  # restrict Java processes to single core (otherwise it seems
+  # to take all cores on the node, even if not available)
   - id: "jse_drop_trinity"
     runner: "jse_drop"
     jse_drop_qsub_options: "-V -j n -l mem256 -pe smp.pe 12"
@@ -49,6 +79,7 @@ galaxy_job_destinations:
     envs:
       - id: "_JAVA_OPTIONS"
         value: "-Xmx6G -Xms256m"
+
 # Tool destinations
 galaxy_tool_destinations:
   - id: "amplicon_analysis_pipeline"
@@ -71,14 +102,16 @@ galaxy_tool_destinations:
     destination: "jse_drop_smp_8"
   - id: "hisat2"
     destination: "jse_drop_smp_12"
-  - id: "picard_MarkDuplicates"
-    destination: "jse_drop_picard_markduplicates"
   - id: "freebayes"
     destination: "jse_drop_smp_8"
+  - id: "ncbi_blastn_wrapper"
+    destination: "jse_drop_ncbi_blast_plus"
+  - id: "picard_MarkDuplicates"
+    destination: "jse_drop_picard_markduplicates"
   - id: "rna_star"
     destination: "jse_drop_smp_8"
   - id: "rnaspades"
-    destination: "jse_drop_smp_4"
+    destination: "jse_drop_smp_8_mem256"
   - id: "salmon"
     destination: "jse_drop_smp_4"
   - id: "tophat"
@@ -88,10 +121,23 @@ galaxy_tool_destinations:
   - id: "transdecoder"
     destination: "jse_drop_smp_4"
   - id: "trimmomatic"
-    destination: "jse_drop_smp_6"
+    destination: "jse_drop_smp_8"
   - id: "trinityrnaseq"
     destination: "jse_drop_smp_8"
   - id: "trinity"
     destination: "jse_drop_trinity"
   - id: "trinity_align_and_estimate_abundance"
     destination: "jse_drop_smp_4"
+  # Locally managed tools
+  # Use the short queue as these are small fast jobs
+  - id: "Cas13d_GuideScoring"
+    destination: "jse_drop_short"
+  - id: "gRNA_specificity_scorer"
+    destination: "jse_drop_short"
+  - id: "pdf_report"
+    destination: "jse_drop_short"
+
+# Limits
+galaxy_registered_user_concurrent_jobs: 8
+galaxy_unregistered_user_concurrent_jobs: 0
+galaxy_concurrent_jobs: 1
