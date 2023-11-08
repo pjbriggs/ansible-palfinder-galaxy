@@ -38,11 +38,6 @@ galaxy_jse_drop_galaxy_id: "centaurus_devel"
 # Running jobs
 galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
 
-# Concurrent jobs
-galaxy_registered_user_concurrent_jobs: 8
-galaxy_unregistered_user_concurrent_jobs: 0
-galaxy_concurrent_jobs: 8
-
 # Use mamba for dependency resolution?
 galaxy_conda_use_mamba: no
 

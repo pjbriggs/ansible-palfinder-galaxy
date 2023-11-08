@@ -38,12 +38,12 @@
   - instances/centaurus/devel_config.yml
   - instances/centaurus/devel_resolvers.yml
   - instances/centaurus/devel_local_tools.yml
+  - instances/centaurus/devel_job_conf.yml
   - instances/centaurus/{{ centaurus_secrets }}
   # Variables common to production and devel
   - instances/centaurus/shed_tools_minimal.yml
   #- instances/centaurus/tool_data_minimal.yml
   - instances/centaurus/custom_scss.yml
-  - instances/centaurus/job_conf.yml
   - instances/centaurus/tool_data_tables.yml
   - instances/centaurus/sanitize_whitelist.yml
   # SSL certs parameterised so use same YAML file
