@@ -13,4 +13,4 @@ csf:
     galaxy_gid: 400
     # Galaxy and Python versions to target
     galaxy_version: "20.09"
-    python_version: "3.6.11"
+    python_version: "3.8.13"
