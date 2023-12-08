@@ -4,8 +4,6 @@ centaurus-dev:
   vars:
     # Server name
     galaxy_server_name: "centaurus-dev.itservices.manchester.ac.uk"
-    # Galaxy base installation dir
-    galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
     # Secrets
     centaurus_secrets: devel_secrets.yml
     # Local JSE-Drop service
