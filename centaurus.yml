@@ -20,7 +20,8 @@
   # Postfix settings
   - postfix_host_name: "centaurus.ls.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
-  # Base installation directory set in inventory file
+  # Base installation directory and other paths set in the
+  # production_config.yaml file for the 'production' instance
 
   ## Options for migrating to a new VM
   #- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
