@@ -8,8 +8,6 @@ centaurus-dev:
     # Server name
     galaxy_server_name: 192.168.60.3
     enable_user_activation: no
-    # Galaxy base installation dir
-    galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
     # Secrets
     centaurus_secrets: vagrant_secrets.yml
     # Local JSE-Drop service
