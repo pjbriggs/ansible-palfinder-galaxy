@@ -2,8 +2,23 @@
 # Galaxy configuration for Centaurus-devel
 galaxy_name: "centaurus-dev"
 galaxy_version: "release_20.09"
+
+# Galaxy base installation dirs
+galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
 galaxy_dir: "{{ galaxy_install_dir }}/devel"
 galaxy_clone_dir: "galaxy-dist"
+
+# Galaxy database directory
+galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/database/files"
+
+# Job working directory
+galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/job_working_directory"
+
+# Data manager data directory
+galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/tool-data"
+
+# New file path
+galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
 
 # Galaxy-specific Python installation
 galaxy_python_version: "3.8.13"
