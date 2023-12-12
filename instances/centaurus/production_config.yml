@@ -50,9 +50,6 @@ enable_jse_drop: yes
 galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
 galaxy_jse_drop_galaxy_id: "centaurus"
 
-# Running jobs
-galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
-
 # Use mamba for dependency resolution?
 galaxy_conda_use_mamba: no
 
