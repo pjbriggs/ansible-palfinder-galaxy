@@ -39,8 +39,8 @@
         src='{{ postfix_generic_maps }}'
         dest='/etc/postfix/generic'
 
-     - name: Update generic maps
-       command: postmap /etc/postfix/generic
+    - name: Update generic maps
+      command: postmap /etc/postfix/generic
   when: postfix_smtp_generic_maps|default(None) != None
 
 - name: Start Postfix
