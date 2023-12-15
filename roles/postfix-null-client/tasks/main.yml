@@ -36,7 +36,7 @@
   block:
     - name: Copy generic map file
       copy:
-        src='{{ postfix_generic_maps }}'
+        src='{{ postfix_smtp_generic_maps }}'
         dest='/etc/postfix/generic'
 
     - name: Update generic maps
