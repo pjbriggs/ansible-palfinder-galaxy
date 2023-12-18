@@ -62,7 +62,7 @@ default_quota_gb: 100
 
 # Email
 galaxy_smtp_server: "smtp.manchester.ac.uk"
-galaxy_outgoing_email_addr: "Centaurus Devel <galaxy-no-reply@{{ galaxy_server_name  }}>"
+galaxy_outgoing_email_addr: "Centaurus Devel <galaxy-no-reply@centaurus-dev.itservices.manchester.ac.uk>"
 galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
 
 # Status monitoring page
