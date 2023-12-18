@@ -32,6 +32,17 @@
   notify:
   - Reload Postfix
 
+- name: Import generic maps file
+  block:
+    - name: Copy generic map file
+      copy:
+        src='{{ postfix_smtp_generic_maps }}'
+        dest='/etc/postfix/generic'
+
+    - name: Update generic maps
+      command: postmap /etc/postfix/generic
+  when: postfix_smtp_generic_maps|default(None) != None
+
 - name: Start Postfix
   service:
     name=postfix
