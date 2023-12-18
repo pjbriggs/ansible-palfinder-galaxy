@@ -18,8 +18,9 @@
   - python_version: "3.10.5"
   - postgresql_version: "14"
   # Postfix settings
-  - postfix_host_name: "centaurus-dev.ls.manchester.ac.uk"
+  - postfix_host_name: "centaurus-dev.its.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
+  - postfix_smtp_generic_maps: "instances/centaurus/files/postfix-generic-devel"
   # Base installation directory and other paths set in the
   # devel_config.yaml file for the 'devel' instance
 
