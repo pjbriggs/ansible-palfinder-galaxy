@@ -37,6 +37,7 @@
 
   vars_files:
   # Instance-specific variables
+  - instances/centaurus/devel_versions.yml
   - instances/centaurus/devel_config.yml
   - instances/centaurus/devel_resolvers.yml
   - instances/centaurus/devel_local_tools.yml

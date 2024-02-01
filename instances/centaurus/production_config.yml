@@ -1,7 +1,6 @@
 ---
 # Galaxy configuration for Centaurus-devel
 galaxy_name: "centaurus"
-galaxy_version: "release_20.09"
 
 # Galaxy base installation dirs
 galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
@@ -19,9 +18,6 @@ galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/production/
 
 # New file path
 galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
-
-# Galaxy-specific Python installation
-galaxy_python_version: "3.8.13"
 
 # Account management
 allow_user_creation: no

@@ -36,6 +36,7 @@
 
   vars_files:
   # Instance-specific variables
+  - instances/centaurus/production_versions.yml
   - instances/centaurus/production_config.yml
   - instances/centaurus/production_resolvers.yml
   - instances/centaurus/production_local_tools.yml
