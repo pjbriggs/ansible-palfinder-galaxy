@@ -3,7 +3,7 @@
 # Install tool using nebulizer & Galaxy API
 
 if [ $# -eq 0 ] ; then
-    echo Usage: $0 SHED TOOL OWNER APIKEY \[URL\] \[--section SECTION\]
+    echo Usage: $0 SHED TOOL OWNER APIKEY \[URL\] \[--section SECTION\] \[--check-install\]
     exit
 fi
 
@@ -12,12 +12,16 @@ TOOL=$2
 OWNER=$3
 APIKEY=$4
 SECTION=
+CHECKINSTALL=
 URL=http://localhost:80
 while [ ! -z "$5" ] ; do
     case "$5" in
 	--section)
 	    shift
 	    SECTION=$5
+	    ;;
+	--check-install)
+	    CHECKINSTALL=yes
 	    ;;
 	*)
 	    URL=$5
@@ -58,7 +62,11 @@ if [ $retcode -ne 0 ] ; then
     echo Nonzero return code ignored
 fi
 
-# Check that tool exists
+# Check that tool exists?
+if [ -z "$CHECKINSTALL" ] ; then
+    exit
+fi
+echo Checking that tool is installed
 ntries=0
 while [ $ntries -lt 10 ] ; do
     if [ -n "$(tool_installing)" ] ; then
