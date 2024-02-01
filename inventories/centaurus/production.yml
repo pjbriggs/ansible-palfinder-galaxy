@@ -21,3 +21,6 @@ centaurus:
     # Threads for uWSGI and handler processes
     galaxy_uwsgi_processes: 4
     galaxy_handler_processes: 2
+    # Installation mode (either 'minimal' for testing
+    # or 'full' for production)
+    galaxy_install_mode: "full"
