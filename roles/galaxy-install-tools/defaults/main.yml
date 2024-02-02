@@ -25,6 +25,14 @@ galaxy_utils_dir: "/usr/local"
 #        section: ... etc
 galaxy_tools: []
 
+# Extra arguments to append to the 'install_tool.sh' script
+# when installing from the tool shed
+# - Set to "--check-install" to force post-install check on
+#   tool existence after installing (increases installation
+#   time but identifies tools where dependencies can't be
+#   installed or new Galaxy version is needed)
+galaxy_install_tool_extra_args:
+
 # Local tools to be installed
 # If defined then should be a list e.g.
 # local_galaxy_tools:

@@ -14,7 +14,7 @@
 
     - name: "Install tools from Galaxy toolshed"
       command:
-        "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}'"
+        "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}' {{ galaxy_install_tool_extra_args }}"
       with_items: "{{ galaxy_tools }}"
 
     - name: "Deactivate Galaxy master API key"
