@@ -1,9 +1,14 @@
 <?xml version="1.0"?>
 <!--
      Auto-generated tool_data_table_conf.xml
-     Based on the sample version from Galaxy release_18.05
+{% if galaxy_tool_data_tables is none %}
+     Default version based on sample from Galaxy release_18.05
+{% else %}
+     Custom version created by Ansible
+{% endif %}
 -->
 <tables>
+{% if galaxy_tool_data_tables is none %}
     <!-- Locations of all fasta files under genome directory -->
     <table name="all_fasta" comment_char="#" allow_duplicate_entries="False">
         <columns>value, dbkey, name, path</columns>
@@ -104,7 +109,7 @@
         <columns>value, name, url</columns>
         <file path="tool-data/biom_simple_display.loc" />
     </table>
-{% if galaxy_tool_data_tables is not none %}
+{% else %}
 {% for tbl in galaxy_tool_data_tables %}
     <!-- {{ tbl.description }} -->
     <table name="{{ tbl.name }}" comment_char="#" allow_duplicate_entries="False">
