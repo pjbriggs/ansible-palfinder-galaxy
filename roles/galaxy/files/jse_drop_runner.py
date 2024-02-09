@@ -408,10 +408,6 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             log.exception("(%s/%s) Job wrapper finish method failed: %s" %
                           (galaxy_id_tag,external_job_id,ex))
             job_state.job_wrapper.fail("Unable to finish job", exception=True)
-        # Clean up the job files
-        cleanup_job = self.app.config.cleanup_job
-        if cleanup_job == "always" or (not stderr and cleanup_job == "onsuccess"):
-            job_state.cleanup()
         # Set the job state
         try:
             job_state.job_wrapper.finish(stdout,stderr,exit_code)
