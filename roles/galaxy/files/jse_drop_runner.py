@@ -389,18 +389,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                           (external_job_id,tool_stdout_path))
                 with io.open(tool_stdout_path,'rt') as fp:
                     stdout = fp.read()
-                    try:
-                        # Try to clean up non-ascii characters
-                        # (Python 2 only)
-                        stdout = stdout.\
-                                 encode('ascii',errors='ignore').\
-                                 replace('\x00','?')
-                    except TypeError:
-                        pass
             else:
                 log.debug("finish_job %s: couldn't find %s" %
                           (external_job_id,tool_stdout_path))
-                stdout = "Unable to acquire tool output"
+                stdout = "Unable to acquire tool stdout"
             # Stderr
             tool_stderr_path = os.path.join(outputs_directory,"tool_stderr")
             if os.path.exists(tool_stderr_path):
@@ -408,18 +400,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                           (external_job_id,tool_stderr_path))
                 with io.open(tool_stderr_path,'rt') as fp:
                     stderr = fp.read()
-                    try:
-                        # Try to clean up non-ascii characters
-                        # (Python 2 only)
-                        stderr = stderr.\
-                                 encode('ascii',errors='ignore').\
-                                 replace('\x00','?')
-                    except TypeError:
-                        pass
             else:
                 log.debug("finish_job %s: couldn't find %s" %
                           (external_job_id,tool_stderr_path))
-                stderr = "Unable to acquire tool output"
+                stderr = "Unable to acquire tool stderr"
         except Exception as ex:
             log.exception("(%s/%s) Job wrapper finish method failed: %s" %
                           (galaxy_id_tag,external_job_id,ex))
