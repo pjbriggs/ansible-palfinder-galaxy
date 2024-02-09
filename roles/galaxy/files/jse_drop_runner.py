@@ -404,12 +404,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 log.debug("finish_job %s: couldn't find %s" %
                           (external_job_id,tool_stderr_path))
                 stderr = "Unable to acquire tool stderr"
-        except Exception as ex:
-            log.exception("(%s/%s) Job wrapper finish method failed: %s" %
-                          (galaxy_id_tag,external_job_id,ex))
-            job_state.job_wrapper.fail("Unable to finish job", exception=True)
-        # Set the job state
-        try:
+            # Set the job state
             job_state.job_wrapper.finish(stdout,stderr,exit_code)
         except Exception as ex:
             log.exception("(%s/%s) Job wrapper finish method failed: %s" %
