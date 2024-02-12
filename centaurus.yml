@@ -21,7 +21,7 @@
   - postfix_host_name: "centaurus.ls.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
   # Base installation directory and other paths set in the
-  # production_config.yaml file for the 'production' instance
+  # production_config.yml file for the 'production' instance
 
   ## Options for migrating to a new VM
   #- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
@@ -40,9 +40,9 @@
   - instances/centaurus/production_config.yml
   - instances/centaurus/production_resolvers.yml
   - instances/centaurus/production_local_tools.yml
-  - instances/centaurus/production_job_conf.yml
   - instances/centaurus/{{ centaurus_secrets }}
   # Variables common to production and devel
+  - instances/centaurus/job_conf.yml
   - instances/centaurus/shed_tools_{{ galaxy_install_mode }}.yml
   - instances/centaurus/tool_data_{{ galaxy_install_mode }}.yml
   - instances/centaurus/custom_scss.yml

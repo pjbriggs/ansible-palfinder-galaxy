@@ -22,7 +22,7 @@
   - postfix_relay_host: "smtp.manchester.ac.uk"
   - postfix_smtp_generic_maps: "instances/centaurus/files/postfix-generic-devel"
   # Base installation directory and other paths set in the
-  # devel_config.yaml file for the 'devel' instance
+  # devel_config.yml file for the 'devel' instance
 
   ## Options for migrating to a new VM
   #- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
@@ -41,9 +41,9 @@
   - instances/centaurus/devel_config.yml
   - instances/centaurus/devel_resolvers.yml
   - instances/centaurus/devel_local_tools.yml
-  - instances/centaurus/devel_job_conf.yml
   - instances/centaurus/{{ centaurus_secrets }}
   # Variables common to production and devel
+  - instances/centaurus/job_conf.yml
   - instances/centaurus/shed_tools_{{ galaxy_install_mode }}.yml
   - instances/centaurus/tool_data_{{ galaxy_install_mode }}.yml
   - instances/centaurus/custom_scss.yml

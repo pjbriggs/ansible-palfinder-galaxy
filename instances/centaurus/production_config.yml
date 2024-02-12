@@ -52,6 +52,11 @@ galaxy_conda_use_mamba: no
 # Preserve Python environment for tools
 galaxy_preserve_python_env: "legacy_and_local"
 
+# Limits for concurrent jobs etc
+galaxy_registered_user_concurrent_jobs: 8
+galaxy_unregistered_user_concurrent_jobs: 0
+galaxy_concurrent_jobs: 1
+
 # Quotas
 enable_quotas: yes
 default_quota_gb: 100
