@@ -1,6 +1,8 @@
 """
 Job runner used to execute Galaxy jobs through JSE-drop.
 
+**This version is compatible with Galaxy 21.05**
+
 To configure Galaxy to use JSE-drop:
 
 1. Enable the plugin in job_conf.xml, for example:
