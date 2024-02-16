@@ -307,9 +307,9 @@ virtual machines for testing the deployment.
 
 The following servers are defined in the ``Vagrantfile``:
 
- - ``centaurus``: CentOS Linux 7 VM (http://192.168.60.3)
- - ``palfinder``: Scientific Linux 6 VM (uses the address
-   http://192.168.60.4)
+ - ``centaurus``: Ubuntu 20.04 VM (http://192.168.60.2)
+ - ``centaurus_dev``: Ubuntu 20.04 VM (http://192.168.60.3)
+ - ``palfinder``: Ubuntu 20.04 VM (http://192.168.60.4)
 
 An additional VM is used to build Galaxy virtual environment for
 deployment on the compute cluster:
@@ -502,6 +502,7 @@ Vagrant Boxes
 The following Vagrant VirtualBox images are recommended for use with the
 playbooks:
 
+ - **Ubuntu 22.04**: ``ubuntu/focal64`` https://app.vagrantup.com/ubuntu/boxes/focal64/
  - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
  - **CentOS 8**: ``centos/8`` https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/virtualbox.box
 

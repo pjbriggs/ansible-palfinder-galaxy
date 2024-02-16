@@ -1,0 +1,105 @@
+---
+# Galaxy configuration for Centaurus-devel
+galaxy_name: "centaurus-dev"
+
+# Galaxy base installation dirs
+galaxy_install_dir: "/mnt/rvmi/centaurus/galaxy"
+galaxy_dir: "{{ galaxy_install_dir }}/devel"
+galaxy_clone_dir: "galaxy-dist"
+
+# Galaxy database directory
+galaxy_file_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/database/files"
+
+# Job working directory
+galaxy_job_working_dir: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/job_working_directory"
+
+# Data manager data directory
+galaxy_data_manager_data_path: "/mnt/bmh01-rvmi/bcf-galaxy/centaurus/devel/tool-data"
+
+# New file path
+galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
+
+# Account management
+allow_user_creation: no
+allow_user_deletion: no
+enable_require_login: yes
+enable_user_activation: no
+
+# GDPR compliance
+enable_beta_gdpr: no
+
+# uWSGI sockets and ports
+galaxy_http_port: "8080"
+galaxy_uwsgi_socket: "4001"
+
+# Users
+galaxy_users:
+  - email: "{{ galaxy_admin_user }}"
+    password: "{{ galaxy_admin_passwd }}"
+galaxy_admin_user: "peter.briggs@manchester.ac.uk"
+#galaxy_extra_admins:
+#  - "foo@manchester.ac.uk"
+#  - "bar@manchester.ac.uk"
+
+# Job configuration
+enable_jse_drop: yes
+galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/jse-drop-csf3"
+galaxy_jse_drop_galaxy_id: "centaurus_devel"
+
+# Use mamba for dependency resolution?
+galaxy_conda_use_mamba: no
+
+# Preserve Python environment for tools
+galaxy_preserve_python_env: "legacy_and_local"
+
+# Limits for concurrent jobs etc
+galaxy_registered_user_concurrent_jobs: 2
+galaxy_unregistered_user_concurrent_jobs: 0
+galaxy_concurrent_jobs: 1
+
+# Quotas
+enable_quotas: yes
+default_quota_gb: 100
+
+# Email
+galaxy_smtp_server: "smtp.manchester.ac.uk"
+galaxy_outgoing_email_addr: "Centaurus Devel <galaxy-no-reply@centaurus-dev.itservices.manchester.ac.uk>"
+galaxy_incoming_email_addr: "peter.briggs@manchester.ac.uk"
+
+# Status monitoring page
+galaxy_generate_status_page: yes
+
+# Job cleanup
+galaxy_cleanup_job: "onsuccess"
+
+# Working directory clean up interval (days)
+galaxy_clean_up_cron_interval: 14
+
+# FTP upload
+enable_ftp_upload: no
+
+# Reporting interface
+enable_reports: yes
+galaxy_reports_uwsgi_socket: "9001"
+
+# Audit report
+email_audit_report_to: "peter.briggs@manchester.ac.uk"
+
+ # Welcome page etc
+galaxy_welcome_template: "instances/centaurus/templates/centaurus-devel-welcome.html.j2"
+##galaxy_terms: "instances/centaurus/files/centaurus-terms.html"
+##galaxy_citations: "instances/centaurus/files/centaurus-citations.html"
+
+# Check toolshed for updates
+enable_tool_shed_check: yes
+
+# Message of the day to display on the front page and message
+# to display under masthead
+# -- for ansible <2.6 "errors=..." option is not supported so
+#    an empty placeholder file is required to stop the playbook
+#    failing
+cdntaurus_motd: "{{ lookup('file', 'instances/centaurus/files/devel-motd', errors='warn') }}"
+galaxy_message: "{{ lookup('file', 'instances/centaurus/files/devel-message', errors='warn') }}"
+
+# Tools conf base XML
+galaxy_tool_conf_file: "instances/centaurus/files/centaurus-tool_conf.xml"

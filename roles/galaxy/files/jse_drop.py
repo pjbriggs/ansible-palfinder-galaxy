@@ -44,6 +44,7 @@ import tempfile
 import re
 import glob
 import time
+import fcntl
 from datetime import datetime
 from datetime import timedelta
 
@@ -103,6 +104,16 @@ class JSEDrop(object):
 
     >>> jse.cleanup('my_job')
 
+    In some cases it might be desirable to stop other processes
+    from accessing the drop-off directory whilst using the
+    client from a different process, so it's also possible to
+    lock the drop-off directory:
+
+    >>> with jse.get_lock():
+    ...    jse.cleanup('my_job')
+
+    (See the FileLock class for details of how the locking is
+    implemented.)
     """
     def __init__(self,drop_dir):
         """
@@ -122,6 +133,14 @@ class JSEDrop(object):
         Return absolute path to JSE drop-off directory
         """
         return self._drop_dir
+
+    def get_lock(self,timeout=None):
+        """
+        Acquire a filesystem lock on the JSE-drop directory
+
+        Returns a FileLock instance
+        """
+        return FileLock(self.drop_dir,timeout=timeout)
 
     def jobs(self):
         """
@@ -510,6 +529,83 @@ class JSEDrop(object):
                                        "%s%s" % (name,ext)))
             except OSError:
                 pass
+
+class FileLock:
+    """
+    File locking using fcntl.flock()
+
+    Usage:
+
+    >>> lock = FileLock(drop_dir)
+    >>> lock.has_lock
+    False
+    >>> lock.acquire()
+    >>> lock.has_lock
+    True
+    >>> lock.release()
+
+    Can also be used as context manager e.g.
+
+    >>> with FileLock(drop_dir):
+    ...    # Lock drop dir while you do stuff
+
+    NB largely copied from FileLock class in
+    https://github.com/fls-bioinformatics-core/auto_process_ngs/blob/devel/auto_process_ngs/utils.py
+    """
+    def __init__(self,f,timeout):
+        # File system entity to lock
+        self._f = os.path.abspath(f)
+        self._lockfd = None
+        self._timeout = timeout
+
+    def __enter__(self):
+        # Called by 'with' statement to enter
+        # runtime context
+        self.acquire()
+        return self
+
+    def __exit__(self,*args):
+        # Called when execution leaves the 'with'
+        # code block
+        self.release()
+
+    def acquire(self,timeout=None):
+        # Acquire the lock on the drop dir
+        if timeout is None:
+            timeout = self._timeout
+        if timeout is not None:
+            interval = max(0.01,timeout/100.0)
+        else:
+            interval is None
+        max_time = time.time() + timeout
+        lockfd = os.open(self._f,os.O_RDONLY)
+        while not self.has_lock:
+            try:
+                # Try to get an exclusive lock
+                fcntl.flock(lockfd,fcntl.LOCK_EX | fcntl.LOCK_NB)
+                self._lockfd = lockfd
+            except BlockingIOError:
+                # Something else has the lock
+                if (timeout is not None and time.time() < max_time):
+                    # Timeout limit not reached
+                    time.sleep(interval)
+                else:
+                    # No timeout or timeout exceeded
+                    break
+        if not self.has_lock:
+            # Failed to get lock
+            raise BlockingIOError
+
+    def release(self):
+        # Release a previously acquired lock
+        if self.has_lock:
+            os.close(self._lockfd)
+            self._lockfd = None
+
+    @property
+    def has_lock(self):
+        # Check if instance holds the lock
+        return (self._lockfd is not None)
 
 def jse_drop_cleanup_deleted(drop_dir,interval):
     """

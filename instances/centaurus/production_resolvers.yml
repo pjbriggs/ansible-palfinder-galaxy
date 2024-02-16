@@ -1,0 +1,22 @@
+---
+# Dependency resolvers for production
+galaxy_dependency_resolvers:
+  # Versioned resolvers
+  - type: 'tool_shed_packages'
+  - type: 'galaxy_packages'
+  - type: 'galaxy_packages'
+    base_path: '{{ galaxy_dir }}/local_tools/Amplicon_analysis/tool_dependencies'
+  - type: 'galaxy_packages'
+    base_path: '{{ galaxy_dir }}/local_tool_dependencies'
+  - type: 'galaxy_packages'
+    base_path: '{{ galaxy_dir }}/local_tools/tool_dependencies'
+  - type: 'conda'
+  # Unversioned resolvers
+  - type: 'galaxy_packages'
+    versionless: 'true'
+  - type: 'galaxy_packages'
+    base_path: '{{ galaxy_dir }}/local_tools/Amplicon_analysis/tool_dependencies'
+  - type: 'galaxy_packages'
+    versionless: 'true'
+  - type: 'conda'
+    versionless: 'true'

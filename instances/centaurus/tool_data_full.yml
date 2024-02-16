@@ -43,6 +43,12 @@ galaxy_loc_file_data:
       - "snp138\thg19\tfilter\t/mnt/bmh01-rvmi/bcf-galaxy/centaurus/common/tool-data/annovar/hg19"
       - "cosmic68\thg19\tfilter\t/mnt/bmh01-rvmi/bcf-galaxy/centaurus/common/tool-data/annovar/hg19"
       - "1000g2012apr_all\thg19\tfilter\t/mnt/bmh01-rvmi/bcf-galaxy/centaurus/common/tool-data/annovar/hg19"
+  # blastdb.loc
+  - loc_file: "blastdb.loc"
+    data:
+      - "nt_2023-05-25\tNCBI partially redundant (nt) 25 May 2023\t/mnt/bmh01-rvmi/bcf-galaxy/centaurus/common/blast/nt/2023-05-25/nt"
+      - "nt_12_May_2023\tNCBI partially redundant (nt) 12 May 2023\t/mnt/data-sets/bcf/softwareData/blast/nt_12_May_2023/nt"
+      - "nt_24_Jul_2013\tNCBI partially redundant (nt) 24 July 2013\t/mnt/data-sets/bcf/softwareData/blast/nt_24_Jul_2013/nt"
   # bowtie2_indices.loc
   - loc_file: "bowtie2_indices.loc"
     data:
@@ -162,7 +168,7 @@ galaxy_loc_file_data:
   # rnastar_index2x_versioned.loc
   - loc_file: "rnastar_index2x_versioned.loc"
     data:
-      - "directory) that points to the directories in which those files are stored."
+      - "#hg19_random_chrM_hap\thg19\tHuman (hg19_random_chrM-hap)\t/mnt/data-sets/bcf/genomeIndexes/hg19_GRCh37_random_chrM/STAR_2.7.8a_75bp_gencode41\t1\t2.7.8a"
   # rnastar_index.loc
   - loc_file: "rnastar_index.loc"
     data:

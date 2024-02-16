@@ -1,0 +1,27 @@
+---
+# Local tools managed by ansible
+local_galaxy_tools:
+  - name: "venn_diagram"
+    tool_files:
+      - "tools/venn_diagram/cistrome_venn_diagram.xml"
+      - "tools/venn_diagram/cistrome_venn_diagram.py"
+    section:
+      name: "ChIP-seq"
+      id: "ngs-chip-seq"
+
+# Local tools not managed by ansible
+local_galaxy_tool_references:
+  - name: "cas13_design"
+    tool_xml_files:
+      - "cas13_design/RfxCas13d_GuideScoring.xml"
+      - "cas13_design/guide_specificity_metrics.xml"
+      - "cas13_design/pdf_report.xml"
+    section:
+      name: "Cas13 Guide Design"
+      id: "cas13-guide-design"
+  - name: "local_tools"
+    tool_xml_files:
+      - "Amplicon_analysis/Amplicon_analysis-galaxy/amplicon_analysis_pipeline.xml"
+    section:
+      name: "Local Tools"
+      id: "local-tools"

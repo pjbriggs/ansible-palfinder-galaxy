@@ -23,6 +23,22 @@ galaxy_job_destinations:
     runner: "jse_drop"
     jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
     jse_drop_slots: "12"
+  - id: "jse_drop_smp_16"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 16"
+    jse_drop_slots: "16"
+  # High memory runner
+  - id: "jse_drop_smp_8_mem256"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 8 -l mem256"
+    jse_drop_slots: "8"
+    envs:
+      - id: "GALAXY_MEMORY_MB"
+        value: "131072"
+  # Short serial queue runner for quick jobs (or testing)
+  - id: "jse_drop_short"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-j n -l short"
   # Runner for Amplicon analysis pipeline
   - id: "jse_drop_amplicon_analysis"
     runner: "jse_drop"
@@ -31,24 +47,43 @@ galaxy_job_destinations:
     envs:
       - id: "AMPLICON_ANALYSIS_REF_DATA_PATH"
         value: "/mnt/data-sets/bcf/softwareData/galaxy/amplicon-analysis-pipeline"
-  # High-memory runner for Trinity
-  - id: "jse_drop_trinity"
+  # Runner for NCBI Blast+
+  - id: "jse_drop_ncbi_blast_plus"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -l mem256 -pe smp.pe 12"
-    jse_drop_slots: "12"
-    envs:
-      - id: "GALAXY_MEMORY_MB"
-        value: "194560"
-      - id: "_JAVA_OPTIONS"
-        value: "-XX:ParallelGCThreads=1"
-  # Runner for Picard (needs Java options)
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 16 -l mem256"
+    jse_drop_slots: "16"
+  # Runner for Picard MarkDuplicates (needs Java options)
   - id: "jse_drop_picard_markduplicates"
     runner: "jse_drop"
     jse_drop_qsub_options: "-V -j n -pe smp.pe 2"
-    jse_drop_slots: "2"
     envs:
       - id: "_JAVA_OPTIONS"
         value: "-Xmx6G -Xms256m"
+  # Runner for snp2hla
+  - id: "jse_drop_snp2hla"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n"
+    envs:
+      - id: "ref_panel"
+        value: "/mnt/rvmi/centaurus/galaxy/devel/local_tools/snp2hla/data/REF"
+  # Runner for Trinity
+  #
+  # Trinity docs suggest CPUs <= 12 so 384G available (i.e. 32G/core * 12)
+  # Set GALAXY_MEMORY_MB=389120 (no units) (i.e. 380 * 1024)
+  #
+  # Also need to explicitly set _JAVA_OPTIONS to restrict Java processes to
+  # single core (otherwise it seems to take all cores on the node, even if
+  # not available)
+  - id: "jse_drop_trinity"
+    runner: "jse_drop"
+    jse_drop_qsub_options: "-V -j n -l mem512 -pe smp.pe 12"
+    jse_drop_slots: "12"
+    envs:
+      - id: "GALAXY_MEMORY_MB"
+        value: "389120"
+      - id: "_JAVA_OPTIONS"
+        value: "-XX:ParallelGCThreads=1"
+
 # Tool destinations
 galaxy_tool_destinations:
   - id: "amplicon_analysis_pipeline"
@@ -69,18 +104,22 @@ galaxy_tool_destinations:
     destination: "jse_drop_smp_8"
   - id: "cufflinks"
     destination: "jse_drop_smp_8"
-  - id: "hisat2"
-    destination: "jse_drop_smp_12"
-  - id: "picard_MarkDuplicates"
-    destination: "jse_drop_picard_markduplicates"
   - id: "freebayes"
     destination: "jse_drop_smp_8"
+  - id: "hisat2"
+    destination: "jse_drop_smp_12"
+  - id: "ncbi_blastn_wrapper"
+    destination: "jse_drop_ncbi_blast_plus"
+  - id: "picard_MarkDuplicates"
+    destination: "jse_drop_picard_markduplicates"
   - id: "rna_star"
     destination: "jse_drop_smp_8"
   - id: "rnaspades"
-    destination: "jse_drop_smp_4"
+    destination: "jse_drop_smp_8_mem256"
   - id: "salmon"
     destination: "jse_drop_smp_4"
+  - id: "snp2hla_2"
+    destination: "jse_drop_snp2hla"
   - id: "tophat"
     destination: "jse_drop_smp_12"
   - id: "tophat2"
@@ -88,10 +127,16 @@ galaxy_tool_destinations:
   - id: "transdecoder"
     destination: "jse_drop_smp_4"
   - id: "trimmomatic"
-    destination: "jse_drop_smp_6"
+    destination: "jse_drop_smp_8"
   - id: "trinityrnaseq"
     destination: "jse_drop_smp_8"
   - id: "trinity"
     destination: "jse_drop_trinity"
   - id: "trinity_align_and_estimate_abundance"
     destination: "jse_drop_smp_4"
+  - id: "Cas13d_GuideScoring"
+    destination: "jse_drop_short"
+  - id: "gRNA_specificity_scorer"
+    destination: "jse_drop_short"
+  - id: "pdf_report"
+    destination: "jse_drop_short"

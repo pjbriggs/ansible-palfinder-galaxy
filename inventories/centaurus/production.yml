@@ -1,25 +1,26 @@
 centaurus:
   hosts:
-    130.88.97.245
+    130.88.41.210
   vars:
     # Server name
     galaxy_server_name: "centaurus.itservices.manchester.ac.uk"
-    # Galaxy configuation
-    centaurus_galaxy_config: production.yml
     # Secrets
     centaurus_secrets: production_secrets.yml
-    # uWSGI and handler configuration
-    galaxy_uwsgi_processes: 4
-    galaxy_handler_processes: 4
-    # JSE-Drop service
+    # Local JSE-Drop service
     enable_local_jse_drop: no
-    # Job cleanup
-    galaxy_cleanup_job: "onsuccess"
+    # Cluster needs to use its own virtual env
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/centaurus/galaxy/shared/csf/galaxy/20.09/venv_py3.8"
+    # Environment setup file
+    galaxy_environment_setup_file: "instances/centaurus/files/centaurus_environment_setup-production.sh"
     # Postfix/email configuration
     enable_smtp: yes
     # Audit report
     email_audit_report_to: "{{ galaxy_admin_user }}"
     # SSL configuration
     enable_https: yes
-    # Default quota
-    default_quota_gb: 100
+    # Threads for uWSGI and handler processes
+    galaxy_uwsgi_processes: 4
+    galaxy_handler_processes: 2
+    # Installation mode (either 'minimal' for testing
+    # or 'full' for production)
+    galaxy_install_mode: "full"

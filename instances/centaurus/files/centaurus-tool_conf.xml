@@ -5,6 +5,7 @@
     <tool file="data_source/ucsc_tablebrowser.xml" />
     <!-- <tool file="data_source/ucsc_tablebrowser_test.xml" /> -->
     <tool file="data_source/ucsc_tablebrowser_archaea.xml" />
+    <tool file="data_source/sra.xml" />
     <tool file="data_source/ebi_sra.xml" />
     <tool file="data_source/fly_modencode.xml" />
     <tool file="data_source/intermine.xml" />
@@ -20,12 +21,9 @@
     <tool file="data_source/zebrafishmine.xml" />
     <tool file="data_source/eupathdb.xml" />
     <tool file="data_source/hbvar.xml" />
-    <tool file="genomespace/genomespace_importer.xml" />
-    <tool file="genomespace/genomespace_push.xml" />
   </section>
   <section id="send" name="Send Data">
     <tool file="cloud/send.xml" />
-    <tool file="genomespace/genomespace_exporter.xml" />
   </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" />
@@ -94,10 +92,28 @@
   </section>
   <section id="ngs:_sam_tools" name="SAM Tools">
   </section>
+  <!--
+      FIXME: Alternate version of "SAM Tools" in devel
+      FIXME: update the section information in shed_tool_conf.xml
+      FIXME: to match production
+  -->
+  <!--
+  <section id="samtools" name="NGS: SAM Tools">
+  </section>
+  -->
   <section id="bed_tools" name="BED Tools">
   </section>
   <section id="bed_tools2" name="BED Tools2">
   </section>
+  <!--
+      FIXME: Alternate version of "BED Tools2" in devel
+      FIXME: update the section information in shed_tool_conf.xml
+      FIXME: to match production
+  -->
+  <!--
+  <section id="bedtools2" name="BED Tools2">
+  </section>
+  -->
   <section id="bcf_vcf" name="BCF/VCF">
   </section>
   <section id="convert" name="Convert Formats">
@@ -140,6 +156,9 @@
     <tool file="stats/aggregate_binned_scores_in_intervals.xml" />
     <tool file="filters/ucsc_gene_bed_to_exon_bed.xml" />
   </section>
+  <!--
+      Genomic Analysis
+  -->
   <label id="genomics-analysis" text="Genomics Analysis" />
   <section id="assembly" name="Assembly" version="">
   </section>
@@ -147,21 +166,52 @@
   </section>
   <section id="ngs-mapping" name="Mapping">
   </section>
+  <!--
+      FIXME: "Peak calling" only appears in devel
+      FIXME: update the section information in shed_tool_conf.xml
+      FIXME: to match production
+  -->
+  <!--
+  <section id="ngs:_peak_calling" name="NGS: Peak Calling">
+  </section>
+  -->
   <section id="ngs:_variant_analysis" name="Variant Calling">
+  </section>
+  <section id="variant_analysis" name="NGS: Variant Analysis">
   </section>
   <section id="ngs-rna-tools" name="RNA-seq">
     <label id="rna_seq" text="RNA-seq" />
     <label id="filtering" text="Filtering" />
   </section>
+  <!--
+      FIXME: Alternate version of "ngs-rna-tools" in devel
+      FIXME: update the section information in shed_tool_conf.xml
+      FIXME: to match production
+  -->
+  <!--
+  <section id="ngs-rna-tools" name="NGS: RNA Analysis">
+    <label id="rna_seq" text="RNA-seq" />
+    <label id="filtering" text="Filtering" />
+  </section>
+  -->
   <section id="ngs-chip-seq" name="ChIP-seq">
   </section>
+  <!--
+      FIXME: Alternate version of "ngs-chip-seq" in devel
+      FIXME: update the section information in shed_tool_conf.xml
+      FIXME: to match production
+  -->
+  <!--
+  <section id="ngs-chip-seq" name="NGS: ChIP-seq">
+  </section>
+  -->
   <section id="microsatellite_analysis" name="Microsatellite Analysis" version="">
   </section>
   <section id="microbiome_analysis" name="Microbiome Analysis" version="">
   </section>
   <section id="motifs" name="Motifs">
   </section>
-  <section id="single_cell_tools" name="Single Cell" version="">
+  <section id="single_cell_tools" name="Single Cell">
   </section>
   <section id="hgv" name="Phenotype Association">
     <tool file="evolution/codingSnps.xml" />
@@ -184,6 +234,9 @@
   </section>
   <section id="data_simulation" name="Data simulation" version="">
   </section>
+  <!--
+      Metagenomics
+  -->
   <label id="metagenomics" text="Metagenomics" />
   <section id="metagenomics:_mothur" name="Mothur" version="">
   </section>
@@ -191,6 +244,9 @@
   </section>
   <section id="metagenomics:_vsearch" name="Vsearch" version="">
   </section>
+  <!--
+      Genomics Toolkits
+  -->
   <label id="genomics-toolkits" text="Genomics Toolkits" />
   <section id="ngs:_picard_tools" name="Picard Tools">
   </section>
@@ -200,6 +256,9 @@
   </section>
   <section id="ngs:_ncbi_blast_plus" name="NCBI BLAST+">
   </section>
+  <!--
+      Statistics and Visualisation
+  -->
   <label id="statistics_and_visulation" text="Statistics and Visualisation" />
   <section id="stats" name="Statistics">
     <tool file="stats/gsummary.xml" />

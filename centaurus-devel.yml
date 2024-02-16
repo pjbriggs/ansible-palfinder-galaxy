@@ -1,5 +1,5 @@
 ---
-- hosts: centaurus
+- hosts: centaurus-dev
 
   vars:
   # Ubuntu doesn't have Python2 by default
@@ -18,10 +18,11 @@
   - python_version: "3.10.5"
   - postgresql_version: "14"
   # Postfix settings
-  - postfix_host_name: "centaurus.ls.manchester.ac.uk"
+  - postfix_host_name: "centaurus-dev.its.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
+  - postfix_smtp_generic_maps: "instances/centaurus/files/postfix-generic-devel"
   # Base installation directory and other paths set in the
-  # production_config.yml file for the 'production' instance
+  # devel_config.yml file for the 'devel' instance
 
   ## Options for migrating to a new VM
   #- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
@@ -32,14 +33,14 @@
   ## Define proxy environment variables if needed
   #- proxy_env:
   #    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
-  #    https_proxy: 'https://updateproxy.manchester.ac.uk:3128
+  #    https_proxy: 'https://updateproxy.manchester.ac.uk:3128'
 
   vars_files:
   # Instance-specific variables
-  - instances/centaurus/production_versions.yml
-  - instances/centaurus/production_config.yml
-  - instances/centaurus/production_resolvers.yml
-  - instances/centaurus/production_local_tools.yml
+  - instances/centaurus/devel_versions.yml
+  - instances/centaurus/devel_config.yml
+  - instances/centaurus/devel_resolvers.yml
+  - instances/centaurus/devel_local_tools.yml
   - instances/centaurus/{{ centaurus_secrets }}
   # Variables common to production and devel
   - instances/centaurus/job_conf.yml

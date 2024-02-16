@@ -1638,7 +1638,7 @@ galaxy:
   # environment for legacy tools and locally managed tools (this might
   # be useful for instance if you are installing software into Galaxy's
   # virtualenv for tool development).
-  #preserve_python_environment: legacy_only
+  preserve_python_environment: {{ galaxy_preserve_python_env }}
 
   # Clean up various bits of jobs left on the filesystem after
   # completion.  These bits include the job working directory, external

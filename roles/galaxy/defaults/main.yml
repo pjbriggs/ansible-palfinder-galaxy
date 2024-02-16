@@ -43,6 +43,13 @@ galaxy_generate_status_page: no
 # Environment setup file
 galaxy_environment_setup_file:
 
+# Preserve Python environment
+# - 'legacy_only' (default) preserves Python env for
+#    legacy tools only
+# - 'legacy_and_local' for legacy and locally managed tools
+# - 'always' for all tools (may break conda dependencies)
+galaxy_preserve_python_env: "legacy_only"
+
 # (S)CSS styles/custom colours
 # Define entries as a dictionary with:
 # - var   (SCSS variable e.g. 'brand-primary')
