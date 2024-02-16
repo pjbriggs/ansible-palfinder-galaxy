@@ -23,4 +23,6 @@
       - 'python-setuptools'
       - 'libffi'
       - 'libffi-devel'
+      - 'xz'
+      - 'xz-devel'
     state: 'present'
