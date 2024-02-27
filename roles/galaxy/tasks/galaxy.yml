@@ -99,12 +99,20 @@
       when: venv_python_version.stdout != external_python_version.stdout
   when: galaxy_venv.stat.exists
 
-- name: "Remove futures from pinned-requirements.txt"
+- name: "Remove futures from pinned-requirements.txt (release_20.09)"
   lineinfile:
     path: '{{ galaxy_root }}/lib/galaxy/dependencies/pipfiles/default/pinned-requirements.txt'
     state: absent
     line: "futures==3.1.1"
   when: galaxy_version == "release_20.09"
+
+- name: "Change pydantic version to 1.10 in pinned-requirements.txt (release_21.05)"
+  lineinfile:
+    path: '{{ galaxy_root }}/lib/galaxy/dependencies/pinned-requirements.txt'
+    search_string: "pydantic==1.7.3;"
+    state: present
+    line: 'pydantic==1.10; python_version >= "3.6" and python_version < "4.0"'
+  when: galaxy_version == "release_21.05"
 
 - name: "Make virtualenv in Galaxy root"
   command:
