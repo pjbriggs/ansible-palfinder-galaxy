@@ -413,6 +413,14 @@ Python and the Galaxy virtual environment, by specifiying:
    galaxy_force_reinstall_python: yes
    galaxy_force_reinstall_venv: yes
 
+Finally, it may also be a good idea to refresh the compiled Mako
+templates (especially if upgrading to a new Galaxy release or
+Python version) - this can be done automatically by specifying:
+
+::
+
+   galaxy_remove_mako_templates: yes
+
 Notes on the deployment
 -----------------------
 

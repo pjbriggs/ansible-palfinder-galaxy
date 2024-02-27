@@ -291,15 +291,18 @@
   with_items: "{{ galaxy_sanitize_whitelist_tools }}"
   when: galaxy_sanitize_whitelist_tools|default(None) != None
 
-# Remove compiled .mako templates for Python 3 updates
-# See https://docs.galaxyproject.org/en/release_20.01/admin/python.html
-- name: "Remove compiled .mako templates"
+# Remove compiled .mako templates
+- name: "Remove compiled .mako templates from 'database'"
   file:
     path: '{{ galaxy_root }}/database/compiled_templates/'
     state: absent
-  when:
-    - galaxy_python_version.startswith("3.")
-    - galaxy_version == "release_20.01"
+  when: galaxy_remove_mako_templates == True
+
+- name: "Remove compiled .mako templates from 'database/cache'"
+  file:
+    path: '{{ galaxy_root }}/database/cache/compiled_templates/'
+    state: absent
+  when: galaxy_remove_mako_templates == True
 
 # Temp dirs for pip and yarn caches
 - name: "Check/create temporary cache directory"
