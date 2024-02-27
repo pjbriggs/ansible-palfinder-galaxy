@@ -99,7 +99,7 @@
       when: venv_python_version.stdout != external_python_version.stdout
   when: galaxy_venv.stat.exists
 
-- name: "Remove futures from pinned-requirements.txt"
+- name: "Remove futures from pinned-requirements.txt (release_20.09)"
   lineinfile:
     path: '{{ galaxy_root }}/lib/galaxy/dependencies/pipfiles/default/pinned-requirements.txt'
     state: absent
