@@ -302,6 +302,11 @@
     - galaxy_version == "release_20.01"
 
 # Temp dirs for pip and yarn caches
+- name: "Check/create temporary cache directory"
+  file:
+    path: "{{ galaxy_installation_tmp_dir }}"
+    state: directory
+
 - name: "Make temporary pip cache directory"
   tempfile:
     path: "{{ galaxy_installation_tmp_dir }}"
