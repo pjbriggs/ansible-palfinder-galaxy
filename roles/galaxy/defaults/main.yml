@@ -116,6 +116,11 @@ galaxy_force_reinstall_python: no
 # Temporary directory to use during installation
 galaxy_installation_tmp_dir: "/tmp"
 
+# Remove compiled mako templates?
+# This might be necessary when upgrading to a new
+# Galaxy release and/or Python version
+galaxy_remove_mako_templates: yes
+
 # Toolshed check
 enable_tool_shed_check: no
 
