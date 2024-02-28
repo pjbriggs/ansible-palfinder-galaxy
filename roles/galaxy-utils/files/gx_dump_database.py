@@ -93,7 +93,7 @@ if __name__ == "__main__":
     # Run pg_dump
     try:
         subprocess.run(['pg_dump','-U',user,name],
-                       env={ 'PGPASSWORD': passwd },
+                       env={ **os.environ, 'PGPASSWORD': passwd },
                        stdout=fpout)
     except Exception as ex:
         logging.critical("SQL dump failed: %s" % ex)
