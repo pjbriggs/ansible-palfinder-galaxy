@@ -57,7 +57,7 @@
 # Create .loc files from samples
 - name: "Create and populate loc files"
   block:
-    - name: "Create loc files from sample versions"
+    - name: "Create initial empty loc files from sample versions"
       copy:
         src='{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
         dest='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
@@ -66,7 +66,7 @@
         - '{{ galaxy_loc_file_data }}'
 
     # Update the reference data
-    - name: "Update tool data in loc files"
+    - name: "Populate loc files with tool data"
       lineinfile:
         path='{{ galaxy_root }}/tool-data/{{ item.0.loc_file }}'
         state=present

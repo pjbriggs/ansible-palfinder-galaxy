@@ -4,6 +4,9 @@ This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 -->
 <toolbox tool_path="../local_tools">
 {% if local_galaxy_tools is not none %}
+<!--
+    Local tools installed by Ansible
+-->
 {%   for tool in local_galaxy_tools %}
 {%     if "section" in tool %}
   <section id="{{ tool.section.id }}" name="{{ tool.section.name }}">
@@ -20,13 +23,16 @@ This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 {%   endfor %}
 {% endif %}
 {% if local_galaxy_tool_references is not none %}
+<!--
+    Additional local tools not installed by Ansible
+-->
 {%   for tool in local_galaxy_tool_references %}
 {%     if "section" in tool %}
   <section id="{{ tool.section.id }}" name="{{ tool.section.name }}">
 {%     endif %}
 {%     for tool_file in tool.tool_xml_files %}
 {%       if tool_file.endswith(".xml") %}
-    <tool file="{{ tool.name }}/{{ tool_file | basename }}" />
+    <tool file="{{ tool_file }}" />
 {%       endif %}
 {%     endfor %}
 {%     if "section" in tool %}

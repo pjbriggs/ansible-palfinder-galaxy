@@ -57,8 +57,9 @@ local_galaxy_tools: []
 # If defined then should be a list of dictionaries, each
 # of the form:
 #
-# - name: internal name for the tool
-# - tool_xml_files: paths to XML files (as a list)
+# - name: internal name for the tool (not used)
+# - tool_xml_files: paths to XML files relative to the
+#   'local_tools' directory (as a list)
 # - section: dictionary with 'name' and 'id' of target section
 #
 # For example:
@@ -66,9 +67,9 @@ local_galaxy_tools: []
 # local_galaxy_tool_references:
 #      - name: "cas13_design"
 #        tool_xml_files:
-#          - "tools/cas13_design/RfxCas13d_GuideScoring.xml"
-#          - "tools/cas13_design/guide_specificity_metrics.xml"
-#          - "tools/cas13_design/pdf_report.xml"
+#          - "cas13_design/tools/cas13_design/RfxCas13d_GuideScoring.xml"
+#          - "cas13_design/tools/cas13_design/guide_specificity_metrics.xml"
+#          - "cas13_design/tools/cas13_design/pdf_report.xml"
 #        section:
 #          name: "Cas13 Guide Design"
 #          id: "cas13-guide-design"
