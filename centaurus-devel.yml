@@ -24,16 +24,22 @@
   # Base installation directory and other paths set in the
   # devel_config.yml file for the 'devel' instance
 
-  ## Options for migrating to a new VM
-  #- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
-  #- galaxy_force_reinstall_python: yes
-  #- galaxy_force_reinstall_venv: yes
-  #- galaxy_reinstall_conda: yes
+  # Options when migrating to a new VM
+  # NB SQL database file should be on the remote server
+  ##- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.galaxy_dev.2024-02-27.sql"
+  ##- galaxy_reinstall_conda: yes
 
-  ## Define proxy environment variables if needed
-  #- proxy_env:
-  #    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
-  #    https_proxy: 'https://updateproxy.manchester.ac.uk:3128'
+  # Options when updating Python version
+  ##- galaxy_force_reinstall_python: yes
+  ##- galaxy_force_reinstall_venv: yes
+
+  # Options when updating Galaxy version
+  ##- galaxy_remove_mako_templates: yes
+
+  # Define proxy environment variables if needed
+  ##- proxy_env:
+  ##    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
+  ##    https_proxy: 'https://updateproxy.manchester.ac.uk:3128'
 
   vars_files:
   # Instance-specific variables
