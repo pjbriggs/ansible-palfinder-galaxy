@@ -24,3 +24,5 @@ centaurus-dev:
     # Installation mode (either 'minimal' for testing
     # or 'full' for production)
     galaxy_install_mode: "full"
+    # Temporary dir for Galaxy install
+    galaxy_installation_tmp_dir: "/home/{{ galaxy_user }}/tmp"
