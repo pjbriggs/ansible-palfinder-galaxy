@@ -9,7 +9,7 @@ centaurus-dev:
     # Local JSE-Drop service
     enable_local_jse_drop: no
     # Cluster needs to use its own virtual env
-    galaxy_jse_drop_virtual_env: "/mnt/rvmi/centaurus/galaxy/shared/csf/galaxy/20.09/venv_py3.8"
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/centaurus/galaxy/shared/csf/galaxy/21.05/venv_py3.8"
     # Environment setup file
     galaxy_environment_setup_file: "instances/centaurus/files/centaurus_environment_setup-devel.sh"
     # Postfix/email configuration
