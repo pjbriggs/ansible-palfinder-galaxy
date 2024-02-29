@@ -26,7 +26,7 @@ This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 {%     endif %}
 {%     for tool_file in tool.tool_xml_files %}
 {%       if tool_file.endswith(".xml") %}
-    <tool file="{{ tool.name }}/{{ tool_file | basename }}" />
+    <tool file="{{ tool_file }}" />
 {%       endif %}
 {%     endfor %}
 {%     if "section" in tool %}
