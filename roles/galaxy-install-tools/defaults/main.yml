@@ -31,6 +31,9 @@ galaxy_tools: []
 #   tool existence after installing (increases installation
 #   time but identifies tools where dependencies can't be
 #   installed or new Galaxy version is needed)
+# - Set to "--no-wait" to force tool installation not to wait
+#   for installations to complete (fastest option if tools
+#   are already installed, not recommended otherwise)
 galaxy_install_tool_extra_args:
 
 # Local tools to be installed
