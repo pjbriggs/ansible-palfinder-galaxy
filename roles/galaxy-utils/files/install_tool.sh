@@ -3,7 +3,7 @@
 # Install tool using nebulizer & Galaxy API
 
 if [ $# -eq 0 ] ; then
-    echo Usage: $0 SHED TOOL OWNER APIKEY \[URL\] \[--section SECTION\] \[--check-install\]
+    echo Usage: $0 SHED TOOL OWNER APIKEY \[URL\] \[--section SECTION\] \[--check-install\] \[--no-wait\]
     exit
 fi
 
@@ -13,6 +13,7 @@ OWNER=$3
 APIKEY=$4
 SECTION=
 CHECKINSTALL=
+NOWAIT=
 URL=http://localhost:80
 while [ ! -z "$5" ] ; do
     case "$5" in
@@ -22,6 +23,10 @@ while [ ! -z "$5" ] ; do
 	    ;;
 	--check-install)
 	    CHECKINSTALL=yes
+	    ;;
+	--no-wait)
+	    shift
+	    NOWAIT="--no-wait"
 	    ;;
 	*)
 	    URL=$5
@@ -52,9 +57,9 @@ fi
 
 # Install the tool
 if [ -z "$SECTION" ] ; then
-    $NEBULIZER -k $APIKEY install_tool -y $URL $SHED $OWNER $TOOL
+    $NEBULIZER -k $APIKEY install_tool -y $NOWAIT $URL $SHED $OWNER $TOOL
 else
-    $NEBULIZER -k $APIKEY install_tool -y --tool-panel-section "$SECTION" $URL $SHED $OWNER $TOOL
+    $NEBULIZER -k $APIKEY install_tool -y $NOWAIT --tool-panel-section "$SECTION" $URL $SHED $OWNER $TOOL
 fi
 retcode=$?
 echo Tool installation returned $retcode
