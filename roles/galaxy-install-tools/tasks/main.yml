@@ -57,11 +57,19 @@
 # Create .loc files from samples
 - name: "Create and populate loc files"
   block:
+    - name: "Create any missing sample loc files"
+      copy:
+        content: ""
+        dest: "{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample"
+        force: false
+      with_items:
+        - '{{ galaxy_loc_file_data }}'
+
     - name: "Create initial empty loc files from sample versions"
       copy:
-        src='{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
-        dest='{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
-        remote_src=True
+        src: '{{ galaxy_root }}/tool-data/{{ item.loc_file }}.sample'
+        dest: '{{ galaxy_root }}/tool-data/{{ item.loc_file }}'
+        remote_src: true
       with_items:
         - '{{ galaxy_loc_file_data }}'
 
