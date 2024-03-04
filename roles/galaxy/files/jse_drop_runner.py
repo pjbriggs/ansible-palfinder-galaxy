@@ -3,6 +3,8 @@ Job runner used to execute Galaxy jobs through JSE-drop.
 
 **This version is compatible with Galaxy 21.05**
 
+(See https://github.com/galaxyproject/galaxy/blob/release_21.05/doc/source/dev/build_a_job_runner.rst)
+
 To configure Galaxy to use JSE-drop:
 
 1. Enable the plugin in job_conf.xml, for example:
@@ -64,6 +66,7 @@ The parameters available for the destinations are:
 """
 
 import logging
+import shutil
 import string
 import time
 import io
@@ -107,9 +110,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         kwargs[ 'runner_param_specs' ].update( runner_param_specs )
         # Initialise the base class
         super( JSEDropJobRunner, self ).__init__( app, nworkers, **kwargs )
-        # Initialise the queues from the base class
-        self._init_monitor_thread()
-        self._init_worker_threads()
+        # Keep a record of completed jobs (to see if job
+        # completion is being double-handled)
+        self._check_double_handling = True
+        self._completed = list()
 
     def _get_job_name(self,galaxy_id_tag,tool_id=None,galaxy_id=None):
         """
@@ -164,6 +168,25 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         except KeyError:
             return None
 
+    def _register_completed_job(self,job_name):
+        """
+        Raises exception if job completion is double handled
+
+        If double handling checking is enabled then the
+        name of the completed job will be checked against
+        the list of previously completed jobs. An
+        exception will be raised if the same job name
+        has already been registered.
+        """
+        if not self._check_double_handling:
+            return
+        if job_name in self._completed:
+            raise Exception("'%s': job already added to list of "
+                            "'completed' jobs in JSE-Drop runner" %
+                            job_name)
+        else:
+            self._completed.append(job_name)
+
     def parse_destination_params(self, params):
         """Parse the JobDestination ``params`` dict and return the runner's native representation of those params.
         """
@@ -194,7 +217,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                           "JSE-drop directory defined)" %
                           (galaxy_id_tag,job_name))
             return
-        # Initialise JSE-drop wrapper
+        # Initialise JSE-drop client interface
         jse_drop = JSEDrop(drop_off_dir)
         # ID and name for job
         galaxy_id_tag = job_wrapper.get_id_tag()
@@ -236,7 +259,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         script = "\n".join((shell,qsub_header,script))
         # Create the drop file to submit the job
         try:
-            drop_file = jse_drop.run(job_name,script)
+            with jse_drop.get_lock(timeout=60):
+                drop_file = jse_drop.run(job_name,script)
             log.debug("created drop file %s" % drop_file)
             log.info("(%s) submitted as %s" % (galaxy_id_tag,job_name))
         except:
@@ -259,50 +283,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         ajs.running = False
         ajs.job_destination = job_destination
         # Add to the queue of jobs to monitor
-        self.monitor_job(ajs)
-        log.info("%s: queued" % job_name)
-
-    def stop_job(self,job_wrapper):
-        # Attempts to remove a job from the JSE-Drop queue
-        # Fetch the job id used by JSE-Drop
-        job_name = job_wrapper.get_job().job_runner_external_id
-        # Fetch the drop dir
-        try:
-            drop_off_dir = self._get_drop_dir()
-            log.debug("stop_job: drop-off dir = %s" % drop_off_dir)
-            jse_drop = JSEDrop(drop_off_dir)
-            # Delete the job
-            jse_drop.kill(job_name)
-            log.debug("JSE-drop: killed job '%s'" % job_name)
-        except Exception as ex:
-            log.error("stop_job: failed with exception: %s", ex)
-
-    def recover(self,job,job_wrapper):
-        # Recovers jobs in the queued/running state when Galaxy started
-        # What is 'job' an instance of???
-        # Could be model.Job?
-        # Fetch the job id used by JSE-Drop
-        job_name = job.get_job_runner_external_id()
-        # Get the job destination
-        job_destination = job_wrapper.job_destination
-        # Fetch the drop dir
-        drop_off_dir = self._get_drop_dir()
-        log.debug("recover: drop-off dir = %s" % drop_off_dir)
-        jse_drop = JSEDrop(drop_off_dir)
-        # Store state information for job
-        ajs = AsynchronousJobState()
-        ajs.job_wrapper = job_wrapper
-        ajs.job_id = job_name
-        ajs.job_destination = job_destination
-        # Sort out the status
-        if job.state == model.Job.states.RUNNING:
-            ajs.old_state = True
-            ajs.running = True
-        elif job.get_state() == model.Job.states.QUEUED:
-            ajs.old_state = True
-            ajs.running = False
-        # Add to the queue of jobs to monitor
         self.monitor_queue.put(ajs)
+        log.info("%s: queued" % job_name)
 
     def check_watched_item(self,job_state):
         # Check for change in job state
@@ -314,28 +296,47 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         with jse_drop.get_lock(timeout=60):
             #log.info("%s: acquired lock" % job_name)
             jse_drop_status = jse_drop.status(job_name)
-            if jse_drop_status == JSEDropStatus.RUNNING and \
-               not job_state.running:
-                # Job has started running
-                log.info("%s: job started running" % job_name)
-                job_state.running = True
-                job_state.job_wrapper.change_state(model.Job.states.RUNNING)
-                return job_state
-            elif jse_drop_status == JSEDropStatus.FINISHED:
+
+            if jse_drop_status == JSEDropStatus.FINISHED:
                 # Job has finished
-                log.info("%s: job has finished" % job_name)
                 job_state.running = False
-                self.mark_as_finished(job_state)
+                log.info("%s: job has finished" % job_name)
+                self._register_completed_job(job_name)
+                # NB JSE-drop finished state only indicates
+                # job completion, not whether it succeeded or
+                # failed - we need to check the exit status
+                # to determine that
+                exit_code = self.create_log_files(job_state)
+                if exit_code == 0:
+                    # Success
+                    job_state.job_wrapper.change_state(model.Job.states.OK)
+                    self.mark_as_finished(job_state)
+                else:
+                    # Failure
+                    job_state.job_wrapper.change_state(model.Job.states.ERROR)
+                    self.mark_as_failed(job_state)
+                ##FIXME not sure if clean up of the JSE-drop files
+                ##FIXME should be the responsibility of the runner?
                 # Remove the JSE-drop files
                 self.cleanup(job_name,("always","onsuccess"))
                 return None
+
+            elif jse_drop_status == JSEDropStatus.RUNNING:
+                if not job_state.running:
+                    # Job has started running
+                    log.info("%s: job started running" % job_name)
+                    job_state.running = True
+                    job_state.job_wrapper.change_state(model.Job.states.RUNNING)
+                return job_state
+
             elif jse_drop_status in (JSEDropStatus.FAILED,
                                      JSEDropStatus.MISSING,
                                      JSEDropStatus.ERROR,):
-                # Job has finished but with an error
+                # Job has finished with an error from JSE-drop
+                job_state.running = False
                 log.info("%s: job has finished with an error" %
                          job_name)
-                job_state.running = False
+                self._register_completed_job(job_name)
                 if jse_drop_status == JSEDropStatus.FAILED:
                     # Get message from qfail file
                     log.warn("%s: failed" % job_name)
@@ -357,66 +358,118 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                              "fail_job (ignored): %s" % (job_name,
                                                          jse_drop_status,
                                                          ex))
+                self.create_log_files(job_state)
+                job_state.job_wrapper.change_state(model.Job.states.ERROR)
+                self.mark_as_failed(job_state)
+                ##FIXME not sure if clean up of the JSE-drop files
+                ##FIXME should be the responsibility of the runner?
                 # Remove the JSE-drop files
                 self.cleanup(job_name,("always",))
                 return None
-            elif jse_drop_status == JSEDropStatus.DELETED:
-                # Job has been deleted
-                # Update state and clean up JSE-drop files
-                log.info("%s: job has been deleted" % job_name)
-                job_state.running = False
-                self.cleanup(job_name,("always","onsuccess"))
-                return None
-        # Other states are ignored
-        return job_state
 
-    def finish_job(self,job_state):
-        # Looks like we need to over-ride the version of this
-        # method in the base class in order to handle setting of
-        # stdout/stderr files and exit code
+            ##FIXME: not clear if it matters to the runner that
+            ##FIXME: the job is being delete?
+            ##elif jse_drop_status == JSEDropStatus.DELETED:
+            ##    # Job has been deleted
+            ##    # Update state and clean up JSE-drop files
+            ##    log.info("%s: job has been deleted" % job_name)
+            ##    job_state.running = False
+            ##    self.cleanup(job_name,("always","onsuccess"))
+            ##    return None
+
+            # Other states are ignored
+            return job_state
+
+    def stop_job(self,job_wrapper):
+        # Invoked by Galaxy to remove a job from the JSE-Drop queue
+        # Also appears to be invoked when a job completes normally?
+        # Fetch the job id used by JSE-Drop
+        job_name = job_wrapper.get_job().job_runner_external_id
+        log.debug("stop_job: job_name = %s" % job_name)
+        # Fetch the drop dir
+        try:
+            jse_drop = JSEDrop(self._get_drop_dir())
+            with jse_drop.get_lock(timeout=60):
+                jse_drop_status = jse_drop.status(job_name)
+                if jse_drop_status in (JSEDropStatus.WAITING,
+                                       JSEDropStatus.RUNNING):
+                    # Delete job which is either pending or running
+                    jse_drop.kill(job_name)
+                    log.debug("JSE-drop: killed job '%s'" % job_name)
+                    ##FIXME this looks like trying to do clean up
+                    ##FIXME prematurely?
+                    ### Clean up JSE-drop files
+                    ##self.cleanup(job_name,("always","onsuccess")
+                else:
+                    log.warning("JSE-drop: job '%s' not in a state that can "
+                                "be stopped" % job_name)
+        except Exception as ex:
+            log.error("stop_job: failed with exception: %s", ex)
+
+    def recover(self,job,job_wrapper):
+        # Recovers jobs in the queued/running state when Galaxy started
+        # Fetch the job id used by JSE-Drop
+        job_name = job.get_job_runner_external_id()
+        # Get the job destination
+        job_destination = job_wrapper.job_destination
+        # Store state information for job
+        ajs = AsynchronousJobState()
+        ajs.job_wrapper = job_wrapper
+        ajs.job_id = job_name
+        ajs.job_destination = job_destination
+        # Sort out the status
+        if job.state == model.Job.states.RUNNING:
+            ajs.old_state = 'R'
+            ajs.running = True
+            self.monitor_queue.put(ajs)
+        elif job.get_state() == model.Job.states.QUEUED:
+            ajs.old_state = 'Q'
+            ajs.running = False
+            self.monitor_queue.put(ajs)
+
+    def create_log_files(self,job_state):
+        # Deal with log files and set exit code
         galaxy_id_tag = job_state.job_wrapper.get_id_tag()
         external_job_id = job_state.job_id
-        # Initialise JSE-drop
-        drop_off_dir = self._get_drop_dir()
-        jse_drop = JSEDrop(drop_off_dir)
         # Get exit_code, stdout and stderr
         job_wrapper = job_state.job_wrapper
+        job = job_state.job_wrapper.get_job()
+        # Exit code
+        exit_code = job_state.read_exit_code()
+        log.info("create_log_files %s: exit code = %s" % (external_job_id,
+                                                          exit_code))
+        exit_code_file = job_state.exit_code_file
+        with open(exit_code_file,'wt') as fp:
+            fp.write("%s" % exit_code)
+        # Stdout
+        tool_stdout_path = os.path.join(job_wrapper.working_directory,
+                                        "outputs",
+                                        "tool_stdout")
+        stdout_file = job_state.output_file
         try:
-            job = job_state.job_wrapper.get_job()
-            # Exit code
-            exit_code = job_state.read_exit_code()
-            log.debug("finish_job %s: exit code = %s" %
-                      (external_job_id,exit_code))
-            # Stdout
-            outputs_directory = os.path.join(job_wrapper.working_directory,
-                                             "outputs")
-            tool_stdout_path = os.path.join(outputs_directory,"tool_stdout")
-            if os.path.exists(tool_stdout_path):
-                log.info("finish_job %s: reading stdout from %s" %
-                          (external_job_id,tool_stdout_path))
-                with io.open(tool_stdout_path,'rt') as fp:
-                    stdout = fp.read()
-            else:
-                log.warn("finish_job %s: couldn't find %s" %
-                         (external_job_id,tool_stdout_path))
-                stdout = "Unable to acquire tool stdout"
-            # Stderr
-            tool_stderr_path = os.path.join(outputs_directory,"tool_stderr")
-            if os.path.exists(tool_stderr_path):
-                log.info("finish_job %s: reading stderr from %s" %
-                         (external_job_id,tool_stderr_path))
-                with io.open(tool_stderr_path,'rt') as fp:
-                    stderr = fp.read()
-            else:
-                log.warn("finish_job %s: couldn't find %s" %
-                         (external_job_id,tool_stderr_path))
-                stderr = "Unable to acquire tool stderr"
-            # Set the job state
-            job_state.job_wrapper.finish(stdout,stderr,exit_code)
+            log.info("create_log_files %s: copying stdout from %s" %
+                     (external_job_id,tool_stdout_path))
+            shutil.copyfile(tool_stdout_path,stdout_file)
         except Exception as ex:
-            log.exception("(%s/%s) Job wrapper finish method failed: %s" %
-                          (galaxy_id_tag,external_job_id,ex))
-            job_state.job_wrapper.fail("Unable to finish job", exception=True)
+            log.error("create_log_files %s: unable to copy stdout: %s" %
+                      (external_job_id,ex))
+            with open(stdout_file,'wt') as fp:
+                fp.write("Unable to acquire tool stdout")
+        # Stderr
+        tool_stderr_path = os.path.join(job_wrapper.working_directory,
+                                        "outputs",
+                                        "tool_stderr")
+        stderr_file = job_state.error_file
+        try:
+            log.info("create_log_files %s: copying stderr from %s" %
+                     (external_job_id,tool_stderr_path))
+            shutil.copyfile(tool_stderr_path,stderr_file)
+        except Exception as ex:
+            log.error("create_log_files %s: unable to copy stderr: %s" %
+                     (external_job_id,ex))
+            with open(stderr_file,'wt') as fp:
+                fp.write("Unable to acquire tool stderr")
+        return exit_code
 
     def cleanup(self,job_name,conditions):
         # Remove the JSEDrop files associated with the job
