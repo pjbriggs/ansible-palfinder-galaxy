@@ -318,10 +318,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                     # Failure
                     job_state.job_wrapper.change_state(model.Job.states.ERROR)
                     self.mark_as_failed(job_state)
-                ##FIXME not sure if clean up of the JSE-drop files
-                ##FIXME should be the responsibility of the runner?
-                # Remove the JSE-drop files
-                self.cleanup(job_name,("always","onsuccess"))
+                # Mark the JSE-drop files for removal
+                self.mark_for_cleanup(job_name,("always","onsuccess"))
                 return None
 
             elif jse_drop_status == JSEDropStatus.RUNNING:
@@ -364,10 +362,8 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 self.create_log_files(job_state)
                 job_state.job_wrapper.change_state(model.Job.states.ERROR)
                 self.mark_as_failed(job_state)
-                ##FIXME not sure if clean up of the JSE-drop files
-                ##FIXME should be the responsibility of the runner?
-                # Remove the JSE-drop files
-                self.cleanup(job_name,("always",))
+                # Mark the JSE-drop files for removal
+                self.mark_for_cleanup(job_name,("always",))
                 return None
 
             ##FIXME: not clear if it matters to the runner that
@@ -474,11 +470,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 fp.write("Unable to acquire tool stderr")
         return exit_code
 
-    def cleanup(self,job_name,conditions):
-        # Remove the JSEDrop files associated with the job
-        # if Galaxy's "cleanup_job" setting matches one of
-        # the supplied conditions
-        # NB does not clean up the actual job outputs
+    def mark_for_cleanup(self,job_name,conditions):
+        # Mark the JSEDrop files associated with the job for
+        # removal if Galaxy's "cleanup_job" setting matches one
+        # of the specified conditions
         cleanup_job = self.app.config.cleanup_job
         if cleanup_job in conditions:
             log.info("%s: marking JSEDrop files for cleanup" % job_name)
