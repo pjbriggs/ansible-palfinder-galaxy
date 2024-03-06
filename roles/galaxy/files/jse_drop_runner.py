@@ -481,5 +481,5 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # NB does not clean up the actual job outputs
         cleanup_job = self.app.config.cleanup_job
         if cleanup_job in conditions:
-            log.info("%s: cleanup JSEDrop files" % job_name)
-            JSEDrop(self._get_drop_dir()).cleanup(job_name)
+            log.info("%s: marking JSEDrop files for cleanup" % job_name)
+            JSEDrop(self._get_drop_dir()).mark_for_cleanup(job_name)
