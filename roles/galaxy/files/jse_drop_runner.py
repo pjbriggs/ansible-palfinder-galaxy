@@ -113,7 +113,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Keep a record of completed jobs (to see if job
         # completion is being double-handled)
         self._check_double_handling = True
-        self._completed = list()
+        self._completed = set()
 
     def _get_job_name(self,galaxy_id_tag,tool_id=None,galaxy_id=None):
         """
@@ -177,15 +177,18 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         the list of previously completed jobs. An
         exception will be raised if the same job name
         has already been registered.
+
+        NB this mechanism is only intended for debugging
+        purposes.
         """
         if not self._check_double_handling:
             return
         if job_name in self._completed:
-            raise Exception("'%s': job already added to list of "
-                            "'completed' jobs in JSE-Drop runner" %
+            raise Exception("'%s': job already registered as a "
+                            "completed job in JSE-Drop runner" %
                             job_name)
         else:
-            self._completed.append(job_name)
+            self._completed.add(job_name)
 
     def parse_destination_params(self, params):
         """Parse the JobDestination ``params`` dict and return the runner's native representation of those params.
