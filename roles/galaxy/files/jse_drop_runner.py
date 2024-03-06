@@ -402,7 +402,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                     ##FIXME this looks like trying to do clean up
                     ##FIXME prematurely?
                     ### Clean up JSE-drop files
-                    ##self.cleanup(job_name,("always","onsuccess")
+                    ##self.cleanup(job_name,("always","onsuccess"))
                 else:
                     log.warning("JSE-drop: job '%s' not in a state that can "
                                 "be stopped" % job_name)
