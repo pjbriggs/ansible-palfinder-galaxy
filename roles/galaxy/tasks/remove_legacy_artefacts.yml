@@ -24,6 +24,8 @@
     - 'Clean up empty directories from job working directory'
     - 'Delete old datasets'
     - 'Email audit report'
+    - 'Clean up deleted files from JSE-drop directory'
+    - 'Remove JSE-drop jobs marked for clean up or as deleted'
 
 # NB using certbot SSL certificate renewal is performed automatically
 # so this task simply removes any existing legacy cronjob
