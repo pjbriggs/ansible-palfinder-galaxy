@@ -677,20 +677,10 @@ def jse_drop_cleanup_deleted(drop_dir,interval,timeout=600):
       interval (int): interval (in seconds) from now which
         deleted jobs must be older than in order to be
         cleaned up
-
     """
-    jsedrop = JSEDrop(drop_dir)
-    now = datetime.now()
-    interval = timedelta(seconds=interval)
-    jobs = [j for j in jsedrop.jobs()
-            if (jsedrop.status(j) == JSEDropStatus.DELETED
-                and
-                (now - datetime.fromtimestamp(jsedrop.timestamp(j)))
-                > interval)]
-    for job in jobs:
-        print("%s: cleaning up deleted job '%s'" %
-              (time.strftime("%Y-%m-%d %H:%M:%S"),job))
-        jsedrop.cleanup(job)
+    return jse_drop_cleanup(drop_dir,interval=interval,
+                            status=(JSEDropStatus.DELETED,),
+                            timeout=timeout)
 
 if __name__ == '__main__':
     # Test program
