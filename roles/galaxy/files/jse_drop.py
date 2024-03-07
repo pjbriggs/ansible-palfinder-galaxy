@@ -58,6 +58,7 @@ class JSEDropStatus(object):
     ERROR = 6
     DELETING = 7
     DELETED = 8
+    CLEANUP = 9
 
 class JSEDrop(object):
     """
@@ -250,6 +251,9 @@ class JSEDrop(object):
         if not os.path.exists("%s.drop.qsub" % base_name):
             # No submission script found
             return JSEDropStatus.MISSING
+        if os.path.exists("%s.drop.cleanup" % base_name):
+            # Job marked for clean up
+            return JSEDropStatus.CLEANUP
         if os.path.exists("%s.drop.qfail" % base_name):
             # Submission failed
             return JSEDropStatus.FAILED
@@ -459,6 +463,24 @@ class JSEDrop(object):
         with open(kill_file,'wt') as fp:
             pass
 
+    def mark_for_cleanup(self,name):
+        """
+        Mark the job for clean up
+
+        The clean up (i.e. removal of associated JSE
+        drop files) must be done elsewhere.
+
+        Arguments:
+          name (str): name of the job
+        """
+        cleanup_file = os.path.join(self._drop_dir,
+                                    "%s.drop.cleanup" % name)
+        if os.path.exists(cleanup_file):
+            # Clean up file already exists, ignore
+            return
+        with open(cleanup_file,'wt') as fp:
+            pass
+
     def timestamp(self,name):
         """
         Return timestamp associated with a job
@@ -506,7 +528,8 @@ class JSEDrop(object):
                       '.drop.qstat',
                       '.drop.qdel',
                       '.drop.qdeleted',
-                      '.drop.qacct',)
+                      '.drop.qacct',
+                      '.drop.cleanup',)
         # Remove stdout/stderr first
         for f in (self.stdout_file(name),self.stderr_file(name)):
             if f is None:
@@ -607,7 +630,45 @@ class FileLock:
         # Check if instance holds the lock
         return (self._lockfd is not None)
 
-def jse_drop_cleanup_deleted(drop_dir,interval):
+def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
+                     status=None):
+    """
+    Clean up jobs in the specified drop directory
+
+    Arguments:
+      drop_dir (str): path to JSE 'drop-off' directory
+      interval (int): interval (in seconds); if specified
+        then is the maximum age that job must be in order
+        to be cleaned up (otherwise jobs will be cleaned
+        up immediately)
+      timeout (int): if specified then is the maximum
+        time to wait to acquire the lock on the drop-off
+        directory before giving up
+      status (list): only clean up jobs with one of the
+        specified status values. Set to '("all",)' to
+        clean up all jobs (regardless of status). Default
+        is to clean up deleted jobs and those marked for
+        clean up
+    """
+    if status is None:
+        status = (JSEDropStatus.CLEANUP,JSEDropStatus.DELETED)
+    jsedrop = JSEDrop(drop_dir)
+    with jsedrop.get_lock(timeout=timeout):
+        now = datetime.now()
+        interval = timedelta(seconds=interval)
+        for s in status:
+            jobs = [j for j in jsedrop.jobs()
+                    if ((s == "all" or jsedrop.status(j) == s)
+                        and
+                        (interval is None or
+                         (now - datetime.fromtimestamp(jsedrop.timestamp(j))
+                          > interval)))]
+            for job in jobs:
+                print("%s: cleaning up job '%s'" %
+                      (time.strftime("%Y-%m-%d %H:%M:%S"),job))
+                jsedrop.cleanup(job)
+
+def jse_drop_cleanup_deleted(drop_dir,interval,timeout=600):
     """
     Clean up deleted jobs in the specified drop directory
 
@@ -616,39 +677,75 @@ def jse_drop_cleanup_deleted(drop_dir,interval):
       interval (int): interval (in seconds) from now which
         deleted jobs must be older than in order to be
         cleaned up
-
     """
-    jsedrop = JSEDrop(drop_dir)
-    now = datetime.now()
-    interval = timedelta(seconds=interval)
-    jobs = [j for j in jsedrop.jobs()
-            if (jsedrop.status(j) == JSEDropStatus.DELETED
-                and
-                (now - datetime.fromtimestamp(jsedrop.timestamp(j)))
-                > interval)]
-    for job in jobs:
-        print("%s: cleaning up deleted job '%s'" %
-              (time.strftime("%Y-%m-%d %H:%M:%S"),job))
-        jsedrop.cleanup(job)
+    return jse_drop_cleanup(drop_dir,interval=interval,
+                            status=(JSEDropStatus.DELETED,),
+                            timeout=timeout)
 
 if __name__ == '__main__':
-    # Test program
-    import sys
-    try:
-        job_name = sys.argv[1]
-    except Exception:
-        sys.stderr.write("Need to supply job name")
-        sys.exit(1)
-    jse = JSEDrop('.')
-    status = jse.status(job_name)
-    print("Job   : %s" % job_name)
-    print("Status: %s" % status)
-    if status == JSEDropStatus.RUNNING:
-        print("Job is running")
-        print("State: %s" % jse.qstat(job_name)['state'])
-    elif status == JSEDropStatus.FINISHED:
-        print("Job has finished")
-        print("Exit status: %s" % jse.qacct(job_name)['exit_status'])
-    elif status == JSEDropStatus.FAILED:
-        print("Job has failed")
-        print("Exit status: %s" % jse.qfail(job_name)['exit_code'])
+    """
+    Provide a basic CLI for JSE Drop
+    """
+    from argparse import ArgumentParser
+    from fnmatch import fnmatch
+    status_descriptions = {
+        JSEDropStatus.MISSING:  "missing",
+        JSEDropStatus.WAITING:  "waiting",
+        JSEDropStatus.FAILED:   "failed",
+        JSEDropStatus.RUNNING:  "running",
+        JSEDropStatus.FINISHED: "finished",
+        JSEDropStatus.ERROR :   "error",
+        JSEDropStatus.DELETING: "deleting",
+        JSEDropStatus.DELETED : "deleted",
+        JSEDropStatus.CLEANUP : "cleanup",
+    }
+    p = ArgumentParser()
+    p.add_argument("drop_dir",help="JSE drop-off directory")
+    p.add_argument("-s",dest="status",metavar="STATUS",
+                   help="only display jobs with specified status")
+    p.add_argument("-j",dest="job_name",metavar="JOB",
+                   help="job name")
+    p.add_argument("--clean",dest="clean_interval",metavar="INTERVAL",
+                   help="clean up jobs that are older than INTERVAL "
+                   "seconds; by default jobs marked 'cleanup' are "
+                   "removed (use -s to select other job statuses)")
+    args = p.parse_args()
+    jse = JSEDrop(args.drop_dir)
+    with jse.get_lock(timeout=60):
+        jobs = sorted(jse.jobs(),key=lambda j: jse.timestamp(j))
+        if args.job_name is not None:
+            jobs = [j for j in jobs if fnmatch(j,args.job_name)]
+        status = None
+        if args.status is not None:
+            for s in status_descriptions:
+                if fnmatch(status_descriptions[s],args.status):
+                    status = s
+                    break
+        if args.clean_interval is not None:
+            if not status:
+                status = JSEDropStatus.CLEANUP
+        if status:
+            jobs = [j for j in jobs if jse.status(j) == status]
+        if args.clean_interval is not None:
+            # Clean up selected jobs
+            now = datetime.now()
+            interval = timedelta(seconds=int(args.clean_interval))
+            jobs = [j for j in jobs
+                    if now - datetime.fromtimestamp(jse.timestamp(j))
+                    > interval]
+            for job in jobs:
+                print("Cleaning up job '%s'" % job)
+                jse.cleanup(job)
+        else:
+            # Print list of jobs
+            for job in jobs:
+                status = jse.status(job)
+                try:
+                    status = status_descriptions[status]
+                except KeyError:
+                    pass
+                ts = jse.timestamp(job)
+                ds = datetime.fromtimestamp(ts)
+                print("%s\t%s\t%s" % (job,
+                                      status,
+                                      ds.strftime("%m/%d/%Y %H:%M:%S")))
