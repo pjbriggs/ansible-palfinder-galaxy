@@ -427,47 +427,45 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             self.monitor_queue.put(ajs)
 
     def create_log_files(self,job_state):
-        # Deal with log files and set exit code
+        # Deal with exit code and log files
         galaxy_id_tag = job_state.job_wrapper.get_id_tag()
         external_job_id = job_state.job_id
-        # Get exit_code, stdout and stderr
         job_wrapper = job_state.job_wrapper
         job = job_state.job_wrapper.get_job()
-        # Exit code
         exit_code = job_state.read_exit_code()
         log.info("create_log_files %s: exit code = %s" % (external_job_id,
                                                           exit_code))
-        exit_code_file = job_state.exit_code_file
-        with open(exit_code_file,'wt') as fp:
-            fp.write("%s" % exit_code)
         # Stdout
-        tool_stdout_path = os.path.join(job_wrapper.working_directory,
-                                        "outputs",
-                                        "tool_stdout")
-        stdout_file = job_state.output_file
         try:
-            log.info("create_log_files %s: copying stdout from %s" %
-                     (external_job_id,tool_stdout_path))
-            shutil.copyfile(tool_stdout_path,stdout_file)
+            shutil.copyfile(os.path.join(job_wrapper.working_directory,
+                                         "outputs",
+                                         "tool_stdout"),
+                            job_state.output_file)
         except Exception as ex:
-            log.error("create_log_files %s: unable to copy stdout: %s" %
-                      (external_job_id,ex))
-            with open(stdout_file,'wt') as fp:
-                fp.write("Unable to acquire tool stdout")
-        # Stderr
-        tool_stderr_path = os.path.join(job_wrapper.working_directory,
-                                        "outputs",
-                                        "tool_stderr")
-        stderr_file = job_state.error_file
-        try:
-            log.info("create_log_files %s: copying stderr from %s" %
-                     (external_job_id,tool_stderr_path))
-            shutil.copyfile(tool_stderr_path,stderr_file)
-        except Exception as ex:
-            log.error("create_log_files %s: unable to copy stderr: %s" %
+            # Report error and fail the job
+            log.warn("create_log_files %s: exception copying stdout: %s" %
                      (external_job_id,ex))
-            with open(stderr_file,'wt') as fp:
-                fp.write("Unable to acquire tool stderr")
+            exit_code = 1
+        # Stderr
+        try:
+            shutil.copyfile(os.path.join(job_wrapper.working_directory,
+                                         "outputs",
+                                         "tool_stderr"),
+                            job_state.error_file)
+        except Exception as ex:
+            # Report error and fail the job
+            log.warn("create_log_files %s: exception copying stderr: %s" %
+                     (external_job_id,ex))
+            exit_code = 1
+        # Exit code
+        try:
+            with open(job_state.exit_code_file,'wt') as fp:
+                fp.write("%s" % exit_code)
+        except Exception as ex:
+            # Report error and fail the job
+            log.warn("create_log_files %s: exception writing exit code: %s" %
+                     (external_job_id,ex))
+            exit_code = 1
         return exit_code
 
     def mark_for_cleanup(self,job_name,conditions):
