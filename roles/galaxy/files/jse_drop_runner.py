@@ -379,22 +379,23 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 self.mark_for_cleanup(job_name,("always",))
                 return None
 
-            ##FIXME: not clear if it matters to the runner that
-            ##FIXME: the job is being delete?
-            ##elif jse_drop_status == JSEDropStatus.DELETED:
-            ##    # Job has been deleted
-            ##    # Update state and clean up JSE-drop files
-            ##    log.info("%s: job has been deleted" % job_name)
-            ##    job_state.running = False
-            ##    self.cleanup(job_name,("always","onsuccess"))
-            ##    return None
+            elif jse_drop_status == JSEDropStatus.DELETED:
+                # Job has been deleted
+                log.info("%s: job has been deleted" % job_name)
+                job_state.running = False
+                # Mark the JSE-drop files for removal
+                self.mark_for_cleanup(job_name,("always","onsuccess"))
+                return None
 
             # Other states are ignored
+            # Returning job state ensures the job remains in
+            # the monitor queue
             return job_state
 
     def stop_job(self,job_wrapper):
-        # Invoked by Galaxy to remove a job from the JSE-Drop queue
-        # Also appears to be invoked when a job completes normally?
+        # Invoked by Galaxy to attempt to delete a dispatched
+        # job executing in the JSE-Drop queue
+        # The job will still be monitored by 'check_watched_item'
         # Fetch the job id used by JSE-Drop
         job_name = job_wrapper.get_job().job_runner_external_id
         log.debug("stop_job: job_name = %s" % job_name)
@@ -408,10 +409,6 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                     # Delete job which is either pending or running
                     jse_drop.kill(job_name)
                     log.debug("JSE-drop: killed job '%s'" % job_name)
-                    ##FIXME this looks like trying to do clean up
-                    ##FIXME prematurely?
-                    ### Clean up JSE-drop files
-                    ##self.cleanup(job_name,("always","onsuccess"))
                 else:
                     log.warning("JSE-drop: job '%s' not in a state that can "
                                 "be stopped" % job_name)
