@@ -309,17 +309,22 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 # job completion, not whether it succeeded or
                 # failed - we need to check the exit status
                 # to determine that
-                exit_code = self.create_log_files(job_state)
+                try:
+                    exit_code = self.create_log_files(job_state)
+                except Exception as ex:
+                    log.error("%s: exception trying to create log files "
+                              "(ignored): %s" % (job_name,ex))
+                    exit_code = 1
                 if exit_code == 0:
                     # Success
                     job_state.job_wrapper.change_state(model.Job.states.OK)
                     self.mark_as_finished(job_state)
+                    self.mark_for_cleanup(job_name,("always","onsuccess"))
                 else:
                     # Failure
                     job_state.job_wrapper.change_state(model.Job.states.ERROR)
                     self.mark_as_failed(job_state)
-                # Mark the JSE-drop files for removal
-                self.mark_for_cleanup(job_name,("always","onsuccess"))
+                    self.mark_for_cleanup(job_name,("always",))
                 return None
 
             elif jse_drop_status == JSEDropStatus.RUNNING:
@@ -359,7 +364,15 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                              "fail_job (ignored): %s" % (job_name,
                                                          jse_drop_status,
                                                          ex))
-                self.create_log_files(job_state)
+                # Since all these states indicate a problem with
+                # the job within JSE-Drop, it seems unlikely that
+                # any logs etc will have been created
+                # However we'll try and collect them anyway
+                try:
+                    self.create_log_files(job_state)
+                except Exception as ex:
+                    log.warn("%s: exception trying to create log files "
+                             "(ignored)" % (job_name,ex))
                 job_state.job_wrapper.change_state(model.Job.states.ERROR)
                 self.mark_as_failed(job_state)
                 # Mark the JSE-drop files for removal
