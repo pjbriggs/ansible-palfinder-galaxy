@@ -631,7 +631,7 @@ class FileLock:
         return (self._lockfd is not None)
 
 def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
-                     status=JSEDropStatus.CLEANUP):
+                     status=None):
     """
     Clean up jobs in the specified drop directory
 
@@ -644,24 +644,29 @@ def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
       timeout (int): if specified then is the maximum
         time to wait to acquire the lock on the drop-off
         directory before giving up
-      status (int): only clean up jobs with the specified
-        status (default: jobs marked for clean up; set to
-        "all" to clean up all jobs regardless of status)
+      status (list): only clean up jobs with one of the
+        specified status values. Set to '("all",)' to
+        clean up all jobs (regardless of status). Default
+        is to clean up deleted jobs and those marked for
+        clean up
     """
+    if status is None:
+        status = (JSEDropStatus.CLEANUP,JSEDropStatus.DELETED)
     jsedrop = JSEDrop(drop_dir)
     with jsedrop.get_lock(timeout=timeout):
         now = datetime.now()
         interval = timedelta(seconds=interval)
-        jobs = [j for j in jsedrop.jobs()
-                if ((status == "all" or jsedrop.status(j) == status)
-                    and
-                    (interval is None or
-                     (now - datetime.fromtimestamp(jsedrop.timestamp(j)))
-                      > interval))]
-        for job in jobs:
-            print("%s: cleaning up job '%s'" %
-                  (time.strftime("%Y-%m-%d %H:%M:%S"),job))
-            jsedrop.cleanup(job)
+        for s in status:
+            jobs = [j for j in jsedrop.jobs()
+                    if ((s == "all" or jsedrop.status(j) == s)
+                        and
+                        (interval is None or
+                         (now - datetime.fromtimestamp(jsedrop.timestamp(j))
+                          > interval)))]
+            for job in jobs:
+                print("%s: cleaning up job '%s'" %
+                      (time.strftime("%Y-%m-%d %H:%M:%S"),job))
+                jsedrop.cleanup(job)
 
 def jse_drop_cleanup_deleted(drop_dir,interval,timeout=600):
     """
