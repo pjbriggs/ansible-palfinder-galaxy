@@ -101,7 +101,7 @@ enable_tool_shed_check: yes
 # -- for ansible <2.6 "errors=..." option is not supported so
 #    an empty placeholder file is required to stop the playbook
 #    failing
-cdntaurus_motd: "{{ lookup('file', 'instances/centaurus/files/motd', errors='warn') }}"
+centaurus_motd: "{{ lookup('file', 'instances/centaurus/files/motd', errors='warn') }}"
 galaxy_message: "{{ lookup('file', 'instances/centaurus/files/message', errors='warn') }}"
 
 # Tools conf base XML
