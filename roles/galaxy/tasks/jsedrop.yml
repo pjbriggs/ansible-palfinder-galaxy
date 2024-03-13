@@ -37,7 +37,7 @@
 - name: "Clean up files from JSE-drop directory marked for clean up"
   cron:
     user='{{ galaxy_user }}'
-    name='Clean up JSE-drop jobs marked for clean up'
+    name='Clean up JSE-drop jobs marked for clean up or as deleted'
     minute='*/5'
     job='. {{ galaxy_root }}/.venv/bin/activate && PYTHONPATH={{ galaxy_root }}/lib:$PYTHONPATH python -c "from galaxy.jobs.runners.jse_drop import jse_drop_cleanup ; jse_drop_cleanup(\'{{ galaxy_jse_drop_dir }}\',interval={{ galaxy_jse_drop_cleanup_grace_period }})" 2>&1 1>>{{ galaxy_log_dir}}/jse_drop_cleanup.log'
     state=present
