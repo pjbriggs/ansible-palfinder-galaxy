@@ -28,7 +28,7 @@
 
   # Options when migrating to a new VM
   # NB SQL database file should be on the remote server
-  ##- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
+  ##- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump-2024-03-12.sql"
   ##- galaxy_reinstall_conda: yes
 
   # Options when updating Python version
