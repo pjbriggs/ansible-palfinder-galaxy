@@ -1,6 +1,6 @@
 centaurus:
   hosts:
-    130.88.41.210
+    130.88.97.245
   vars:
     # Server name
     galaxy_server_name: "centaurus.itservices.manchester.ac.uk"
