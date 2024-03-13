@@ -22,7 +22,7 @@
   - postfix_relay_host: "smtp.manchester.ac.uk"
   - postfix_smtp_generic_maps: "instances/centaurus/files/postfix-generic-devel"
   # Default job runner
-  galaxy_default_runner: "jse_drop_short"
+  - galaxy_default_runner: "jse_drop_short"
 
   # Base installation directory and other paths set in the
   # devel_config.yml file for the 'devel' instance

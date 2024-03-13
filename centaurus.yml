@@ -21,7 +21,7 @@
   - postfix_host_name: "centaurus.itservices.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
   # Default job runner
-  galaxy_default_runner: "jse_drop_serial"
+  - galaxy_default_runner: "jse_drop_serial"
 
   # Base installation directory and other paths set in the
   # production_config.yml file for the 'production' instance
