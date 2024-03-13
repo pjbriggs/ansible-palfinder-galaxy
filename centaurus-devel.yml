@@ -39,6 +39,10 @@
   # Options when updating Galaxy version
   ##- galaxy_remove_mako_templates: yes
 
+  # Uncomment for faster tool installation
+  # NB may cause issues with dependency installation
+  - galaxy_install_tool_extra_args: "--no-wait"
+
   # Define proxy environment variables if needed
   ##- proxy_env:
   ##    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
