@@ -666,7 +666,12 @@ def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
             for job in jobs:
                 print("%s: cleaning up job '%s'" %
                       (time.strftime("%Y-%m-%d %H:%M:%S"),job))
-                jsedrop.cleanup(job)
+                try:
+                    jsedrop.cleanup(job)
+                except Exception as ex:
+                    print("%s: error attempting clean up for '%s': "
+                          "%s (ignored)" %
+                          (time.strftime("%Y-%m-%d %H:%M:%S"),job,ex))
 
 def jse_drop_cleanup_deleted(drop_dir,interval,timeout=600):
     """
