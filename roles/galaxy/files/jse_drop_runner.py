@@ -235,7 +235,9 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Set up job state instance
         ajs = AsynchronousJobState(
             files_dir=job_wrapper.working_directory,
-            job_wrapper=job_wrapper)
+            job_wrapper=job_wrapper,
+            job_id=job_name,
+            job_destination=job_destination)
         # Sort out the slots (see e.g. condor.py for example)
         if galaxy_slots:
             galaxy_slots_statement = 'GALAXY_SLOTS="%s"; export GALAXY_SLOTS_CONFIGURED="1"' % galaxy_slots
@@ -279,12 +281,6 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Store runner information for tracking if Galaxy restarts
         job_wrapper.set_job_destination(job_destination,
                                         external_job_id)
-        # Store state information for job
-        ajs.job_wrapper = job_wrapper
-        ajs.job_id = job_name
-        ajs.old_state = True
-        ajs.running = False
-        ajs.job_destination = job_destination
         # Add to the queue of jobs to monitor
         self.monitor_queue.put(ajs)
         log.info("%s: queued" % job_name)
