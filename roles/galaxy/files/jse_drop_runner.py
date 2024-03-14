@@ -419,19 +419,19 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Recovers jobs in the queued/running state when Galaxy started
         # Fetch the job id used by JSE-Drop
         job_name = job.get_job_runner_external_id()
-        # Get the job destination
-        job_destination = job_wrapper.job_destination
-        # Store state information for job
-        ajs = AsynchronousJobState()
+        log.debug("recover: attempting to recover job '%s'" % job_name)
+        ajs = AsynchronousJobState(
+            files_dir=job_wrapper.working_directory,
+            job_wrapper=job_wrapper)
+        ajs.job_id = str(job_name)
+        ajs.job_destination = job_wrapper.job_destination
+        job_wrapper.command_line = job.command_line
         ajs.job_wrapper = job_wrapper
-        ajs.job_id = job_name
-        ajs.job_destination = job_destination
-        # Sort out the status
         if job.state == model.Job.states.RUNNING:
             ajs.old_state = 'R'
             ajs.running = True
             self.monitor_queue.put(ajs)
-        elif job.get_state() == model.Job.states.QUEUED:
+        elif job.state == model.Job.states.QUEUED:
             ajs.old_state = 'Q'
             ajs.running = False
             self.monitor_queue.put(ajs)
