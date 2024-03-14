@@ -2,7 +2,6 @@
 # job_conf.xml configuration
 
 # Job runners and destinations
-galaxy_default_runner: "jse_drop_serial"
 galaxy_job_destinations:
   - id: "jse_drop_serial"
     runner: "jse_drop"

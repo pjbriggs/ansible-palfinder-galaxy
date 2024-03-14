@@ -18,21 +18,34 @@
   - python_version: "3.10.5"
   - postgresql_version: "14"
   # Postfix settings
-  - postfix_host_name: "centaurus.ls.manchester.ac.uk"
+  - postfix_host_name: "centaurus.itservices.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
+  # Default job runner
+  - galaxy_default_runner: "jse_drop_serial"
+
   # Base installation directory and other paths set in the
   # production_config.yml file for the 'production' instance
 
-  ## Options for migrating to a new VM
-  #- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump.sql"
-  #- galaxy_force_reinstall_python: yes
-  #- galaxy_force_reinstall_venv: yes
-  #- galaxy_reinstall_conda: yes
+  # Options when migrating to a new VM
+  # NB SQL database file should be on the remote server
+  ##- galaxy_new_db_sql: "/home/centaurus-galaxy/pg_dump-2024-03-12.sql"
+  ##- galaxy_reinstall_conda: yes
 
-  ## Define proxy environment variables if needed
-  #- proxy_env:
-  #    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
-  #    https_proxy: 'https://updateproxy.manchester.ac.uk:3128
+  # Options when updating Python version
+  ##- galaxy_force_reinstall_python: yes
+  ##- galaxy_force_reinstall_venv: yes
+
+  # Options when updating Galaxy version
+  ##- galaxy_remove_mako_templates: yes
+
+  # Uncomment for faster tool installation
+  # NB may cause issues with dependency installation
+  - galaxy_install_tool_extra_args: "--no-wait"
+
+  # Define proxy environment variables if needed
+  ##- proxy_env:
+  ##    http_proxy: 'http://updateproxy.manchester.ac.uk:3128'
+  ##    https_proxy: 'https://updateproxy.manchester.ac.uk:3128
 
   vars_files:
   # Instance-specific variables

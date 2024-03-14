@@ -146,10 +146,10 @@ galaxy_loc_file_data:
       - "dm3\tdm2\t/mnt/data-sets/bcf/genomeIndexes/dm3_het_chrM_chrU/liftOver/dm3ToDm2.over.chain"
       - "sacCer2\tsacCer1\t/mnt/data-sets/bcf/genomeIndexes/sacCer2_ucsc_roman/liftOver/sacCer2ToSacCer1.over.chain"
       - "sacCer2\tsacCer3\t/mnt/data-sets/bcf/genomeIndexes/sacCer2_ucsc_roman/liftOver/sacCer2ToSacCer3.over.chain"
-      - "sacCer3\tsacCer1 /mnt/data-sets/bcf/genomeIndexes/sacCer3/liftOver/sacCer3ToSacCer1.over.chain"
-      - "sacCer3\tsacCer2 /mnt/data-sets/bcf/genomeIndexes/sacCer3/liftOver/sacCer3ToSacCer2.over.chain"
-      - "sacCer1\tsacCer2 /mnt/data-sets/bcf/genomeIndexes/sacCer1/liftOver/sacCer1ToSacCer2.over.chain"
-      - "sacCer1\tsacCer3 /mnt/data-sets/bcf/genomeIndexes/sacCer1/liftOver/sacCer1ToSacCer3.over.chain"
+      - "sacCer3\tsacCer1\t/mnt/data-sets/bcf/genomeIndexes/sacCer3/liftOver/sacCer3ToSacCer1.over.chain"
+      - "sacCer3\tsacCer2\t/mnt/data-sets/bcf/genomeIndexes/sacCer3/liftOver/sacCer3ToSacCer2.over.chain"
+      - "sacCer1\tsacCer2\t/mnt/data-sets/bcf/genomeIndexes/sacCer1/liftOver/sacCer1ToSacCer2.over.chain"
+      - "sacCer1\tsacCer3\t/mnt/data-sets/bcf/genomeIndexes/sacCer1/liftOver/sacCer1ToSacCer3.over.chain"
   # rnachipintegrator_canonical_genes_legacy.loc
   - loc_file: "rnachipintegrator_canonical_genes_legacy.loc"
     data:
