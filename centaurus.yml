@@ -95,6 +95,9 @@
   - galaxy-install-tools
   - galaxy-set-default-quota
 
+  # Additional set up
+  - galaxy-audit-report
+
   ## Use this to set environment variables on the remote
   ## when ansible tasks run (e.g. proxy settings)
   #environment: "{{ proxy_env }}"
