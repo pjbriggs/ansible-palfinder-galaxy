@@ -11,7 +11,6 @@
   with_items:
   - '{{ galaxy_dir }}'
   - '{{ galaxy_tool_dependency_dir }}'
-  - '{{ galaxy_ftp_upload_dir }}'
   - '{{ galaxy_dir }}/logs'
   - '{{ galaxy_dir }}/backups'
 
