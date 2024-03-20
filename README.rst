@@ -28,8 +28,6 @@ The following roles are defined:
 
  - ``postgresql``: installs and configures PostgreSQL
 
- - ``proftpd``: builds and installs ProFTPd from source
-
  - ``supervisord``: builds and installs Supervisord from source
 
  - ``postfix-null-client``: installs and configures Postfix as
@@ -51,7 +49,6 @@ The following roles are defined:
    * Set up cron jobs to purge histories and datasets
    * Set up log rotation
    * Set up Nginx proxy
-   * Set up FTP server
    * Installs customised ``tool_conf.xml``
    * (Optionally) set up the JSE-drop job runner plugin
    * Configure uWSGI for Galaxy
@@ -120,9 +117,6 @@ Database passwords:
 
  - ``galaxy_db_password``: password for Postgresql database
    (default: same name as the database user)
- - ``galaxy_ftp_password``: password used by FTP server for
-   authenticating users against Postgresql database
-   (default: same name as the FTP database user)
 
 UWSGI settings:
 
@@ -227,7 +221,6 @@ Variables for handling special cases:
 Versions of installed components:
 
  - ``python_version`` (3.6.11)
- - ``proftpd_version`` (1.3.5a)
  - ``supervisor_version`` (4.2.2)
  - ``git`` (2.20.0)
 
@@ -443,12 +436,11 @@ Notes on the deployment
 
        DROP DATABASE galaxy_palfinder;
        DROP ROLE galaxy;
-       DROP ROLE galaxy_ftp;
 
  - If deploying to a virtual machine and using port forwarding to
    connect to the Nginx/Galaxy server, it may be necessary to open
    port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``
-   (similarly port 443 for SSL access and port 21 for FTP upload).
+   (similarly port 443 for SSL access).
 
  - We need to install Supervisord as the default version available
    via ``yum`` on Scientific Linux is too old for the syntax used
@@ -458,7 +450,6 @@ Notes on the deployment
 
    * 80: HTTP access
    * 443: HTTPS access
-   * 21: FTP upload
    * 25: outgoing email
 
  - To enable TLS/SSL access (i.e. use HTTPS rather than HTTP)
