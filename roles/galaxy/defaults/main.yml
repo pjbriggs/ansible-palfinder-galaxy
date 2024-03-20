@@ -257,13 +257,6 @@ galaxy_handler_processes: 1
 galaxy_log_dir: "{{ galaxy_dir }}/logs"
 enable_log_rotation: yes
 
-# FTP uploads
-enable_ftp_upload: no
-galaxy_ftp_upload_dir: "{{ galaxy_dir }}/ftp_uploads"
-galaxy_ftp_upload_site: "ftp://{{ galaxy_server_name }}"
-galaxy_ftp_user: "{{ galaxy_user }}_ftp"
-galaxy_ftp_password: "{{ galaxy_ftp_user }}"
-
 # Outgoing mail notification settings
 enable_smtp: no
 galaxy_smtp_server: "localhost:25"
