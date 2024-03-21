@@ -1,4 +1,4 @@
-# Remove 'legacy' artefacts and cron jobs set up pre-19.09
+# Remove 'legacy' artefacts, configs, cron jobs etc set up pre-22.01
 # These will be replaced by instance-specific versions
 ---
 # Logrotation file
@@ -36,14 +36,14 @@
     name="Renew SSL certificate from Lets Encrypt"
     state=absent
 
-# Remove Python
+# Remove Galaxy Python (if requested)
 - name: "Remove Galaxy Python installation"
   file:
     path: '{{ galaxy_python_dir }}'
     state: absent
   when: galaxy_force_reinstall_python == True
 
-# Remove Galaxy virtualenv
+# Remove Galaxy virtualenv (if requested)
 - name: "Remove Galaxy virtual env"
   file:
     path: '{{ galaxy_root }}/.venv'
