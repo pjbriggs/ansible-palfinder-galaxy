@@ -1,9 +1,29 @@
 # Stop Galaxy running
 ---
-- name: "Command to halt running Galaxy"
-  debug:
-    msg: "{{ galaxy_utils_dir }}/bin/gxctl.sh stop {{ galaxy_name }}"
+- name: "Check if Gravity is available"
+  stat:
+    path: "{{ galaxy_utils_dir }}/bin/galaxyctl"
+  register: galaxyctl
 
-- name: "Halt running Galaxy"
+- name: "Halt running Galaxy using Gravity"
+  block:
+
+    - name: "Check for running Galaxy"
+      shell:
+        cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl status 2>&1"
+        chdir: "{{ galaxy_root }}"
+      register: gravity_galaxy_status
+
+    - name: "Halt running Galaxy using Gravity"
+      shell:
+        cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl stop"
+        chdir: "{{ galaxy_root }}"
+      when: gravity_galaxy_status.stdout != "supervisord is not running"
+
+  when: galaxyctl.stat.exists == True
+
+# Fallback when upgrading from legacy Galaxy version
+- name: "Halt running Galaxy using Supervisord"
   command:
-    "{{ galaxy_utils_dir }}/bin/gxctl.sh stop {{ galaxy_name }}"
+    "/usr/local/bin/supervisorct stop {{ galaxy_name }}:"
+  when: galaxyctl.stat.exists == False
