@@ -28,6 +28,13 @@
     extra_args='--prefix {{ galaxy_utils_dir }} --no-binary :all:'
     state=present
 
+- name: "Install Gravity"
+  pip:
+    name: "gravity"
+    executable: '{{ python_install_dir }}/bin/pip3'
+    extra_args: '--prefix {{ galaxy_utils_dir }}'
+    state: latest
+
 - name: "Install utility scripts"
   copy:
     src={{ item }}
