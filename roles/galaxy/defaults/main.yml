@@ -138,6 +138,7 @@ galaxy_use_cached_depedency_manager: no
 # User account creation and activation
 allow_user_creation: yes
 allow_user_deletion: yes
+allow_user_impersonation: yes
 enable_user_activation: no
 
 # User login
@@ -229,7 +230,7 @@ galaxy_unregistered_user_concurrent_jobs: 0
 galaxy_concurrent_jobs: 2
 
 # HTML sanitization whitelist
-galaxy_sanitize_whitelist_file: "config/sanitize_whitelist.txt"
+galaxy_sanitize_whitelist_file: "sanitize_allowlist.txt"
 # List of paths for whitelisted tools e.g.
 # galaxy_sanitize_whitelist_tools:
 # - "toolshed.g2.bx.psu.edu/repos/devteam/fastqc/fastqc/0.72"
@@ -244,6 +245,11 @@ nginx_user: "nginx"
 nginx_group: "nginx"
 nginx_conf_dir: "/etc/nginx"
 nginx_share_dir: "/usr/share/nginx"
+
+# Gunicorn configuration
+galaxy_gunicorn_workers: 4
+galaxy_gunicorn_socket: 4001
+galaxy_reports_gunicorn_socket: 9001
 
 # uWSGI configuration
 galaxy_uwsgi_processes: 8
@@ -273,6 +279,10 @@ galaxy_reports_password: "{{ galaxy_reports_user }}"
 # Utilities should be installed under the 'bin' subdirectory
 # of this location
 galaxy_utils_dir: "/usr/local"
+
+# Enable authenticated users to see names of other users
+# (useful for sharing in small Galaxy instances)
+expose_user_name: no
 
 # GDPR Compliance mode
 enable_beta_gdpr: no
