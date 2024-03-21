@@ -49,3 +49,13 @@
     path: '{{ galaxy_root }}/.venv'
     state: absent
   when: galaxy_force_reinstall_venv == True
+
+# Remove artefacts (utilities, configs etc) from previous Galaxy
+# versions
+- name: "Remove artefacts from previous Galaxy versions"
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - '{{ galaxy_utils_dir }}/bin/gxctl.sh'
+    - '/usr/local/etc/supervisord.d/{{ galaxy_name }}.ini'
