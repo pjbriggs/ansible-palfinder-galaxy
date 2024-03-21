@@ -1,8 +1,8 @@
 ---
 
-- include: install_gxctl.yml
-
 - include: halt_galaxy.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
 
 - include: remove_legacy_artefacts.yml
 
@@ -61,3 +61,7 @@
 
 - include: cronvars.yml
   when: enable_smtp
+
+- include: start_galaxy.yml
+  become: yes
+  become_user: "{{ galaxy_user }}"
