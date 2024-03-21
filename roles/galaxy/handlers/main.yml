@@ -4,10 +4,10 @@
     name: "{{ nginx_service }}"
     state: reloaded
 
-- name: "Restart Supervisord"
-  service:
-    name: supervisord
-    state: restarted
+- name: "Restart Galaxy"
+  shell:
+    cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl restart"
+    chdir: "{{ galaxy_root }}"
 
 - name: "Restart Galaxy reports"
   service:
