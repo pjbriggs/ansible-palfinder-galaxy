@@ -7,6 +7,6 @@
 
 - name: "Restart Galaxy"
   shell:
-    cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl update && {{ galaxy_utils_dir }}/bin/galaxyctl start"
+    cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl start"
     chdir: "{{ galaxy_root }}"
   when: galaxyctl.stat.exists
