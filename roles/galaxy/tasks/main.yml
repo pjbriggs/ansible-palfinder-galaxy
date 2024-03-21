@@ -52,8 +52,6 @@
 
 - include: logrotate.yml
 
-- include: supervisor.yml
-
 - include: nginxproxy.yml
 
 - include: static.yml
