@@ -291,7 +291,7 @@
 # Sanitization whitelist
 - name: Add tools to sanitization whitelist
   lineinfile:
-    path='{{ galaxy_root }}/{{ galaxy_sanitize_whitelist_file }}'
+    path='{{ galaxy_root }}/config/{{ galaxy_sanitize_whitelist_file }}'
     state=present
     create=yes
     line="{{ item }}"
