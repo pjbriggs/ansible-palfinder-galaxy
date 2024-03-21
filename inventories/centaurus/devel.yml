@@ -18,9 +18,8 @@ centaurus-dev:
     email_audit_report_to: "{{ galaxy_admin_user }}"
     # SSL configuration
     enable_https: yes
-    # Threads for uWSGI and handler processes
-    galaxy_uwsgi_processes: 4
-    galaxy_handler_processes: 2
+    # Gunicorn settings
+    galaxy_gunicorn_workers: 4
     # Installation mode (either 'minimal' for testing
     # or 'full' for production)
     galaxy_install_mode: "full"
