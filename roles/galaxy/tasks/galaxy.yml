@@ -196,7 +196,7 @@
 - name: Create Galaxy configuration file
   template:
     dest='{{ galaxy_root }}/config/galaxy.yml'
-    src=galaxy-config.yml.j2
+    src='galaxy-config-{{ galaxy_version }}.yml.j2'
 
 # Deal with possible bug when Galaxy installs Mercurial in
 # the virtualenv without execute permission
