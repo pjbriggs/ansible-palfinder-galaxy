@@ -252,12 +252,7 @@ galaxy_gunicorn_socket: 4001
 galaxy_reports_gunicorn_socket: 9001
 
 # uWSGI configuration
-galaxy_uwsgi_processes: 8
-galaxy_uwsgi_socket: 4001
 galaxy_reports_uwsgi_socket: 9001
-
-# Galaxy handler processes
-galaxy_handler_processes: 1
 
 # Logging
 galaxy_log_dir: "{{ galaxy_dir }}/logs"
