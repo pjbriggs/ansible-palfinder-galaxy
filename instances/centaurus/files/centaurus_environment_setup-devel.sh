@@ -10,20 +10,26 @@ export TEMP=$GALAXY_HOME/tmp
 export TMP=$TEMP
 export TMPDIR=$TEMP
 #
-# Set locale to ASCII rather than UTF-8
-export LANG=en_GB.ISO-88591-5
+# 12/09/2019: Set locale to be UTF-8 in order to get
+# custom QIIME2 conda install to work
+# This reverses a previous version where the locale
+# was explicity set to be ASCII rather than UTF-8
+# so it's possible that it could cause problems
+# elsewhere
+#export LANG=en_GB.ISO-88591-5
+export LANG=en_GB.utf8
+export LC_ALL=en_GB.utf8
 #
-# SAM tools
-##export PATH=$GALAXY_HOME/apps/samtools/1.2/bin:$PATH
-export PATH=$GALAXY_HOME/apps/samtools/1.3.1/bin:$PATH
+# Explicitly set the locale for sorting etc
+export LC_COLLATE=C
 #
-# Bowtie (for trinityrnaseq)
-export PATH=$PATH:/opt/gridware/pkg/apps/bowtie/1.1.0/gcc-4.4.7
-#
-# Fake usearch for Amplicon analysis pipeline testing
-##if [ -d $GALAXY_HOME/devel/local_tools/Amplicon_analysis/tool_dependencies/_mock_usearch ] ; then
-##    echo Adding fake usearch executables to PATH
-##    export PATH=$PATH:$GALAXY_HOME/devel/local_tools/Amplicon_analysis/tool_dependencies/_mock_usearch
-##fi
+# Add legacy executables by setting to a non-empty value
+export __CENTAURUS_LEGACY_APPS=
+if [ ! -z "$__CENTAURUS_LEGACY_APPS" ] ; then
+    # SAM tools
+    export PATH=$GALAXY_HOME/apps/samtools/0.1.18:$PATH
+    # UCSC tools v309/v345
+    export PATH=$GALAXY_HOME/apps/ucsc-tools/v345:$PATH
+fi
 ##
 #
