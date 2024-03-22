@@ -6,14 +6,6 @@
 GALAXY_HOME=/mnt/rvmi/centaurus/galaxy
 GALAXY_TOP=$HOME/production
 #
-# Proxies
-export HTTPS_PROXY=proxy.man.ac.uk:3128
-export https_proxy=$HTTPS_PROXY
-export HTTP_PROXY=$HTTPS_PROXY
-export https_proxy=$HTTPS_PROXY
-export FTP_PROXY=$HTTPS_PROXY
-export ftp_proxy=$HTTPS_PROXY
-#
 # TEMP should be the same as new_file_path
 export TEMP=$GALAXY_HOME/tmp
 export TMP=$TEMP
