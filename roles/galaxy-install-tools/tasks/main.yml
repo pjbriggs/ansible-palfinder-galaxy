@@ -31,8 +31,6 @@
         search_string: "master_api_key:"
         line: "  #master_api_key: changethis"
         state: present
-      notify:
-        - "Restart Galaxy"
 
     - name: "Restart Galaxy service with master API key disabled"
       service:
