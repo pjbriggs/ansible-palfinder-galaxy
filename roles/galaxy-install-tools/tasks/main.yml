@@ -8,18 +8,36 @@
 
 - name: "Install tools from Galaxy toolshed"
   block:
-    - name: "Activate Galaxy master API key for tool installation"
-      command:
-        "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+    - name: "Add master API key to Galaxy config for tool installation"
+      lineinfile:
+        path: "{{ galaxy_root }}/config/galaxy.yml"
+        search_string: "#master_api_key:"
+        line: "  master_api_key: {{ master_api_key }}"
+        state: present
+
+    - name: "Restart Galaxy service with master API key enabled"
+      service:
+        name: "galaxy"
+        state: restarted
 
     - name: "Install tools from Galaxy toolshed"
       command:
         "{{ galaxy_utils_dir }}/bin/install_tool.sh toolshed.g2.bx.psu.edu {{ item.tool }} {{ item.owner }} {{ master_api_key }} {{ galaxy_url }} --section '{{ item.section }}' {{ galaxy_install_tool_extra_args }}"
       with_items: "{{ galaxy_tools }}"
 
-    - name: "Deactivate Galaxy master API key"
-      command:
-          "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
+    - name: "Remove master API key from Galaxy configuration"
+      lineinfile:
+        path: "{{ galaxy_root }}/config/galaxy.yml"
+        search_string: "master_api_key:"
+        line: "  #master_api_key: changethis"
+        state: present
+      notify:
+        - "Restart Galaxy"
+
+    - name: "Restart Galaxy service with master API key disabled"
+      service:
+        name: "galaxy"
+        state: restarted
   when: galaxy_tools | length > 0
 
 # Local tools

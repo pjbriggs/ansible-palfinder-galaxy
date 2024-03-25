@@ -1,4 +1,5 @@
 ---
-- name: "Restart Galaxy"
-  command:
-    "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }}"
+- name: "Restart Galaxy service"
+  service:
+    name: "galaxy"
+    state: restarted
