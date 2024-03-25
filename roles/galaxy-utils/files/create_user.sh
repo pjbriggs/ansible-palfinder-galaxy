@@ -22,6 +22,28 @@ function user_exists() {
     $NEBULIZER -k $APIKEY list_users $URL --name "$USER" | grep ^$USER | cut -f1
 }
 
+function wait_for_galaxy() {
+    local galaxy_ready=
+    local n_tries=0
+    while [ -z "$galaxy_ready" ] ; do
+	$NEBULIZER ping $URL -c 1 2>&1 >/dev/null
+	if [ $? -ne 0 ] ; then
+	    ((ntries++))
+	    if [ $ntries -gt 18 ] ; then
+		echo Failed to contact $URL >&2
+		exit 1
+	    fi
+	    sleep 5
+	else
+	    galaxy_ready=yes
+	fi
+    done
+}
+
+# Wait for Galaxy
+wait_for_galaxy
+echo Galaxy ready at $URL
+
 # Check for user
 if [ -n "$(user_exists)" ] ; then
     echo $USER: already present
