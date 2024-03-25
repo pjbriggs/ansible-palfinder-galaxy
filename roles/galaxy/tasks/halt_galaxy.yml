@@ -1,29 +1,27 @@
 # Stop Galaxy running
 ---
-- name: "Check if Gravity is available"
+- name: "Check for galaxy.service file"
   stat:
-    path: "{{ galaxy_utils_dir }}/bin/galaxyctl"
-  register: galaxyctl
+    path: "/lib/systemd/system/galaxy.service"
+  register: galaxy_service
 
-- name: "Halt running Galaxy using Gravity"
-  block:
-
-    - name: "Check for running Galaxy"
-      shell:
-        cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl status 2>&1"
-        chdir: "{{ galaxy_root }}"
-      register: gravity_galaxy_status
-
-    - name: "Halt running Galaxy using Gravity"
-      shell:
-        cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl stop"
-        chdir: "{{ galaxy_root }}"
-      when: gravity_galaxy_status.stdout != "supervisord is not running"
-
-  when: galaxyctl.stat.exists == True
+- name: "Stop Galaxy service"
+  service:
+    name: "galaxy"
+    state: stopped
+  when:
+    - galaxy_service.stat.exists == True
 
 # Fallback when upgrading from legacy Galaxy version
+
+- name: "Check for Galaxy supervisor ini file"
+  stat:
+    path: "/usr/local/etc/supervisord.d/{{ galaxy_name }}.ini"
+  register: supervisor_ini
+
 - name: "Halt running Galaxy using Supervisord"
   command:
     "/usr/local/bin/supervisorct stop {{ galaxy_name }}:"
-  when: galaxyctl.stat.exists == False
+  when:
+    - galaxy_service.stat.exists == False
+    - supervisor_ini.exists == True

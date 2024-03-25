@@ -5,9 +5,9 @@
     state: reloaded
 
 - name: "Restart Galaxy"
-  shell:
-    cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl restart"
-    chdir: "{{ galaxy_root }}"
+  service:
+    name: "galaxy"
+    state: restarted
 
 - name: "Restart Galaxy reports"
   service:

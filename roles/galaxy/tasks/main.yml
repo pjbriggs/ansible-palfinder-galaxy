@@ -1,8 +1,6 @@
 ---
 
 - include: halt_galaxy.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
 
 - include: remove_legacy_artefacts.yml
 
@@ -40,6 +38,8 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
+- include: galaxy_service.yml
+
 - include: reports.yml
   when: enable_reports
 
@@ -61,5 +61,3 @@
   when: enable_smtp
 
 - include: start_galaxy.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"

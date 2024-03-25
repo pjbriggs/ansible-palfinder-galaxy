@@ -1,12 +1,6 @@
 # Start Galaxy running
 ---
-- name: "Check if Gravity is available"
-  stat:
-    path: "{{ galaxy_utils_dir }}/bin/galaxyctl"
-  register: galaxyctl
-
-- name: "Restart Galaxy"
-  shell:
-    cmd: "{{ galaxy_utils_dir }}/bin/galaxyctl start"
-    chdir: "{{ galaxy_root }}"
-  when: galaxyctl.stat.exists
+- name: "Start Galaxy"
+  service:
+    name: "galaxy"
+    state: started

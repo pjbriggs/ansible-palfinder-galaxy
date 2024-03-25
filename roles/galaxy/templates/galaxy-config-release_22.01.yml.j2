@@ -22,9 +22,23 @@
 # ``uwsgi:`` section will be ignored if Galaxy is started via Gravity commands (e.g ``./run.sh``, ``galaxy`` or ``galaxyctl``).
 gravity:
 
+  # Process manager to use.
+  # ``supervisor`` is the default process manager when Gravity is invoked as a non-root user.
+  # ``systemd`` is the default when Gravity is invoked as root.
+  # Valid options are: supervisor, systemd
+  process_manager: systemd
+
   # Specify Galaxy's root directory.
   # Gravity will attempt to find the root directory, but you can set the directory explicitly with this option.
   galaxy_root: {{ galaxy_root }}
+
+  # User to run Galaxy as, required when using the systemd process manager as root.
+  # Ignored if ``process_manager`` is ``supervisor`` or user-mode (non-root) ``systemd``.
+  galaxy_user: {{ galaxy_user }}
+
+  # Group to run Galaxy as, optional when using the systemd process manager as root.
+  # Ignored if ``process_manager`` is ``supervisor`` or user-mode (non-root) ``systemd``.
+  # galaxy_group: {{ galaxy_group }}
 
   # Set to a directory that should contain log files for the processes controlled by Gravity.
   # If not specified defaults to ``<state_dir>/log``.
