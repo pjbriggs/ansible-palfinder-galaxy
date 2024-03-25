@@ -1,0 +1,12 @@
+---
+- name: "Create service file for Galaxy"
+  template:
+    src: 'galaxy.service.j2'
+    dest: '/lib/systemd/system/galaxy.service'
+  notify: "Restart Galaxy"
+
+- name: "Start Galaxy service"
+  systemd:
+    name: 'galaxy'
+    enabled: on
+    state: restarted

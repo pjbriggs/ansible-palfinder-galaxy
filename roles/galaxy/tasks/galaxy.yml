@@ -13,6 +13,7 @@
   - '{{ galaxy_tool_dependency_dir }}'
   - '{{ galaxy_dir }}/logs'
   - '{{ galaxy_dir }}/backups'
+  - '{{ galaxy_dir }}/gravity'
 
 - name: "Stop if proxy prefix is set but is missing leading slash"
   fail:

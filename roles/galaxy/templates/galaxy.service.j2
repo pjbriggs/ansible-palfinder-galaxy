@@ -1,0 +1,18 @@
+[Unit]
+Description=Galaxy processes
+After=network.target
+After=time-sync.target
+
+[Service]
+PermissionsStartOnly=true
+Type=simple
+User={{ galaxy_user }}
+Group={{ galaxy_group }}
+Restart=on-abort
+WorkingDirectory={{ galaxy_root }}
+TimeoutStartSec=10
+ExecStart={{ galaxy_root }}/.venv/bin/galaxy --state-dir {{ galaxy_dir }}/gravity
+Environment=VIRTUAL_ENV={{ galaxy_root }}/.venv PATH={{ galaxy_root }}/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=multi-user.target
