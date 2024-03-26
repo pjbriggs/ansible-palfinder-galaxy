@@ -7,12 +7,15 @@
     dest="{{ jsedrop_install_dir }}/jsedrop.py"
     mode="ugo+x"
 
-- include: "jsedrop_initd.yml"
-  when: ansible_distribution == "Scientific" and ansible_distribution_major_version == "6"
+- name: "Create service file for jsedrop.service"
+  template:
+    src="jsedrop.service.j2"
+    dest="/lib/systemd/system/jsedrop.service"
+  notify:
+    - "Restart jsedrop.service"
 
-- include: "jsedrop_service.yml"
-  when: (ansible_distribution == "Scientific" or ansible_distribution == "CentOS") and ansible_distribution_major_version == "7"
-
-- include: "jsedrop_service.yml"
-  when: ansible_distribution == "Ubuntu"
-
+- name: "(Re)start jsedrop.service using systemd"
+  systemd:
+    name="jsedrop"
+    enabled=yes
+    state=restarted
