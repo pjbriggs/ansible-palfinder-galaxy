@@ -1,5 +1,0 @@
----
-- name: "Uninstall apt version of Supervisor (Ubuntu)"
-  apt:
-    pkg: 'supervisor'
-    state: 'absent'
