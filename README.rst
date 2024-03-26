@@ -220,7 +220,6 @@ Versions of installed components:
 
  - ``python_version`` (3.6.11)
  - ``supervisor_version`` (4.2.2)
- - ``git`` (2.20.0)
 
 Playbooks
 ---------
