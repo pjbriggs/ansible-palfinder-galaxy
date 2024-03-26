@@ -1,6 +1,0 @@
----
-# Handlers for supervisord role
-- name: "Restart supervisord.service"
-  service:
-    name: 'supervisord'
-    state: restarted
