@@ -1,7 +1,0 @@
----
-- name: "Install system packages for utility scripts (RedHat)"
-  yum:
-    name:
-      - 'libpqxx'
-      - 'libpqxx-devel'
-    state: latest
