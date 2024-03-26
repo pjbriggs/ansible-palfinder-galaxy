@@ -1,8 +1,0 @@
----
-# git defaults
-git_version: '2.33.1'
-git_checksum: 'sha256:fa459f95153a2c51af149c062f614018c027caf75a8dd92b3f64defe0a78f42f'
-git_install_dir: '/usr/local'
-
-# Set to 'yes' to remove git installed by yum
-git_remove_system_package: no
