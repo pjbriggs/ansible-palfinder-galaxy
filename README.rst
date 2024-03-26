@@ -16,10 +16,6 @@ The following roles are defined:
 
  - ``galaxy-user``: creates the Galaxy user and group
 
- - ``epel-repo``: installs the EPEL package repository
-
- - ``nfslock``: installs the NFSLock package
-
  - ``python3``: builds and installs Python 3 from source
 
  - ``nginx``: installs Nginx
