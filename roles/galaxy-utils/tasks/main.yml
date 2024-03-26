@@ -1,9 +1,5 @@
 # Install utilities
 ---
-
-- include: "dependencies_redhat.yml"
-  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
-
 # Need latest setuptools to install nebulizer
 # Error looks like the one reported here:
 # - https://github.com/rm-hull/luma.examples/issues/45
