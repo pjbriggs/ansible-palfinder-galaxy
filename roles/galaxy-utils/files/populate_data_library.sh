@@ -15,6 +15,24 @@ FOLDER=$(echo $4 | cut -d/ -f2-)
 
 NEBULIZER=$(dirname $0)/nebulizer
 
+# Wait for Galaxy
+galaxy_ready=
+n_tries=0
+while [ -z "$galaxy_ready" ] ; do
+    $NEBULIZER ping $URL -c 1 2>&1 >/dev/null
+    if [ $? -ne 0 ] ; then
+	((ntries++))
+	if [ $ntries -gt 18 ] ; then
+	    echo Failed to contact $URL >&2
+	    exit 1
+	fi
+	sleep 5
+    else
+	galaxy_ready=yes
+    fi
+done
+echo Galaxy ready at $URL
+
 # Create data library
 got_library=$($NEBULIZER -u $USER -P $PASSWD list_libraries $URL 2>/dev/null | grep "^$LIBRARY")
 if [ -z "$got_library" ] ; then
