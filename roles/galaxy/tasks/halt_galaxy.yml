@@ -24,4 +24,4 @@
     "/usr/local/bin/supervisorct stop {{ galaxy_name }}:"
   when:
     - galaxy_service.stat.exists == False
-    - supervisor_ini.exists == True
+    - supervisor_ini.stat.exists == True
