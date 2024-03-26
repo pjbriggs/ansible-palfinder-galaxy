@@ -22,8 +22,6 @@ The following roles are defined:
 
  - ``postgresql``: installs and configures PostgreSQL
 
- - ``supervisord``: builds and installs Supervisord from source
-
  - ``postfix-null-client``: installs and configures Postfix as
    a 'null client'
 
@@ -45,8 +43,6 @@ The following roles are defined:
    * Set up Nginx proxy
    * Installs customised ``tool_conf.xml``
    * (Optionally) set up the JSE-drop job runner plugin
-   * Configure uWSGI for Galaxy
-   * Configure Supervisord for Galaxy
    * (Optionally) set up custom colour scheme via SCSS
    * (Optionally) sets up automatic SSL certificate renewal
 
@@ -82,9 +78,8 @@ Variables
 Key variables:
 
  - ``galaxy_name``: name for the Galaxy instance (NB this is also used
-   as the name for the instance-specific Supervisor and Nginx
-   configuration files, and for naming the Supervisor processes and
-   process groups)
+   as the name for any instance-specific configuration files, and for
+   naming processes etc)
  - ``galaxy_version``: version of Galaxy to install
  - ``galaxy_install_dir``: top-level directory to use; by default Galaxy
    will be installed under ``${galaxy_install_dir}/${galaxy_name}``
@@ -211,11 +206,6 @@ Variables for handling special cases:
    cluster nodes) (default: install Galaxy-specific Python in
    a ``python/VERSION`` directory parallel to the Galaxy code
    cloned from GitHub)
-
-Versions of installed components:
-
- - ``python_version`` (3.6.11)
- - ``supervisor_version`` (4.2.2)
 
 Playbooks
 ---------
@@ -414,7 +404,7 @@ Notes on the deployment
 
  - Python is installed under ``/usr/local`` by default, this can be
    changed via the ``python_install_dir`` parameter. This Python
-   installation is used by other system software (e.g. supervisord).
+   installation is used by other system software.
 
    By default this is also the Python installation used by Galaxy,
    however it is possible to specify a separate Python installation
@@ -434,10 +424,6 @@ Notes on the deployment
    connect to the Nginx/Galaxy server, it may be necessary to open
    port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``
    (similarly port 443 for SSL access).
-
- - We need to install Supervisord as the default version available
-   via ``yum`` on Scientific Linux is too old for the syntax used
-   by the Galaxy config.
 
  - The following ports need to be open for various services:
 
@@ -516,14 +502,6 @@ Known Issues
 
  - Tool installation can timeout or fail in which case it will need
    to be completed manually.
-
- - In the vagrant testing environment restarting Galaxy using the
-   ``supervisorctl`` utility can fail. This appears to be due to
-   ``uWSGI`` child processes not being removed, and subsequently
-   blocking the port used by ``uWSGI``/``Galaxy``. Why this is the
-   case is not clear, so for now the ``gxctl.sh`` utility
-   script (part of the ``galaxy`` role) has been added to work around
-   this problem.
 
  - SSH keys can change when recreating a Vagrant VM for testing,
    in which case you should use e.g. ``ssh-keygen -R "192.168.60.5"``
