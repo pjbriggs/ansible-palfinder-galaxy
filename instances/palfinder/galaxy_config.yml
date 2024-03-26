@@ -1,7 +1,7 @@
 ---
 # Galaxy configuration for Palfinder
 galaxy_name: "palfinder"
-galaxy_version: "release_20.09"
+galaxy_version: "release_22.01"
 
 # Galaxy-specific Python installation
 galaxy_python_version: "3.8.13"
