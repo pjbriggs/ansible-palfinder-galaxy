@@ -1,5 +1,0 @@
----
-- name: "Uninstall yum version of Supervisor (RedHat)"
-  yum:
-    name: 'supervisor'
-    state: 'absent'
