@@ -4,9 +4,9 @@
     name: "{{ nginx_service }}"
     state: reloaded
 
-- name: "Restart Supervisord"
+- name: "Restart Galaxy"
   service:
-    name: supervisord
+    name: "galaxy"
     state: restarted
 
 - name: "Restart Galaxy reports"

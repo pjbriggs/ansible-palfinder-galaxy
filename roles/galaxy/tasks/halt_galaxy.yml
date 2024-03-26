@@ -1,9 +1,27 @@
 # Stop Galaxy running
 ---
-- name: "Command to halt running Galaxy"
-  debug:
-    msg: "{{ galaxy_utils_dir }}/bin/gxctl.sh stop {{ galaxy_name }}"
+- name: "Check for galaxy.service file"
+  stat:
+    path: "/lib/systemd/system/galaxy.service"
+  register: galaxy_service
 
-- name: "Halt running Galaxy"
+- name: "Stop Galaxy service"
+  service:
+    name: "galaxy"
+    state: stopped
+  when:
+    - galaxy_service.stat.exists == True
+
+# Fallback when upgrading from legacy Galaxy version
+
+- name: "Check for Galaxy supervisor ini file"
+  stat:
+    path: "/usr/local/etc/supervisord.d/{{ galaxy_name }}.ini"
+  register: supervisor_ini
+
+- name: "Halt running Galaxy using Supervisord"
   command:
-    "{{ galaxy_utils_dir }}/bin/gxctl.sh stop {{ galaxy_name }}"
+    "/usr/local/bin/supervisorct stop {{ galaxy_name }}:"
+  when:
+    - galaxy_service.stat.exists == False
+    - supervisor_ini.stat.exists == True

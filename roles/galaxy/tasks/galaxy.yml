@@ -13,6 +13,7 @@
   - '{{ galaxy_tool_dependency_dir }}'
   - '{{ galaxy_dir }}/logs'
   - '{{ galaxy_dir }}/backups'
+  - '{{ galaxy_dir }}/gravity'
 
 - name: "Stop if proxy prefix is set but is missing leading slash"
   fail:
@@ -196,7 +197,7 @@
 - name: Create Galaxy configuration file
   template:
     dest='{{ galaxy_root }}/config/galaxy.yml'
-    src=galaxy-config.yml.j2
+    src='galaxy-config-{{ galaxy_version }}.yml.j2'
 
 # Deal with possible bug when Galaxy installs Mercurial in
 # the virtualenv without execute permission
@@ -291,7 +292,7 @@
 # Sanitization whitelist
 - name: Add tools to sanitization whitelist
   lineinfile:
-    path='{{ galaxy_root }}/{{ galaxy_sanitize_whitelist_file }}'
+    path='{{ galaxy_root }}/config/{{ galaxy_sanitize_whitelist_file }}'
     state=present
     create=yes
     line="{{ item }}"

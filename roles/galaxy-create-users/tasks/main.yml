@@ -8,22 +8,34 @@
 - name: "Create and activate Galaxy user accounts"
   block:
     # Create the accounts
-    - name: "Show command line for restarting Galaxy with master API key"
-      debug:
-        msg: "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+    - name: "Add master API key to Galaxy config for tool installation"
+      lineinfile:
+        path: "{{ galaxy_root }}/config/galaxy.yml"
+        search_string: "#master_api_key:"
+        line: "  master_api_key: {{ master_api_key }}"
+        state: present
 
-    - name: "Activate Galaxy master API key for user creation"
-      command:
-        "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --master-api-key {{ master_api_key }}"
+    - name: "Restart Galaxy service with master API key enabled"
+      service:
+        name: "galaxy"
+        state: restarted
 
     - name: "Create Galaxy user accounts"
       command:
         "{{ galaxy_utils_dir }}/bin/create_user.sh '{{ item.email }}' '{{ item.password }}' '{{ master_api_key }}' '{{ galaxy_url }}'"
       with_items: "{{ galaxy_users }}"
 
-    - name: "Deactivate Galaxy master API key"
-      command:
-        "{{ galaxy_utils_dir }}/bin/gxctl.sh restart {{ galaxy_name }} -c {{ galaxy_root }}/config/galaxy.yml -u {{ galaxy_user }} --no-master-api-key"
+    - name: "Remove master API key from Galaxy configuration"
+      lineinfile:
+        path: "{{ galaxy_root }}/config/galaxy.yml"
+        search_string: "master_api_key:"
+        line: "  #master_api_key: changethis"
+        state: present
+
+    - name: "Restart Galaxy service with master API key disabled"
+      service:
+        name: "galaxy"
+        state: restarted
 
     # Activate accounts
     - name: "Activate Galaxy user accounts"

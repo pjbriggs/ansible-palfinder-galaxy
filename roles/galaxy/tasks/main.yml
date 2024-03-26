@@ -1,7 +1,5 @@
 ---
 
-- include: install_gxctl.yml
-
 - include: halt_galaxy.yml
 
 - include: remove_legacy_artefacts.yml
@@ -40,6 +38,8 @@
   become: yes
   become_user: "{{ galaxy_user }}"
 
+- include: galaxy_service.yml
+
 - include: reports.yml
   when: enable_reports
 
@@ -52,8 +52,6 @@
 
 - include: logrotate.yml
 
-- include: supervisor.yml
-
 - include: nginxproxy.yml
 
 - include: static.yml
@@ -61,3 +59,5 @@
 
 - include: cronvars.yml
   when: enable_smtp
+
+- include: start_galaxy.yml

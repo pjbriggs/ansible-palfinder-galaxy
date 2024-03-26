@@ -1,0 +1,6 @@
+# Start Galaxy running
+---
+- name: "Start Galaxy"
+  service:
+    name: "galaxy"
+    state: started
