@@ -409,10 +409,13 @@
       debug:
         msg: "DB schema versions: current {{ current_db_version.stdout }} -> new {{ new_db_version.stdout }}"
 
-    - name: "Update the Galaxy database schema"
+    - name: "Update the Galaxy database schema incrementally"
       command:
-        cmd: "./manage_db.sh upgrade"
+        cmd: "./manage_db.sh upgrade {{ db_version }}"
         chdir: '{{ galaxy_root }}'
+        loop: "{{ range(current_db_version.stdout|int+1, new_db_version.stdout|int+1, 1)|list }}"
+      loop_control:
+        loop_var: "db_version"
       when: new_db_version.stdout|int > current_db_version.stdout|int
 
     # Not possible to downgrade database from a version that is
