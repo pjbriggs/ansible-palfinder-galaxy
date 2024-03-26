@@ -20,8 +20,6 @@ The following roles are defined:
 
  - ``nfslock``: installs the NFSLock package
 
- - ``python27``: builds and installs Python 2.7 from source
-
  - ``python3``: builds and installs Python 3 from source
 
  - ``nginx``: installs Nginx
