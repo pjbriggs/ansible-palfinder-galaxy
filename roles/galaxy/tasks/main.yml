@@ -10,7 +10,7 @@
 - include: "dependencies_ubuntu.yml"
   when: ansible_distribution == "Ubuntu"
 
-- name: "Install Galaxy-specific Python 3"
+- name: "Install Galaxy-specific Python"
   include_role:
     name: python3
   vars:
