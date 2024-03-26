@@ -1,4 +1,0 @@
----
-# Python defaults
-python_version: '2.7.10'
-install_dir: '/usr/local'
