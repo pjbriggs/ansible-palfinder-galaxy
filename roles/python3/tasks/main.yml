@@ -26,11 +26,7 @@
 
 - name: "Build and install Python 3"
   block:
-    - include: "dependencies_redhat.yml"
-      when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
-
     - include: "dependencies_ubuntu.yml"
-      when: ansible_distribution == "Ubuntu"
 
     - name: "Create installation directory"
       file:

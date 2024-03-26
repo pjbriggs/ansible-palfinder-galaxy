@@ -31,35 +31,6 @@
   become_user: '{{ galaxy_user }}'
   register: set_group_read_on_galaxy_home
 
-- name: "Configure Nginx proxy for RedHat (SL/CentOS)"
-  block:
-    # Required to allow Nginx to read static content
-    # from Galaxy's home directory
-    - name: "Add Nginx user to galaxy group"
-      user:
-        name: "{{ nginx_user }}"
-        groups: '{{ nginx_group }},{{ galaxy_group }}'
-      notify:
-        - Restart Nginx
-
-    # Fix SELinux contexts for Galaxy content
-    - name: "Check if SELinux is enforcing"
-      command:
-        "getenforce"
-      register: sestatus
-
-    - name: "Fix SELinux contexts for Galaxy content"
-      block:
-        - name: "Update SELinux contexts for static content"
-          command:
-            "semanage fcontext -a -t httpd_sys_content_t '{{ galaxy_root }}/static(/.*)?'"
-
-        - name: "Apply updated SELinux contexts for static content"
-          command:
-            "restorecon -Rv {{ galaxy_root }}/static"
-      when: '"Disabled" not in sestatus.stdout'
-  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
-
 # Set up strong Diffie-Hellman group for TLS/SSL
 - name: "Check for Diffie-Hellman parameter file"
   stat:

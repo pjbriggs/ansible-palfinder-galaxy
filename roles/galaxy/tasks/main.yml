@@ -4,11 +4,7 @@
 
 - include: remove_legacy_artefacts.yml
 
-- include: "dependencies_redhat.yml"
-  when: ansible_distribution == "Scientific" or ansible_distribution == "CentOS"
-
 - include: "dependencies_ubuntu.yml"
-  when: ansible_distribution == "Ubuntu"
 
 - name: "Install Galaxy-specific Python"
   include_role:
