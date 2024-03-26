@@ -1,10 +1,10 @@
 ---
 # Install, configure and start Nginx on remote server
-- include: "install_nginx_redhat.yml"
-  when: (ansible_distribution == "Scientific" or ansible_distribution == "CentOS") and ansible_distribution_major_version == "7"
-
-- include: "install_nginx_ubuntu.yml"
-  when: ansible_distribution == "Ubuntu"
+- name: "Install Nginx"
+  apt:
+    pkg:
+      - "nginx"
+    state: present
 
 - name: "Check if default Nginx configuration is present"
   stat: path={{ nginx_conf_dir }}/conf.d/default.conf
@@ -13,18 +13,6 @@
 - name: "Move default Nginx configuration"
   command: "mv {{ nginx_conf_dir }}/conf.d/default.conf {{ nginx_conf_dir }}/conf.d/default.conf.bak"
   when: nginx_default_conf.stat.exists
-
-# On Scientific Linux 7 the default nginx.conf file contains
-# a 'server' block which clashes with the one in the Galaxy
-# conf file, so need to replace it
-- name: "Replace main Nginx conf file (SL7)"
-  template:
-    src: "nginx.conf.j2"
-    dest: "{{ nginx_conf_dir }}/nginx.conf"
-    mode: "u=rw,go=r"
-  when: ansible_distribution == "Scientific" and ansible_distribution_major_version == "7"
-  notify:
-  - "Restart Nginx"
 
 - name: "Start Nginx"
   service:
