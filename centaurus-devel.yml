@@ -72,7 +72,6 @@
   - python3
   - nginx
   - postgresql
-  - supervisord
 
   # SSL certificates
   - role: certbot
