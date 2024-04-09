@@ -267,7 +267,11 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Create the drop file to submit the job
         try:
             with jse_drop.get_lock(timeout=JSEDROP_LOCK_TIMEOUT):
+                log.info("(%s/%s) acquired JSE-Drop lock" %
+                         (galaxy_id_tag,job_name))
                 drop_file = jse_drop.run(job_name,script)
+                log.info("(%s/%s) releasing JSE-Drop lock" %
+                         (galaxy_id_tag,job_name))
             log.debug("created drop file %s" % drop_file)
             log.info("(%s) submitted as %s" % (galaxy_id_tag,job_name))
         except Exception as ex:
