@@ -630,6 +630,11 @@ class FileLock:
         # Check if instance holds the lock
         return (self._lockfd is not None)
 
+class JSEDropException(Exception):
+    """
+    Custom exception class for JSE-Drop
+    """
+
 def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
                      status=None):
     """
