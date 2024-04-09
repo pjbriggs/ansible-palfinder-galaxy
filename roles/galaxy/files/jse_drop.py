@@ -703,6 +703,7 @@ if __name__ == '__main__':
     """
     Provide a basic CLI for JSE Drop
     """
+    import sys
     from argparse import ArgumentParser
     from fnmatch import fnmatch
     status_descriptions = {
@@ -727,42 +728,46 @@ if __name__ == '__main__':
                    "seconds; by default jobs marked 'cleanup' are "
                    "removed (use -s to select other job statuses)")
     args = p.parse_args()
-    jse = JSEDrop(args.drop_dir)
-    with jse.get_lock(timeout=60):
-        jobs = sorted(jse.jobs(),key=lambda j: jse.timestamp(j))
-        if args.job_name is not None:
-            jobs = [j for j in jobs if fnmatch(j,args.job_name)]
-        status = None
-        if args.status is not None:
-            for s in status_descriptions:
-                if fnmatch(status_descriptions[s],args.status):
-                    status = s
-                    break
-        if args.clean_interval is not None:
-            if not status:
-                status = JSEDropStatus.CLEANUP
-        if status:
-            jobs = [j for j in jobs if jse.status(j) == status]
-        if args.clean_interval is not None:
-            # Clean up selected jobs
-            now = datetime.now()
-            interval = timedelta(seconds=int(args.clean_interval))
-            jobs = [j for j in jobs
-                    if now - datetime.fromtimestamp(jse.timestamp(j))
-                    > interval]
-            for job in jobs:
-                print("Cleaning up job '%s'" % job)
-                jse.cleanup(job)
-        else:
-            # Print list of jobs
-            for job in jobs:
-                status = jse.status(job)
-                try:
-                    status = status_descriptions[status]
-                except KeyError:
-                    pass
-                ts = jse.timestamp(job)
-                ds = datetime.fromtimestamp(ts)
-                print("%s\t%s\t%s" % (job,
-                                      status,
-                                      ds.strftime("%m/%d/%Y %H:%M:%S")))
+    try:
+        jse = JSEDrop(args.drop_dir)
+        with jse.get_lock(timeout=60):
+            jobs = sorted(jse.jobs(),key=lambda j: jse.timestamp(j))
+            if args.job_name is not None:
+                jobs = [j for j in jobs if fnmatch(j,args.job_name)]
+            status = None
+            if args.status is not None:
+                for s in status_descriptions:
+                    if fnmatch(status_descriptions[s],args.status):
+                        status = s
+                        break
+            if args.clean_interval is not None:
+                if not status:
+                    status = JSEDropStatus.CLEANUP
+            if status:
+                jobs = [j for j in jobs if jse.status(j) == status]
+            if args.clean_interval is not None:
+                # Clean up selected jobs
+                now = datetime.now()
+                interval = timedelta(seconds=int(args.clean_interval))
+                jobs = [j for j in jobs
+                        if now - datetime.fromtimestamp(jse.timestamp(j))
+                        > interval]
+                for job in jobs:
+                    print("Cleaning up job '%s'" % job)
+                    jse.cleanup(job)
+            else:
+                # Print list of jobs
+                for job in jobs:
+                    status = jse.status(job)
+                    try:
+                        status = status_descriptions[status]
+                    except KeyError:
+                        pass
+                    ts = jse.timestamp(job)
+                    ds = datetime.fromtimestamp(ts)
+                    print("%s\t%s\t%s" % (job,
+                                          status,
+                                          ds.strftime("%m/%d/%Y %H:%M:%S")))
+    except Exception as ex:
+        print("Failed: %s" % ex)
+        sys.exit(1)
