@@ -88,7 +88,7 @@ log = logging.getLogger( __name__ )
 
 __all__ = [ 'JSEDropJobRunner' ]
 
-JSEDROP_LOCK_TIMEOUT = 60
+JSEDROP_LOCK_TIMEOUT = 300
 
 class JSEDropJobRunner(AsynchronousJobRunner):
     """
