@@ -270,12 +270,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 drop_file = jse_drop.run(job_name,script)
             log.debug("created drop file %s" % drop_file)
             log.info("(%s) submitted as %s" % (galaxy_id_tag,job_name))
-        except:
+        except Exception as ex:
             # Some problem writing the qsub file
-            job_wrapper.fail("failure preparing job script",
-                             exception=True )
-            log.exception("(%s/%s) failure writing job script" %
-                          (galaxy_id_tag,job_name))
+            job_wrapper.fail("failure preparing job script: %s" % ex,
+                             exception=True)
+            log.exception("(%s/%s) failure writing job script: %s" %
+                          (galaxy_id_tag,job_name,ex))
             return
         # External job id (i.e. id used by JSE-Drop as a handle to
         # identify the job) is the same as the job name here
