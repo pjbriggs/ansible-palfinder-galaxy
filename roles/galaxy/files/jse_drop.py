@@ -664,6 +664,8 @@ def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
     with jsedrop.get_lock(timeout=timeout):
         now = datetime.now()
         interval = timedelta(seconds=interval)
+        print("%s: jse_drop_cleanup: acquired lock" %
+              time.strftime("%Y-%m-%d %H:%M:%S"))
         for s in status:
             jobs = [j for j in jsedrop.jobs()
                     if ((s == "all" or jsedrop.status(j) == s)
@@ -680,6 +682,8 @@ def jse_drop_cleanup(drop_dir,interval=None,timeout=600,
                     print("%s: error attempting clean up for '%s': "
                           "%s (ignored)" %
                           (time.strftime("%Y-%m-%d %H:%M:%S"),job,ex))
+        print("%s: jse_drop_cleanup: releasing lock" %
+              time.strftime("%Y-%m-%d %H:%M:%S"))
 
 def jse_drop_cleanup_deleted(drop_dir,interval,timeout=600):
     """
