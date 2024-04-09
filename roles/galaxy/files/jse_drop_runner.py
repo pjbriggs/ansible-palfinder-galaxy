@@ -88,6 +88,8 @@ log = logging.getLogger( __name__ )
 
 __all__ = [ 'JSEDropJobRunner' ]
 
+JSEDROP_LOCK_TIMEOUT = 60
+
 class JSEDropJobRunner(AsynchronousJobRunner):
     """
     Job runner dropping job files into shared dir for execution by JSE
@@ -264,7 +266,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         script = "\n".join((shell,qsub_header,script))
         # Create the drop file to submit the job
         try:
-            with jse_drop.get_lock(timeout=60):
+            with jse_drop.get_lock(timeout=JSEDROP_LOCK_TIMEOUT):
                 drop_file = jse_drop.run(job_name,script)
             log.debug("created drop file %s" % drop_file)
             log.info("(%s) submitted as %s" % (galaxy_id_tag,job_name))
@@ -292,7 +294,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         job_name = job_state.job_id
         drop_off_dir = self._get_drop_dir()
         jse_drop = JSEDrop(drop_off_dir)
-        with jse_drop.get_lock(timeout=60):
+        with jse_drop.get_lock(timeout=JSEDROP_LOCK_TIMEOUT):
             #log.info("%s: acquired lock" % job_name)
             jse_drop_status = jse_drop.status(job_name)
 
@@ -398,7 +400,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Fetch the drop dir
         try:
             jse_drop = JSEDrop(self._get_drop_dir())
-            with jse_drop.get_lock(timeout=60):
+            with jse_drop.get_lock(timeout=JSEDROP_LOCK_TIMEOUT):
                 jse_drop_status = jse_drop.status(job_name)
                 if jse_drop_status in (JSEDropStatus.WAITING,
                                        JSEDropStatus.RUNNING):
