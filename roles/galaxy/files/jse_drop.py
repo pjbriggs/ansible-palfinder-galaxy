@@ -194,8 +194,8 @@ class JSEDrop(object):
             # Remove leading and trailing spaces and '//'
             return job_id.strip().strip('/')
         except Exception as ex:
-            raise Exception("Failed to extract job id for '%s' from "
-                            "'%s': %s" % (name,job_id,ex))
+            raise JSEDropException("Failed to extract job id for '%s' from "
+                                   "'%s': %s" % (name,job_id,ex))
 
     def get_job_number(self,name):
         """
@@ -617,7 +617,10 @@ class FileLock:
                     break
         if not self.has_lock:
             # Failed to get lock
-            raise BlockingIOError
+            err_msg = "failed to acquire lock for JSEDrop"
+            if timeout is not None:
+                err_msg += " (timeout after %ss)" % timeout
+            raise JSEDropException(err_msg)
 
     def release(self):
         # Release a previously acquired lock
