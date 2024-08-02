@@ -27,10 +27,10 @@ galaxy_job_destinations:
     jse_drop_qsub_options: "-V -j n -pe smp.pe 16"
     jse_drop_slots: "16"
   # High memory runner
-  - id: "jse_drop_smp_8_mem256"
+  - id: "jse_drop_smp_4_mem512"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 8 -l mem256"
-    jse_drop_slots: "8"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 4 -l mem512"
+    jse_drop_slots: "4"
     envs:
       - id: "GALAXY_MEMORY_MB"
         value: "131072"
@@ -49,8 +49,8 @@ galaxy_job_destinations:
   # Runner for NCBI Blast+
   - id: "jse_drop_ncbi_blast_plus"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 16 -l mem256"
-    jse_drop_slots: "16"
+    jse_drop_qsub_options: "-V -j n -pe smp.pe 8 -l mem512"
+    jse_drop_slots: "8"
   # Runner for Picard MarkDuplicates (needs Java options)
   - id: "jse_drop_picard_markduplicates"
     runner: "jse_drop"
@@ -114,7 +114,7 @@ galaxy_tool_destinations:
   - id: "rna_star"
     destination: "jse_drop_smp_8"
   - id: "rnaspades"
-    destination: "jse_drop_smp_8_mem256"
+    destination: "jse_drop_smp_4_mem512"
   - id: "salmon"
     destination: "jse_drop_smp_4"
   - id: "snp2hla_2"
