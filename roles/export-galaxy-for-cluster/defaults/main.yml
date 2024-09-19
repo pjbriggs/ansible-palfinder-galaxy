@@ -1,7 +1,7 @@
 ---
 # Galaxy name and version
 galaxy_name: "csf"
-galaxy_version: "19.09"
+galaxy_version: "22.05"
 
 # Galaxy user
 galaxy_user: "galaxy"
