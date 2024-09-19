@@ -1,6 +1,6 @@
 ---
-# Galaxy version for Centaurus-devel
-galaxy_version: "release_22.01"
+# Galaxy version for Centaurus
+galaxy_version: "release_22.05"
 
 # Galaxy-specific Python installation
 galaxy_python_version: "3.8.13"
