@@ -7,7 +7,7 @@ on virtual machines at the University of Manchester:
  * ``pal_finder``: a public instance for running Pal_finder
  * ``centaurus``: a local instance for researchers
 
-The roles are set up to target Galaxy version 22.01.
+The roles are set up to target Galaxy version 22.05.
 
 Roles
 -----
@@ -107,14 +107,14 @@ Database passwords:
  - ``galaxy_db_password``: password for Postgresql database
    (default: same name as the database user)
 
-UWSGI settings:
+Gunicorn settings:
 
- - ``galaxy_uwsgi_processes``: number of UWSGI processes to
-   use (default: 8)
- - ``galaxy_uwsgi_socket``: socket for Galaxy to use to
-   communicate with UWSGI (default: 4001)
- - ``galaxy_reports_uwsgi_socket``: socket for Galaxy reporting
-   interface to use to communicate with UWSGI (default: 9001)
+ - ``galaxy_gunicorn_workers``: (default: 4)
+ - ``galaxy_gunicorn_socket``: socket for Galaxy to use to
+   communicate with Gunicorn (default: 4001)
+ - ``galaxy_reports_gunicorn_socket``: socket for Galaxy
+   reporting interface to use to communicate with Gunicorn
+   (default: 9001)
 
 Job runner configuration:
 
@@ -123,7 +123,8 @@ Job runner configuration:
  - ``enable_jse_drop``: if true then enables the use of
    the JSE-drop job runner mechanism, and creates a runner
    definition ``jse_drop`` in ``job_conf.xml`` (default:
-   not enabled)
+   not enabled; see separate section for more details of
+   using JSE-Drop)
  - ``galaxy_job_destinations``: a list where each item should
    be a dictionary defining a job destination to be added
    to the ``destinations`` section of ``job_conf.xml``
@@ -399,6 +400,63 @@ Python version) - this can be done automatically by specifying:
 
    galaxy_remove_mako_templates: yes
 
+JSE-Drop job submission configuration
+-------------------------------------
+
+Deployments can make use of a novel job submission system called
+"JSE-drop", which has been developed and implemented at Manchester
+by the Research IT team.
+
+JSE-Drop provides file-based communication with the SGE compute
+cluster and is intended to separate the Galaxy VMs (which are
+accessible via the web) from the cluster. Scripts are placed in
+a 'drop directory' and the JSE-Drop service then submits these
+to the cluster, monitors the resulting jobs, and writes back files
+with status and completion information.
+
+To enable the plugin for JSE-Drop:
+
+* Set the ``enable_jsedrop`` parameter to ``yes``
+* The 'drop directory' that JSE-drop will use is set via the
+  ``galaxy_jse_drop_dir`` parameter.
+
+In addition the following options can be set:
+
+* By default jobs will use the same Python virtual environment as
+  the Galaxy installation; this can be changed by specifying the
+  ``galaxy_jse_drop_virtual_env`` parameter (this is necessary at
+  Manchester as the cluster uses a different OS to the Galaxy VMs)
+* An optional identifier can be inserted into job names by
+  setting the ``galaxy_jse_drop_galaxy_id`` parameter.
+
+For each JSE-drop job destination there are additional parameters:
+
+* Set the number of slots (i.e. cores) used for running by
+  specifying the ``jse_drop_slots`` parameter (defaults to 1 slot
+  if not specified).
+* Options to use with ``qsub`` when submitting jobs can be
+  specified via the ``jse_drop_qsub_options`` parameter.
+
+A reference implementation of a local JSE-drop service can be
+installed using the ``jsedrop`` role. This intended for testing
+purposes only and should not be deployed on a production server.
+
+Using mamba instead of conda for dependency resolution
+------------------------------------------------------
+
+``mamba`` is a drop-in replacement for ``conda`` (see
+https://mamba.readthedocs.io/en/latest/index.html). In the past
+``mambas`` has been recommended an alternatiev as in some cases
+was able to resolve dependencies that ``conda`` failed on.
+
+From Galaxy 22.05 the ``galaxy`` role has been updated to
+(re)install ``conda`` using Miniforge3; this includes ``mamba``
+by default, and also both share the some resolver. So there
+seems to be less obvious benefits to using ``mamba``.
+
+However: to specify ``mamba`` for dependency resolution, set the
+``galaxy_conda_use_mamba`` parameter to ``yes``.
+
 Notes on the deployment
 -----------------------
 
@@ -412,18 +470,11 @@ Notes on the deployment
    this needs to be accessible from other systems such as a compute
    cluster).
 
- - The galaxy database user password is the same as the user name.
-
  - To remove the Galaxy database and user from PostgreSQL, become the
    ``postgres`` user, start the ``psql`` console application and do::
 
        DROP DATABASE galaxy_palfinder;
        DROP ROLE galaxy;
-
- - If deploying to a virtual machine and using port forwarding to
-   connect to the Nginx/Galaxy server, it may be necessary to open
-   port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``
-   (similarly port 443 for SSL access).
 
  - The following ports need to be open for various services:
 
@@ -441,50 +492,14 @@ Notes on the deployment
    ``ssl_certificate`` and ``ssl_certificate_key`` variables to
    specify the location of the certificate files explicitly.
 
- - Optionally the deployment can make use of a novel job submission
-   called JSE-drop which has been developed at Manchester.
-
-   To enable the plugin for this system, set the ``enable_jsedrop``
-   parameter to ``yes``. The 'drop directory' that JSE-drop will use
-   can be set via the ``galaxy_jse_drop_dir`` parameter.
-
-   In addition the following options can be set:
-
-   * By default jobs will use the same Python virtual environment as
-     the Galaxy installation; this can be changed by specifying the
-     ``galaxy_jse_drop_virtual_env`` parameter.
-
-   * An optional identifier can be inserted into job names by
-     setting the ``galaxy_jse_drop_galaxy_id`` parameter.
-
-   For each JSE-drop job destination there are additional parameters:
-
-   * Set the number of slots (i.e. cores) used for running by
-     specifying the ``jse_drop_slots`` parameter (defaults
-     to 1 slot if not specified).
-
-   * Options to use with ``qsub`` when submitting jobs can be
-     specified via the ``jse_drop_qsub_options`` parameter.
-
-Using mamba instead of conda for dependency resolution
-------------------------------------------------------
-
-``mamba`` is a drop-in replacement for ``conda`` (see
-https://mamba.readthedocs.io/en/latest/index.html), which can in
-some cases resolve dependencies that ``conda`` fails on.
-
-To specify ``mamba`` for dependency resolution, set the
-``galaxy_conda_use_mamba`` parameter to ``yes``.
-
 Vagrant Boxes
 -------------
 
 The following Vagrant VirtualBox images are recommended for use with the
 playbooks:
 
- - **Ubuntu 22.04**: ``ubuntu/focal64`` https://app.vagrantup.com/ubuntu/boxes/focal64/
- - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
- - **CentOS 8**: ``centos/8`` https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/virtualbox.box
+ - **Ubuntu 22.04**: ``ubuntu/focal64`` https://app.vagrantup.com/ubuntu/boxes/focal64/ (for Galaxy deployments)
+ - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box (for CSF3 compute cluster)
 
 To install a VirtualBox image for use with Vagrant, do:
 
