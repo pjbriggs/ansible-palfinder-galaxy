@@ -470,18 +470,11 @@ Notes on the deployment
    this needs to be accessible from other systems such as a compute
    cluster).
 
- - The galaxy database user password is the same as the user name.
-
  - To remove the Galaxy database and user from PostgreSQL, become the
    ``postgres`` user, start the ``psql`` console application and do::
 
        DROP DATABASE galaxy_palfinder;
        DROP ROLE galaxy;
-
- - If deploying to a virtual machine and using port forwarding to
-   connect to the Nginx/Galaxy server, it may be necessary to open
-   port 80 on the VM e.g. by editing ``/etc/sysconfig/iptables``
-   (similarly port 443 for SSL access).
 
  - The following ports need to be open for various services:
 
