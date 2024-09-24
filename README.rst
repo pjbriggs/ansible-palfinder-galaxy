@@ -107,14 +107,14 @@ Database passwords:
  - ``galaxy_db_password``: password for Postgresql database
    (default: same name as the database user)
 
-UWSGI settings:
+Gunicorn settings:
 
- - ``galaxy_uwsgi_processes``: number of UWSGI processes to
-   use (default: 8)
- - ``galaxy_uwsgi_socket``: socket for Galaxy to use to
-   communicate with UWSGI (default: 4001)
- - ``galaxy_reports_uwsgi_socket``: socket for Galaxy reporting
-   interface to use to communicate with UWSGI (default: 9001)
+ - ``galaxy_gunicorn_workers``: (default: 4)
+ - ``galaxy_gunicorn_socket``: socket for Galaxy to use to
+   communicate with Gunicorn (default: 4001)
+ - ``galaxy_reports_gunicorn_socket``: socket for Galaxy
+   reporting interface to use to communicate with Gunicorn
+   (default: 9001)
 
 Job runner configuration:
 
