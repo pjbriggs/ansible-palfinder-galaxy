@@ -141,22 +141,22 @@
         state: absent
   when: galaxy_conda.stat.exists == True and galaxy_reinstall_conda == True
 
-- name: "Install conda"
+- name: "Install conda via Miniforge3"
   block:
-    # See https://docs.conda.io/en/latest/miniconda.html#linux-installers
-    - name: "Fetch Miniconda installer"
+    # See https://github.com/conda-forge/miniforge
+    - name: "Fetch Miniforge installer"
       get_url:
-        url: 'https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh'
-        dest: '{{ galaxy_tool_dependency_dir }}/miniconda.sh'
+        url: "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"
+        dest: "{{ galaxy_tool_dependency_dir }}/Miniforge3.sh"
         force: true
 
-    - name: "Install conda using Miniconda"
+    - name: "Install Miniforge conda"
       command:
-        "bash {{ galaxy_tool_dependency_dir }}/miniconda.sh -b -p {{ galaxy_tool_dependency_dir }}/_conda"
+        "bash {{ galaxy_tool_dependency_dir }}/Miniforge3.sh -b -p {{ galaxy_tool_dependency_dir }}/_conda"
 
-    - name: "Remove Miniconda installer"
+    - name: "Remove Miniforge installer"
       file:
-        path: '{{ galaxy_tool_dependency_dir }}/miniconda.sh'
+        path: '{{ galaxy_tool_dependency_dir }}/Miniforge3.sh'
         state: absent
   when: galaxy_conda.stat.exists == False or galaxy_reinstall_conda == True
 
