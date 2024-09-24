@@ -211,7 +211,7 @@
   - supervisord
   - role: postfix-null-client
     when: enable_smtp
-  - lets-encrypt-client
+  - certbot
   # Install local JSEDrop service
   - role: jsedrop
     jsedrop_drop_dir: "{{ galaxy_jse_drop_dir }}"

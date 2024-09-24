@@ -11,4 +11,3 @@
   when:
     - enable_smtp
     - email_audit_report_to is defined and email_audit_report_to != None
-    - galaxy_yml.stat.exists == True

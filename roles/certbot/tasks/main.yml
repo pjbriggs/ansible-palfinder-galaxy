@@ -1,0 +1,8 @@
+---
+# Install certbot
+
+- include: install_with_snap.yml
+  when: certbot_install_using == "snap"
+
+- include: install_with_pip.yml
+  when: certbot_install_using == "pip"
