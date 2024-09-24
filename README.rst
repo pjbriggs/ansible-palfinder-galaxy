@@ -505,9 +505,8 @@ Vagrant Boxes
 The following Vagrant VirtualBox images are recommended for use with the
 playbooks:
 
- - **Ubuntu 22.04**: ``ubuntu/focal64`` https://app.vagrantup.com/ubuntu/boxes/focal64/
- - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box
- - **CentOS 8**: ``centos/8`` https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/virtualbox.box
+ - **Ubuntu 22.04**: ``ubuntu/focal64`` https://app.vagrantup.com/ubuntu/boxes/focal64/ (for Galaxy deployments)
+ - **CentOS 7**: ``centos/7`` https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box (for CSF3 compute cluster)
 
 To install a VirtualBox image for use with Vagrant, do:
 
