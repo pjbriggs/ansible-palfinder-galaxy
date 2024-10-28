@@ -249,10 +249,6 @@ nginx_share_dir: "/usr/share/nginx"
 # Gunicorn configuration
 galaxy_gunicorn_workers: 4
 galaxy_gunicorn_socket: 4001
-galaxy_reports_gunicorn_socket: 9001
-
-# uWSGI configuration
-galaxy_reports_uwsgi_socket: 9001
 
 # Logging
 galaxy_log_dir: "{{ galaxy_dir }}/logs"
@@ -263,12 +259,6 @@ enable_smtp: no
 galaxy_smtp_server: "localhost:25"
 galaxy_outgoing_email_addr: "Galaxy {{ galaxy_name }} <galaxy-no-reply@{{ galaxy_server_name  }}>"
 galaxy_incoming_email_addr: "None"
-
-# Reporting interface
-enable_reports: no
-galaxy_reports_htpasswd: "/etc/nginx/galaxy-reports.htpasswd"
-galaxy_reports_user: "galaxyreports"
-galaxy_reports_password: "{{ galaxy_reports_user }}"
 
 # Location to install galaxy utilities
 # Utilities should be installed under the 'bin' subdirectory
