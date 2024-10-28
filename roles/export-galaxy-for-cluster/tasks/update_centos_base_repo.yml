@@ -1,0 +1,21 @@
+---
+- name: "Update mirrorlist in /etc/yum.repos.d/CentOS-Base.repo"
+  replace:
+    path: /etc/yum.repos.d/CentOS-Base.repo
+    regexp: '(.*)=http://mirrorlist\.centos\.org(.*)$'
+    replace: '\1=http://vault.centos.org\2'
+    backup: true
+
+- name: "Update mirror in /etc/yum.repos.d/CentOS-Base.repo"
+  replace:
+    path: /etc/yum.repos.d/CentOS-Base.repo
+    regexp: '(.*)=http://mirror\.centos\.org(.*)$'
+    replace: '\1=http://vault.centos.org\2'
+    backup: true
+
+- name: "Uncomment baseurl in /etc/yum.repos.d/CentOS-Base.repo"
+  replace:
+    path: /etc/yum.repos.d/CentOS-Base.repo
+    regexp: '#baseurl=(.*)$'
+    replace: 'baseurl=\1'
+    backup: true
