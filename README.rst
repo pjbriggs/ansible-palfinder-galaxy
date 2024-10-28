@@ -112,9 +112,6 @@ Gunicorn settings:
  - ``galaxy_gunicorn_workers``: (default: 4)
  - ``galaxy_gunicorn_socket``: socket for Galaxy to use to
    communicate with Gunicorn (default: 4001)
- - ``galaxy_reports_gunicorn_socket``: socket for Galaxy
-   reporting interface to use to communicate with Gunicorn
-   (default: 9001)
 
 Job runner configuration:
 
