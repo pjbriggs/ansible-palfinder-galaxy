@@ -78,10 +78,6 @@ galaxy_clean_up_cron_interval: 14
 # FTP upload
 enable_ftp_upload: no
 
-# Reporting interface
-enable_reports: yes
-galaxy_reports_uwsgi_socket: "9001"
-
 # Audit report
 email_audit_report_to: "peter.briggs@manchester.ac.uk"
 
