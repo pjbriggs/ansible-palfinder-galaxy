@@ -21,7 +21,7 @@
 
 - name: "Halt running Galaxy using Supervisord"
   command:
-    "/usr/local/bin/supervisorct stop {{ galaxy_name }}:"
+    "/usr/local/bin/supervisorctl stop {{ galaxy_name }}:"
   when:
     - galaxy_service.stat.exists == False
     - supervisor_ini.stat.exists == True
