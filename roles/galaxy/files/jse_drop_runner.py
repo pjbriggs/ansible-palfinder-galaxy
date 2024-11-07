@@ -1,7 +1,7 @@
 """
 Job runner used to execute Galaxy jobs through JSE-drop.
 
-**This version is compatible with Galaxy 21.05**
+**This version is compatible with Galaxy 22.05**
 
 (See https://github.com/galaxyproject/galaxy/blob/release_21.05/doc/source/dev/build_a_job_runner.rst)
 
