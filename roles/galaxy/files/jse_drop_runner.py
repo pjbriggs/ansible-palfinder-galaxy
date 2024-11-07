@@ -1,7 +1,7 @@
 """
 Job runner used to execute Galaxy jobs through JSE-drop.
 
-**This version is compatible with Galaxy 21.05**
+**This version is compatible with Galaxy 22.05**
 
 (See https://github.com/galaxyproject/galaxy/blob/release_21.05/doc/source/dev/build_a_job_runner.rst)
 
@@ -315,12 +315,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                     # Success
                     job_state.job_wrapper.change_state(model.Job.states.OK)
                     self.mark_as_finished(job_state)
-                    self.mark_for_cleanup(job_name,("always","onsuccess"))
+                    self.mark_for_cleanup(job_name)
                 else:
                     # Failure
                     job_state.job_wrapper.change_state(model.Job.states.ERROR)
                     self.mark_as_failed(job_state)
-                    self.mark_for_cleanup(job_name,("always",))
+                    self.mark_for_cleanup(job_name)
                 return None
 
             elif jse_drop_status == JSEDropStatus.RUNNING:
@@ -372,7 +372,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 job_state.job_wrapper.change_state(model.Job.states.ERROR)
                 self.mark_as_failed(job_state)
                 # Mark the JSE-drop files for removal
-                self.mark_for_cleanup(job_name,("always",))
+                self.mark_for_cleanup(job_name)
                 return None
 
             elif jse_drop_status == JSEDropStatus.DELETED:
@@ -380,7 +380,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                 log.info("%s: job has been deleted" % job_name)
                 job_state.running = False
                 # Mark the JSE-drop files for removal
-                self.mark_for_cleanup(job_name,("always","onsuccess"))
+                self.mark_for_cleanup(job_name)
                 return None
 
             # Other states are ignored
@@ -474,11 +474,12 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             exit_code = 1
         return exit_code
 
-    def mark_for_cleanup(self,job_name,conditions):
+    def mark_for_cleanup(self,job_name,conditions=None):
         # Mark the JSEDrop files associated with the job for
         # removal if Galaxy's "cleanup_job" setting matches one
-        # of the specified conditions
+        # of the specified conditions (or if no conditions were
+        # specified)
         cleanup_job = self.app.config.cleanup_job
-        if cleanup_job in conditions:
+        if conditions is None or cleanup_job in conditions:
             log.info("%s: marking JSEDrop files for cleanup" % job_name)
             JSEDrop(self._get_drop_dir()).mark_for_cleanup(job_name)
