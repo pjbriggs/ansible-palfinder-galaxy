@@ -49,3 +49,12 @@
         job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +{{ galaxy_clean_up_cron_interval }} -empty -exec rmdir {} \\;",
         hour: 00,
         minute: 15 }
+
+- name: "Clean up Galaxy temporary 'new file path'"
+  cron:
+    user: "{{ galaxy_user }}"
+    name: "{{ galaxy_name }} clean up new file path directory"
+    job: "find {{ galaxy_new_file_path }} -mindepth 2 -type l -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;"
+    hour: '00'
+    minute: '20'
+    state: present
