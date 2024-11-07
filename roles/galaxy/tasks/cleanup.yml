@@ -58,3 +58,11 @@
     hour: '00'
     minute: '20'
     state: present
+
+- name: "Manage Galaxy SQL database backups"
+  cron:
+    user: "{{ galaxy_user }}"
+    name: "{{ galaxy_name }} manage SQL database backups"
+    job: "{{ galaxy_dir }}/scripts/manage_db_backups.sh {{ galaxy_dir }}/backups 8"
+    special_time: 'weekly'
+    state: present

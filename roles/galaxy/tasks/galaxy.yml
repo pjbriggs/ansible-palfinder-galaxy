@@ -14,6 +14,7 @@
   - '{{ galaxy_dir }}/logs'
   - '{{ galaxy_dir }}/backups'
   - '{{ galaxy_dir }}/gravity'
+  - '{{ galaxy_dir }}/scripts'
 
 - name: "Stop if proxy prefix is set but is missing leading slash"
   fail:
@@ -25,6 +26,14 @@
 - name: Set Galaxy URL
   set_fact:
     galaxy_url: "{{ 'https' if enable_https else 'http' }}://{{ galaxy_server_name }}{{ galaxy_proxy_prefix }}/"
+
+- name: "Install utility scripts"
+  copy:
+    src={{ item }}
+    dest='{{ galaxy_dir }}/scripts'
+    mode='ugo+rx'
+  with_items:
+  - "manage_db_backups.sh"
 
 - name: "Clone Galaxy source"
   git:
