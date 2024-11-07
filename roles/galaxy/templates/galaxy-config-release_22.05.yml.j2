@@ -1154,11 +1154,7 @@ galaxy:
   # `job_conf.xml.interactivetools`.
   # NB This is also used as the URL for the Galaxy instance in completed
   # job emails
-{% if enable_https %}
-  galaxy_infrastructure_url: https://{{ galaxy_server_name }}
-{% else %}
-  galaxy_infrastructure_url: http://{{ galaxy_server_name }}
-{% endif %}
+  galaxy_infrastructure_url: {{ galaxy_url }}
 
   # If the above URL cannot be determined ahead of time in dynamic
   # environments but the port which should be used to access Galaxy can
