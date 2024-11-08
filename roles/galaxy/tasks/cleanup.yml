@@ -54,9 +54,8 @@
   cron:
     user: "{{ galaxy_user }}"
     name: "{{ galaxy_name }} clean up new file path directory"
-    job: "find {{ galaxy_new_file_path }} -mindepth 2 -type l -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;"
-    hour: '00'
-    minute: '20'
+    job: "{{ galaxy_dir }}/scripts/cleanup_dir.sh {{ galaxy_new_file_path }} {{ galaxy_clean_up_cron_interval }}"
+    special_time: 'daily'
     state: present
 
 - name: "Manage Galaxy SQL database backups"
