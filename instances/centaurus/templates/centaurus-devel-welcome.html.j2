@@ -13,6 +13,11 @@
 	      University of Manchester at the Faculty of Biology, Medicine
 	      and Health (FBMH)</strong></p>
 	</div>
+{% if centaurus_motd is defined and centaurus_motd %}
+      <div class="infomessagelarge">
+        {{ centaurus_motd }}
+      </div>
+{% endif %}
     </div>
     <div class="container">
       <h2>About</h2>
