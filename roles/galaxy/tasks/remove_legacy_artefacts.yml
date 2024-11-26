@@ -24,15 +24,21 @@
     - 'Clean up empty directories from job working directory'
     - 'Delete old datasets'
     - 'Email audit report'
-    - 'Remove old JSE-drop .qsub files'
-    - 'Remove all other old JSE-drop files'
-    - 'Clean up deleted files from JSE-drop directory'
-    - 'Remove JSE-drop jobs marked for clean up or as deleted'
-    - 'Clean up old JSE-drop jobs'
     - 'Delete old FTP files'
     - '{{ galaxy_name }} clean up files from job working directory'
     - '{{ galaxy_name }} clean up links from job working directory'
     - '{{ galaxy_name }} clean up empty directories from job working directory'
+
+- name: "Remove legacy cron jobs for JSE-drop"
+  cron:
+    user: '{{ galaxy_user }}'
+    name: '{{ item }}'
+    state: absent
+  with_items:
+    - 'Clean up deleted JSE-drop jobs'
+    - 'Remove old JSE-drop .qsub files'
+    - 'Remove all other old JSE-drop files'
+    - 'Clean up deleted files from JSE-drop directory'
 
 # NB using certbot SSL certificate renewal is performed automatically
 # so this task simply removes any existing legacy cronjob
