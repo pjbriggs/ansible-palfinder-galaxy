@@ -18,6 +18,8 @@ centaurus:
     enable_https: no
     # Gunicorn settings
     galaxy_gunicorn_workers: 2
+    # Working directory clean up interval (days)
+    galaxy_clean_up_cron_interval: 1
     # Installation mode (either 'minimal' for testing
     # or 'full' for production)
     galaxy_install_mode: "minimal"
