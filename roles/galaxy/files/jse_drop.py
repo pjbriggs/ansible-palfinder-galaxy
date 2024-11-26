@@ -712,8 +712,13 @@ if __name__ == '__main__':
                    help="job name")
     p.add_argument("--clean",dest="clean_interval",metavar="INTERVAL",
                    help="clean up jobs that are older than INTERVAL "
-                   "seconds; by default jobs marked 'cleanup' are "
-                   "removed (use -s to select other job statuses)")
+                   "(defaults to 'seconds', othewise specify as "
+                   "'N UNITS' where UNITS can be 'seconds', 'minutes' "
+                   "'hours' or 'days'). By default jobs marked 'cleanup' "
+                   "are removed (use -s to select other job statuses)")
+    p.add_argument("--dry-run",action="store_true",
+                   help="only report jobs that will be cleaned up (don't "
+                   "remove them)")
     args = p.parse_args()
     jse = JSEDrop(args.drop_dir)
     with jse.get_lock(timeout=60):
@@ -721,26 +726,46 @@ if __name__ == '__main__':
         if args.job_name is not None:
             jobs = [j for j in jobs if fnmatch(j,args.job_name)]
         status = None
-        if args.status is not None:
+        if args.status is not None and args.status != "all":
             for s in status_descriptions:
                 if fnmatch(status_descriptions[s],args.status):
                     status = s
                     break
         if args.clean_interval is not None:
-            if not status:
+            if not status and args.status != "all":
                 status = JSEDropStatus.CLEANUP
         if status:
             jobs = [j for j in jobs if jse.status(j) == status]
         if args.clean_interval is not None:
             # Clean up selected jobs
             now = datetime.now()
-            interval = timedelta(seconds=int(args.clean_interval))
+            try:
+                interval_seconds = int(args.clean_interval)
+            except ValueError:
+                multiplier = None
+                if args.clean_interval.endswith(" seconds"):
+                    multiplier = 1
+                elif args.clean_interval.endswith(" minutes"):
+                    multiplier = 60
+                elif args.clean_interval.endswith(" hours"):
+                    multiplier = 60*60
+                elif args.clean_interval.endswith(" days"):
+                    multiplier = 60*60*24
+                else:
+                    print("Can't interpret time interval '%s'" %
+                          args.clean_interval)
+                interval_seconds = int(args.clean_interval.split(" ")[0]) * \
+                                   multiplier
+            interval = timedelta(seconds=interval_seconds)
             jobs = [j for j in jobs
                     if now - datetime.fromtimestamp(jse.timestamp(j))
                     > interval]
             for job in jobs:
-                print("Cleaning up job '%s'" % job)
-                jse.cleanup(job)
+                if not args.dry_run:
+                    print("Cleaning up job '%s'" % job)
+                    jse.cleanup(job)
+                else:
+                    print("Cleaning up job '%s' (dry run)" % job)
         else:
             # Print list of jobs
             for job in jobs:
