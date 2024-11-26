@@ -32,7 +32,7 @@
   cron:
     user: '{{ galaxy_user }}'
     name: "{{ galaxy_name }} clean up files from job working directory"
-    job: "{{ galaxy_dir }}/scripts/cleanup_dir.sh {{ galaxy_job_working_dir }} {{ galaxy_clean_up_cron_interval }}"
+    job: "{{ galaxy_dir }}/scripts/cleanup_dir.sh {{ galaxy_job_working_dir }} {{ galaxy_clean_up_cron_interval }} 2"
     special_time: 'daily'
     state: present
 

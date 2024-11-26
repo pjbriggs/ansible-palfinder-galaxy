@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USAGE="$(basename $0) DIR INTERVAL"
+USAGE="$(basename $0) DIR INTERVAL [MINDEPTH:1]"
 
 # Directory to clean up
 DIR=$1
@@ -21,12 +21,19 @@ if [ -z "$INTERVAL" ] ; then
     exit 1
 fi
 
+# Minimum number of subdir levels (default: 1)
+MINDEPTH=$3
+if [ -z "$MINDEPTH" ] ; then
+    # Default: process all files except the starting points
+    MINDEPTH=1
+fi
+
 # Remove regular files
-find "${DIR}" -mindepth 2 -type f -mtime +${INTERVAL} -exec rm -rf {} \\;
+find "${DIR}" -mindepth ${MINDEPTH} -type f -mtime +${INTERVAL} -exec rm -rf {} \;
 
 # Remove links
-find "${DIR}" -mindepth 2 -type l -mtime +${INTERVAL} -exec rm -rf {} \\;
+find "${DIR}" -mindepth ${MINDEPTH} -type l -mtime +${INTERVAL} -exec rm -rf {} \;
 
 # Remove empty directories
-find "${DIR}" -mindepth 2 -type d -mtime +${INTERVAL} -empty -exec rmdir {} \\;
+find "${DIR}" -mindepth ${MINDEPTH} -type d -mtime +${INTERVAL} -empty -exec rmdir {} \;
 
