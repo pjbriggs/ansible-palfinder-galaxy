@@ -15,29 +15,18 @@
     state=directory
     mode=0775
 
-# Setup cron jobs to clean up JSE-drop directory
-- name: Clean up qsub files from JSE-drop directory
-  cron:
-    user='{{ galaxy_user }}'
-    name='Remove old JSE-drop .qsub files'
-    hour=05
-    minute=00
-    job='find {{ galaxy_jse_drop_dir }} -name "*.qsub" -type f -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -f {} \;'
-    state=present
-
-- name: Clean up other files from JSE-drop directory
-  cron:
-    user='{{ galaxy_user }}'
-    name='Remove all other old JSE-drop files'
-    hour=05
-    minute=00
-    job='find {{ galaxy_jse_drop_dir }} -name "*" -type f -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -f {} \;'
-    state=present
-
 - name: "Clean up files from JSE-drop directory marked for clean up"
   cron:
     user='{{ galaxy_user }}'
     name='Clean up JSE-drop jobs marked for clean up or as deleted'
     minute='*/5'
     job='/usr/local/bin/python3 {{ galaxy_root }}/lib/galaxy/jobs/runners/jse_drop.py {{ galaxy_jse_drop_dir }} --clean {{ galaxy_jse_drop_cleanup_grace_period }} 2>&1 1>>{{ galaxy_log_dir}}/jse_drop_cleanup.log'
+    state=present
+
+- name: "Clean up old jobs from JSE-drop directory"
+  cron:
+    user='{{ galaxy_user }}'
+    name='Clean up old JSE-drop jobs'
+    special_time='daily'
+    job='/usr/local/bin/python3 {{ galaxy_root }}/lib/galaxy/jobs/runners/jse_drop.py {{ galaxy_jse_drop_dir }} -s all --clean "{{ galaxy_clean_up_cron_interval }} days" 2>&1 1>>{{ galaxy_log_dir}}/jse_drop_cleanup.log'
     state=present
