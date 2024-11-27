@@ -31,32 +31,17 @@
 - name: "Clean up Galaxy job working directory"
   cron:
     user: '{{ galaxy_user }}'
-    name: '{{ item.name }}'
-    job: '{{ item.job }}'
-    hour: '{{ item.hour }}'
-    minute: '{{ item.minute }}'
+    name: "{{ galaxy_name }} clean up files from job working directory"
+    job: "{{ galaxy_dir }}/scripts/cleanup_dir.sh {{ galaxy_job_working_dir }} {{ galaxy_clean_up_cron_interval }} 2"
+    special_time: 'daily'
     state: present
-  with_items:
-    - { name: "{{ galaxy_name }} clean up files from job working directory",
-        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type f -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;",
-        hour: 00,
-        minute: 10 }
-    - { name: "{{ galaxy_name }} clean up links from job working directory",
-        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type l -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;",
-        hour: 00,
-        minute: 10 }
-    - { name: "{{ galaxy_name }} clean up empty directories from job working directory",
-        job: "find {{ galaxy_job_working_dir }} -mindepth 2 -type d -mtime +{{ galaxy_clean_up_cron_interval }} -empty -exec rmdir {} \\;",
-        hour: 00,
-        minute: 15 }
 
 - name: "Clean up Galaxy temporary 'new file path'"
   cron:
     user: "{{ galaxy_user }}"
     name: "{{ galaxy_name }} clean up new file path directory"
-    job: "find {{ galaxy_new_file_path }} -mindepth 2 -type l -mtime +{{ galaxy_clean_up_cron_interval }} -exec rm -rf {} \\;"
-    hour: '00'
-    minute: '20'
+    job: "{{ galaxy_dir }}/scripts/cleanup_dir.sh {{ galaxy_new_file_path }} {{ galaxy_clean_up_cron_interval }}"
+    special_time: 'daily'
     state: present
 
 - name: "Manage Galaxy SQL database backups"

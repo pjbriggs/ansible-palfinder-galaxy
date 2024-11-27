@@ -33,6 +33,7 @@
     dest='{{ galaxy_dir }}/scripts'
     mode='ugo+rx'
   with_items:
+  - "cleanup_dir.sh"
   - "manage_db_backups.sh"
 
 - name: "Clone Galaxy source"
