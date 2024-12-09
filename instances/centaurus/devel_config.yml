@@ -21,7 +21,7 @@ galaxy_new_file_path: "{{ galaxy_install_dir }}/tmp"
 
 # Account management
 allow_user_creation: no
-allow_user_deletion: no
+allow_user_deletion: yes
 enable_require_login: yes
 enable_user_activation: no
 
