@@ -120,6 +120,12 @@
     cmd: "{{ galaxy_python_dir }}/bin/virtualenv .venv -p {{ python_exe }}"
     creates: '{{ galaxy_root }}/.venv'
 
+- name: "Downgrade pip in Galaxy virtualenv (release_21.05)"
+  pip:
+    name: "pip<24.1"
+    virtualenv: "{{ galaxy_root }}/.venv"
+  when: galaxy_version == "release_21.05"
+
 - name: "Check if conda is already installed"
   stat:
     path: "{{ galaxy_tool_dependency_dir }}/_conda/bin/conda"
