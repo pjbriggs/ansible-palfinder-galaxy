@@ -59,16 +59,18 @@
         - 'tool_files'
       become: yes
       become_user: "{{ galaxy_user }}"
-
-    - name: "Build tool_conf XML file for local tools"
-      template:
-        dest='{{ galaxy_root }}/config/local_tool_conf.xml'
-        src=local_tool_conf.xml.j2
-      notify:
-        - "Restart Galaxy"
   become: yes
   become_user: "{{ galaxy_user }}"
   when: local_galaxy_tools | length > 0
+
+- name: "Build tool_conf XML file for local tools"
+  template:
+    dest='{{ galaxy_root }}/config/local_tool_conf.xml'
+    src=local_tool_conf.xml.j2
+  notify:
+    - "Restart Galaxy"
+  become: yes
+  become_user: "{{ galaxy_user }}"
 
 # Create .loc files from samples
 - name: "Create and populate loc files"
