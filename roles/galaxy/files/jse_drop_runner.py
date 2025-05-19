@@ -340,10 +340,10 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                          job_name)
                 self._register_completed_job(job_name)
                 if jse_drop_status == JSEDropStatus.FAILED:
-                    # Get message from qfail file
+                    # Get message from failure file
                     log.warn("%s: failed" % job_name)
                     message = "Submission to JSE-drop failed: %s" % \
-                              jse_drop.qfail(job_name)['stderr']
+                              jse_drop.failure_info(job_name)['stderr']
                 elif jse_drop_status == JSEDropStatus.ERROR:
                     # Job is in error state
                     log.warn("%s: job is in error state" % job_name)
