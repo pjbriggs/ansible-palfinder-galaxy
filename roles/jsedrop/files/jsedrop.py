@@ -20,6 +20,11 @@ import subprocess
 
 DEFAULT_INTERVAL = 30
 
+# JSE-drop interfaces
+class JSEDropInterfaces:
+    GE = 1
+    SLURM = 2
+
 class JSEDropInterface:
     """
     Base class for implementing JSE-Drop interface to cluster
@@ -243,10 +248,51 @@ class JSEDropGEInterface(JSEDropInterface):
            slots=status_info["slots"]),
                         user=user)
 
+
     def write_completion_file(self, job_name, job_id, user=None):
         self.write_file(job_name,
                         "qacct",
                         """Job accounting (hostname, jobname, end_time, etc) info can be obtained by running: qacct -j \"{job_id}\"
+""".format(job_id=job_id),
+                        user=user)
+
+
+class JSEDropSlurmInterface(JSEDropInterface):
+    """
+    Implements Slurm-like JSE-Drop interface
+    """
+    def __init__(self, drop_dir):
+        JSEDropInterface.__init__(self,
+                                  drop_dir=drop_dir,
+                                  drop_name="sbatch",
+                                  submit_name="ssubmit",
+                                  status_name="squeue",
+                                  completion_name="sacct",
+                                  delete_name="scancel",
+                                  deleted_name="sdeleted",
+                                  fail_name="sfail",
+                                  stdout_tmpl="{job_id}.out",
+                                  stderr_tmpl=None)
+
+    def write_status_file(self, job_name, status_info, user=None):
+        # Format is a single line:
+        # JOBID|PRIORITY|NAME|USER|STATE|START_TIME|PARTITION|NODELIST|CPUS
+        self.write_file(job_name,
+                        "squeue",
+                        """{job_number}|0.00000222772360|{job_name}|{user}|RUNNING|{start_time}|galaxyq|node001|{slots}
+
+""".format(user=status_info["user"],
+           start_time=status_info["start_time"],
+           job_number=status_info["job_number"],
+           job_name=status_info["job_name"],
+           state=status_info["state"],
+           slots=status_info["slots"]),
+                        user=user)
+
+    def write_completion_file(self, job_name, job_id, user=None):
+        self.write_file(job_name,
+                        "sacct",
+                        """Job accounting (hostname, jobname, end_time, etc) info can be obtained by running: /usr/bin/sacct -S 2025-05-16 --name \"{job_id}\"
 """.format(job_id=job_id),
                         user=user)
 
@@ -373,7 +419,8 @@ class JSEDrop(object):
     """
     Class implementing JSE-Drop protocol
     """
-    def __init__(self,drop_dir,submission_engine=None,run_as_user=False,
+    def __init__(self,drop_dir,interface=JSEDropInterfaces.GE,
+                 submission_engine=None,run_as_user=False,
                  log_file=None,pid_file=None):
         """
         Arguments:
@@ -405,7 +452,14 @@ class JSEDrop(object):
         self._drop_dir_status = None
         self._check_drop_dir()
         # JSEDrop interface
-        self._jsedrop = JSEDropGEInterface(self._drop_dir)
+        if interface == JSEDropInterfaces.GE:
+            self._jsedrop = JSEDropGEInterface(self._drop_dir)
+            self.log("Using Grid Engine interface")
+        elif interface == JSEDropInterfaces.SLURM:
+            self._jsedrop = JSEDropSlurmInterface(self._drop_dir)
+            self.log("Using Slurm interface")
+        else:
+            raise Exception("Unrecognised JSEDrop interface")
         # Submission engine backend
         if submission_engine is None:
             submission_engine = PopenBackend(stdout=self._jsedrop.stdout_tmpl,
@@ -608,6 +662,12 @@ class JSEDrop(object):
             os.remove(self._pid_file)
 
 if __name__ == "__main__":
+
+    # Available interfaces
+    interfaces = {
+        "ge": JSEDropInterfaces.GE,
+        "slurm": JSEDropInterfaces.SLURM,
+    }
     
     # Process command line
     p = ArgumentParser(description="Python implementation of JSE-Drop")
@@ -618,6 +678,12 @@ if __name__ == "__main__":
                    default=DEFAULT_INTERVAL,type=float,
                    help="interval between checks on DROP_DIR, in seconds "
                    "(default: %ss)" % DEFAULT_INTERVAL)
+    p.add_argument("--interface",
+                   dest="interface",metavar="JSEDROP_INTERFACE",
+                   choices=[x for x in interfaces],default="ge",
+                   help="JSE-Drop interface to use (one of %s; default: "
+                   "'%s')" % (",".join([f"'{x}'" for x in interfaces]),
+                            "ge"))
     p.add_argument("--run-as-user",
                    dest="run_as_user",action="store_true",
                    help="run jobs as the user who owns the drop files")
@@ -633,6 +699,7 @@ if __name__ == "__main__":
     # Set up JSE-Drop
     try:
         jse_drop = JSEDrop(args.drop_dir,
+                           interface=interfaces[args.interface],
                            run_as_user=args.run_as_user,
                            log_file=args.log_file,
                            pid_file=args.pid_file)
