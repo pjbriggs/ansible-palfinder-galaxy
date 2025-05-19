@@ -20,13 +20,251 @@ import subprocess
 
 DEFAULT_INTERVAL = 30
 
+class JSEDropInterface:
+    """
+    Base class for implementing JSE-Drop interface to cluster
+
+    Subclass needs to define the drop-off directory and the
+    names used to identify the following types of file:
+
+    - drop_name (extension for submitted job script)
+    - submit_name (extension when JSE-Drop has submitted the job)
+    - status_name (extension for status file for running job)
+    - completion_name (extension for file indicating job has finished)
+    - delete_name (extension for removing a submitted job)
+    - fail_name (extention for file indicating job submission failed)
+
+    e.g. drop_name will be "qsub" for SGE and "sbatch" for Slurm.
+
+    Additionally the subclass also needs to supply the template
+    strings for naming the stdout and stderr files. The templates
+    should be of the form e.g. "{job_id}.o{job_number}" (for SGE)
+    or "{job_id}.log" (for Slurm).
+
+    The subclass also needs to implement the "write_status_file"
+    and "write_completion_file" methods, to write the appropriate
+    content for each.
+    """
+    def __init__(self, drop_dir, drop_name, submit_name, status_name,
+                 completion_name, delete_name, deleted_name, fail_name,
+                 stdout_tmpl, stderr_tmpl):
+        self._drop_dir = drop_dir
+        self._names = {
+            "drop": drop_name,
+            "submit": submit_name,
+            "status": status_name,
+            "completion": completion_name,
+            "delete": delete_name,
+            "deleted": deleted_name,
+            "fail": fail_name
+        }
+        self.stdout_tmpl = stdout_tmpl
+        self.stderr_tmpl = stderr_tmpl
+
+    def list_active_jobs(self):
+        """
+        Return list of active jobs for monitoring
+        """
+        # Get list of all *.drop.* files
+        drop_dir = self._drop_dir
+        drop_files = [os.path.basename(f)
+                      for f in glob.glob(os.path.join(drop_dir, "*.drop.*"))]
+        # Get initial list of names from drop files
+        drop_ext = f".drop.{self._names['drop']}"
+        job_names = [f[:-len(drop_ext)]
+                     for f in drop_files if f.endswith(drop_ext)]
+        # Ignore completed, deleted and failed jobs
+        job_names = [j for j in job_names
+                     if not
+                     (f"{j}.drop.{self._names['completion']}" in drop_files or
+                      f"{j}.drop.{self._names['deleted']}" in drop_files or
+                      f"{j}.drop.{self._names['fail']}" in drop_files)]
+        return job_names
+
+    def make_job_id(self, job_name):
+        """
+        Return random ID for job
+        """
+        return "%s%s--%s--JSE-DROP" % (job_name,
+                                       "_"*max(0,10-len(job_name)),
+                                       "".join(random.choice(
+                                           string.ascii_uppercase +
+                                           string.ascii_lowercase)
+                                               for _ in range(32)))
+
+    def get_job_id(self, job_name):
+        """
+        Extract job ID from 'submit' file
+        """
+        submit_file = os.path.join(self._drop_dir,
+                                   f"{job_name}.drop.{self._names['submit']}")
+        if os.path.exists(submit_file):
+            # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
+            try:
+                with open(submit_file, "rt") as fp:
+                    job_id = fp.read()
+                # Remove leading and trailing spaces and '//'
+                return job_id.strip().strip('/')
+            except Exception as ex:
+                raise Exception(f"Failed to extract job id for '{job_name}' "
+                                f"from '{job_id}': {ex}")
+        else:
+            return None
+
+    def write_file(self, job_name, name, content, user=None):
+        """
+        Write file to the drop-off directory
+        """
+        if name not in [self._names[x] for x in self._names]:
+            raise Exception(f"'{name}': unknown JSE-Drop file type")
+        file_path = os.path.join(self._drop_dir,
+                                 f"{job_name}.drop.{name}")
+        if user is None:
+            # Write file directly
+            with open(file_path,'wt') as fp:
+                fp.write("%s" % content)
+        else:
+            # Write intermediate file and copy as user
+            file_no, tmp_file = tempfile.mkstemp(
+                suffix=f".jsedrop.{name}",
+                text=True)
+            os.fdopen(file_no).close()
+            with open(tmp_file, "wt") as fp:
+                fp.write("%s" % content)
+            os.chmod(tmp_file, 0o644)
+            cmd = f'su -m {user} -c "cp -f {tmp_file} {file_path}"'
+            retcode = subprocess.check_call(cmd, shell=True)
+            os.remove(tmp_file)
+        return file_path
+
+    def drop_file(self, job_name):
+        """
+        Return path to the "drop" file
+        """
+        return os.path.join(self._drop_dir,
+                            f"{job_name}.drop.{self._names['drop']}")
+
+    def submit_file(self, job_name):
+        """
+        Return the path to the "submit" file
+        """
+        return os.path.join(self._drop_dir,
+                            f"{job_name}.drop.{self._names['submit']}")
+
+    def delete_file(self, job_name):
+        """
+        Return the path to the "delete" file
+        """
+        return os.path.join(self._drop_dir,
+                            f"{job_name}.drop.{self._names['delete']}")
+
+    def write_submit_file(self, job_name, job_id, user=None):
+        """
+        Write the "submit" file
+        """
+        self.write_file(job_name,
+                        self._names["submit"],
+                        " //%s//\n" % job_id,
+                        user=user)
+
+    def write_fail_file(self, job_name, status, ex, user=None):
+        # Write the "fail" file
+        self.write_file(job_name,
+                        self._names["fail"],
+                        """======================================
+
+Exit status: //{status}//
+
+STDOUT: 
+ job submission had exception
+
+STDERR: 
+ {ex}
+
+======================================
+""".format(status=status, ex=ex),
+                        user=user)
+
+    def write_deleted_file(self, job_name, status, stdout, stderr,
+                           user=None):
+        """
+        Write the "deleted" file
+        """
+        self.write_file(job_name,
+                        self._names["deleted"],
+                        """Exit status: //{status}//
+
+STDOUT: 
+ {stdout}
+
+STDERR: 
+ {stderr}
+""".format(status=status, stdout=stdout, stderr=stderr),
+                          user=user)
+
+    def write_status_file(self, job_name, status_info, user=None):
+        raise NotImplementedError("Must be implemented by subclass")
+
+    def write_completion_file(self, job_name, job_id, user=None):
+        raise NotImplementedError("Must be implemented by subclass")
+
+
+class JSEDropGEInterface(JSEDropInterface):
+    """
+    Implements Grid Engine-like JSE-Drop interface
+    """
+    def __init__(self, drop_dir):
+        JSEDropInterface.__init__(self,
+                                  drop_dir=drop_dir,
+                                  drop_name="qsub",
+                                  submit_name="qsubmit",
+                                  status_name="qstat",
+                                  completion_name="qacct",
+                                  delete_name="qdel",
+                                  deleted_name="qdeleted",
+                                  fail_name="qfail",
+                                  stdout_tmpl="{job_id}.o{job_number}",
+                                  stderr_tmpl="{job_id}.e{job_number}")
+
+    def write_status_file(self, job_name, status_info, user=None):
+        self.write_file(job_name,
+                        "qstat",
+                        """<JB_job_number>{job_number}</JB_job_number>
+<JB_name>{job_id}</JB_name>
+<JB_owner>{user}</JB_owner>
+<state>{state}</state>
+<JAT_start_time>{start_time}<start_time>
+<slots>{slots}</slots>
+""".format(user=status_info["user"],
+           start_time=status_info["start_time"],
+           job_number=status_info["job_number"],
+           job_id=status_info["job_name"],
+           state=status_info["state"],
+           slots=status_info["slots"]),
+                        user=user)
+
+    def write_completion_file(self, job_name, job_id, user=None):
+        self.write_file(job_name,
+                        "qacct",
+                        """Job accounting (hostname, jobname, end_time, etc) info can be obtained by running: qacct -j \"{job_id}\"
+""".format(job_id=job_id),
+                        user=user)
+
+
 class PopenBackend(object):
     """
     Example backend for JSEDrop which runs jobs via subprocess
     """
-    def __init__(self):
+    def __init__(self, stdout="{job_id}_{job_number}.log",
+                 stderr=None):
         """
         Create a PopenBackend instance
+
+        'stdout' and 'stderr' are templates for the output
+        log file names.
+
+        If 'stderr' is None then redirect all output to a
+        single output file.
         """
         # Internal tracking of job data
         self._job_count = 0
@@ -37,6 +275,9 @@ class PopenBackend(object):
         self._job_owner = dict()
         self._job_start_time = dict()
         self._job_end_time = dict()
+        # Templates for stdout and stderr files
+        self._stdout_tmpl = stdout
+        self._stderr_tmpl = stderr
 
     def submit(self,name,job_id,script,out_dir,user=None):
         """
@@ -51,32 +292,36 @@ class PopenBackend(object):
         self._job_owner[job_id] = user
         self._job_start_time[job_id] = time.localtime()
         try:
+            # Job number
+            job_number = self._job_number[job_id]
             # Paths to output files
             stdout_path = os.path.join(out_dir,
-                                       "%s.o%s" %
-                                       (job_id,
-                                        self._job_number[job_id]))
-            stderr_path = os.path.join(out_dir,
-                                       "%s.e%s" %
-                                       (job_id,
-                                        self._job_number[job_id]))
-            # Run the script
-            if user is None:
-                cmd = '%s 1>%s 2>%s' % (script,
-                                        stdout_path,
-                                        stderr_path)
+                                       self._stdout_tmpl.format(
+                                           job_id=job_id,
+                                           job_number=job_number))
+            if self._stderr_tmpl:
+                stderr_path = os.path.join(out_dir,
+                                           self._stderr_tmpl.format(
+                                               job_id=job_id,
+                                               job_number=job_number))
             else:
-                cmd = 'su -m %s -c "%s 1>%s 2>%s"' % (user,
-                                                      script,
-                                                      stdout_path,
-                                                      stderr_path)
-            p = Popen(cmd,shell=True)
+                stderr_path = None
+            # Build command to run the script
+            cmd = "%s 1>%s" % (script, stdout_path)
+            if stderr_path:
+                cmd = "%s 2>%s" % (cmd, stderr_path)
+            else:
+                cmd = "%s 2>&1" % cmd
+            if user is not None:
+                cmd = 'su -m %s -c "%s"' % (user, cmd)
+            # Execute the command
+            p = Popen(cmd, shell=True)
             # Store Popen object
             self._job_popen[job_id] = p
         except Exception as ex:
             raise ex
 
-    def get_status(self,job_id):
+    def get_status(self, job_id):
         """
         Fetch status information for job
         """
@@ -94,48 +339,21 @@ class PopenBackend(object):
             user = pwd.getpwuid(os.getuid()).pw_name
         # Return output based on status
         if self._job_status[job_id] is None:
-            # Job is still running, return qstat-style output
-            return (None,
-                    """<JB_job_number>{job_number}</JB_job_number>
-<JB_name>{job_id}</JB_name>
-<JB_owner>{user}</JB_owner>
-<state>r</state>
-<JAT_start_time>{start_time}<start_time>
-<slots>1</slots>
-""".format(user=user,
-           start_time=time.strftime("%Y-%m-%dT%T",
-                                    self._job_start_time[job_id]),
-           job_number=self._job_number[job_id],
-           job_id=job_id))
+            # Job is still running, return information
+            job_number=self._job_number[job_id]
+            start_time=time.strftime("%Y-%m-%dT%T",
+                                     self._job_start_time[job_id])
+            return (None, {
+                "job_number": job_number,
+                "job_name": job_id,
+                "user": user,
+                "state": "r",
+                "start_time": start_time,
+                "slots": 1
+            })
         else:
-            # Job has finished, return qacct-style output
-            self._job_end_time[job_id] = time.localtime()
-            group = grp.getgrgid(pwd.getpwnam(user).pw_gid).gr_name
-            return (self._job_status[job_id],
-                    """==============================================================
-qname        test
-hostname     {hostname}
-group        {group}
-owner        {user}
-jobname      {job_id}
-jobnumber    {job_number}
-qsub_time    {start_time}
-start_time   {start_time}
-end_time     {end_time}
-granted_pe   NONE
-slots        1
-failed       0
-exit_status  {status}
-""".format(hostname=platform.node(),
-           group=group,
-           user=user,
-           start_time=time.strftime("%a %b %d %T %Y",
-                                    self._job_start_time[job_id]),
-           end_time=time.strftime("%a %b %d %T %Y",
-                                  self._job_end_time[job_id]),
-           job_id=job_id,
-           job_number=self._job_number[job_id],
-           status=self._job_status[job_id]))
+            # Job has finished, return status
+            return (self._job_status[job_id], {})
         
     def terminate(self,job_id):
         """
@@ -186,9 +404,12 @@ class JSEDrop(object):
         # Set flag for drop directory existence
         self._drop_dir_status = None
         self._check_drop_dir()
+        # JSEDrop interface
+        self._jsedrop = JSEDropGEInterface(self._drop_dir)
         # Submission engine backend
         if submission_engine is None:
-            submission_engine = PopenBackend()
+            submission_engine = PopenBackend(stdout=self._jsedrop.stdout_tmpl,
+                                             stderr=self._jsedrop.stderr_tmpl)
         self._backend = submission_engine
         # Write PID file
         if pid_file:
@@ -241,18 +462,7 @@ class JSEDrop(object):
         """
         Acquire list of job names needing action
         """
-        # Get list of all *.drop.* files
-        drop_dir = self._drop_dir
-        drop_files = [os.path.basename(f)
-                      for f in glob.glob(os.path.join(drop_dir,"*.drop.*"))]
-        # Get initial list of names from .drop.qsub files
-        jobs = [f[:-len(".drop.qsub")]
-                for f in drop_files if f.endswith(".drop.qsub")]
-        # Ignore completed or deleted jobs
-        jobs = [j for j in jobs
-                if not ("%s.drop.qacct" % j in drop_files or
-                        "%s.drop.qdeleted" % j in drop_files or
-                        "%s.drop.qfail" % j in drop_files)]
+        jobs = self._jsedrop.list_active_jobs()
         if jobs:
             self.log("Monitoring jobs: %s" %
                      (', '.join(["'%s'" % j for j in jobs]),))
@@ -262,55 +472,8 @@ class JSEDrop(object):
         """
         Get the user name for the owner of the drop file
         """
-        qsub_file = os.path.join(self._drop_dir,"%s.drop.qsub" % job)
-        return pwd.getpwuid(os.stat(qsub_file).st_uid).pw_name
-
-    def _get_job_id(self,job):
-        """
-        Extract job ID from qsubmit file
-        """
-        qsubmit_file = os.path.join(self._drop_dir,
-                                    "%s.drop.qsubmit" % job)
-        if os.path.exists(qsubmit_file):
-            # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
-            try:
-                with open(qsubmit_file,'rt') as fp:
-                    job_id = fp.read()
-                # Remove leading and trailing spaces and '//'
-                return job_id.strip().strip('/')
-            except Exception as ex:
-                raise Exception("Failed to extract job id for '%s' "
-                                "from '%s': %s" % (job,job_id,ex))
-        else:
-            return None
-
-    def _write_qfile(self,job,qfile,content):
-        """
-        Write content to a 'qfile' (e.g. 'qsubmit','qstat' etc)
-        """
-        qfile_path = os.path.join(self._drop_dir,"%s.drop.%s" %
-                                  (job,qfile))
-        if self._run_as_user:
-            user = self._get_job_owner(job)
-        else:
-            user = None
-        if user is None:
-            # Write file directly
-            with open(qfile_path,'wt') as fp:
-                fp.write("%s" % content)
-        else:
-            # Write intermediate file and copy as user
-            file_no,tmp_qfile = tempfile.mkstemp(
-                suffix=".jsedrop.%s" % qfile,
-                text=True)
-            os.fdopen(file_no).close()
-            with open(tmp_qfile,'wt') as fp:
-                fp.write("%s" % content)
-            os.chmod(tmp_qfile,0o644)
-            cmd = 'su -m %s -c "cp -f %s %s"' % (user,tmp_qfile,qfile_path)
-            retcode = subprocess.check_call(cmd,shell=True)
-            os.remove(tmp_qfile)
-        return qfile_path
+        drop_file = self._jsedrop.drop_file(job)
+        return pwd.getpwuid(os.stat(drop_file).st_uid).pw_name
 
     def log(self,s):
         """
@@ -334,52 +497,34 @@ class JSEDrop(object):
             self.log("-- Submitting as user '%s'" % user)
         else:
             user = None
-        # Get random ID for job
-        job_id = "%s%s--%s--JSE-DROP" % (job,
-                                         '_'*max(0,10-len(job)),
-                                         ''.join(random.choice(
-                                             string.ascii_uppercase +
-                                             string.ascii_lowercase)
-                                                 for _ in range(32)))
+        # Get ID for job from interface
+        job_id = self._jsedrop.make_job_id(job)
         self.log("-- Assigned job ID: %s" % job_id)
         # Submit job
         try:
             self._backend.submit(name=job,
                                  job_id=job_id,
-                                 script=os.path.join(self._drop_dir,
-                                                     "%s.drop.qsub" % job),
+                                 script=self._jsedrop.drop_file(job),
                                  out_dir=self._drop_dir,
                                  user=user)
-            # Write the qsubmit file to indicate job has started
-            self._write_qfile(job,"qsubmit"," //%s//\n" % job_id)
+            # Write the "*submit" file to indicate job has started
+            self._jsedrop.write_submit_file(job, job_id)
         except Exception as ex:
-            # Submission failed, write qfail file
+            # Submission failed, write "*fail" file
             status = 1
             self.log("-- Submission failed for job '%s': %s" % (job,ex))
             try:
-                self._write_qfile(job,"qfail",
-                            """======================================
-
-Exit status: //{status}//
-
-STDOUT: 
- job submission had exception
-
-STDERR: 
- {ex}
-
-======================================
-""".format(status=status,ex=ex))
+                self._jsedrop.write_fail_file(job, status, ex)
             except Exception as ex:
-                self.log("-- Error attempting to write qfail file "
-                         "for job '%s': %s" % (job,ex))
+                self.log("-- Error attempting to write 'fail' file "
+                         "for job '%s': %s" % (job, ex))
             return
 
     def delete(self,job):
         """
         Delete a job from the backend
         """
-        job_id = self._get_job_id(job)
+        job_id = self._jsedrop.get_job_id(job)
         if job_id is not None:
             try:
                 status,stdout,stderr = self._backend.terminate(job_id)
@@ -392,38 +537,28 @@ STDERR:
             status = 1
             stdout = ""
             stderr = "No submitted job matching '%s'" % job
-        # Write qdeleted file
-        self._write_qfile(job,"qdeleted",
-                    """Exit status: //{status}//
+        # Write *deleted file
+        self._jsedrop.write_deleted_file(job, status, stdout, stderr)
 
-STDOUT: 
- {stdout}
-
-STDERR: 
- {stderr}
-""".format(status=status,stdout=stdout,stderr=stderr))
-
-    def update(self,job):
+    def update(self, job):
         """
         Get update on the job status from the backend
         """
-        job_id = self._get_job_id(job)
+        job_id = self._jsedrop.get_job_id(job)
         if job_id is not None:
             # Get status and output
             try:
-                status,output = self._backend.get_status(job_id)
+                status, info = self._backend.get_status(job_id)
             except Exception as ex:
                 self.log("-- WARNING error getting status for "
-                         "job '%s': %s" % (job,ex))
+                         "job '%s': %s" % (job, ex))
                 return
             if status is None:
-                # Job still running, write qstat file
-                self._write_qfile(job,"qstat",output)
+                # Job still running, write "status" file
+                self._jsedrop.write_status_file(job, info)
             else:
-                # Job has completed, write qacct file
-                self._write_qfile(job,"qacct",
-                                  """Job accounting (hostname, jobname, end_time, etc) info can be obtained by running: qacct -j \"{job_id}\"
-""".format(job_id=job_id))
+                # Job has completed, write "completion" file
+                self._jsedrop.write_completion_file(job, job_id)
                 self.log("-- Job '%s' has completed" % job)
         
     def process(self):
@@ -435,12 +570,11 @@ STDERR:
             return
         # Perform actions on jobs
         for job in self._get_jobs():
-            drop_file = os.path.join(self._drop_dir,job)
-            if os.path.exists("%s.drop.qdel" % drop_file):
+            if os.path.exists(self._jsedrop.delete_file(job)):
                 # Handle job deletion first
                 self.log("-- Deleting job '%s'" % job)
                 self.delete(job)
-            elif os.path.exists("%s.drop.qsubmit" % drop_file):
+            elif os.path.exists(self._jsedrop.submit_file(job)):
                 # Handle job updates
                 self.update(job)
             else:
@@ -457,7 +591,7 @@ STDERR:
         # Terminate all jobs still running
         for job in self._get_jobs():
             self.log("-- Terminating job '%s'" % job)
-            job_id = self._get_job_id(job)
+            job_id = self._jsedrop.get_job_id(job)
             if job_id is not None:
                 try:
                     self._backend.terminate(job_id)
