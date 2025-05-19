@@ -113,28 +113,47 @@ class JSEDrop(object):
     (See the FileLock class for details of how the locking is
     implemented.)
     """
-    def __init__(self,drop_dir):
+    def __init__(self,drop_dir,mode="ge"):
         """
         Create new JSEDrop instance
 
         Arguments:
           drop_dir (str): path to JSE 'drop-off' directory
+          mode (str): JSE-Drop mode (aka interface) (either
+            "ge" or "slurm")
         """
         # Drop off directory
         self._drop_dir = os.path.abspath(drop_dir)
         if not os.path.isdir(self._drop_dir):
             raise OSError("Missing drop dir: %s" % self._drop_dir)
+        # Mode
+        self._mode = str(mode).lower()
         # Define names for control files
-        self._names = {
-            "drop": "qsub",
-            "submit": "qsubmit",
-            "status": "qstat",
-            "delete": "qdel",
-            "completed": "qacct",
-            "deleted": "qdeleted",
-            "fail": "qfail",
-            "cleanup": "cleanup"
-        }
+        if self._mode == "ge":
+            # Grid Engine-style
+            self._names = {
+                "drop": "qsub",
+                "submit": "qsubmit",
+                "status": "qstat",
+                "delete": "qdel",
+                "completed": "qacct",
+                "deleted": "qdeleted",
+                "fail": "qfail",
+                "cleanup": "cleanup"
+            }
+        elif self._mode == "slurm":
+            self._names = {
+                "drop": "sbatch",
+                "submit": "ssubmit",
+                "status": "squeue",
+                "delete": "scancel",
+                "completed": "sacct",
+                "deleted": "sdeleted",
+                "fail": "sfail",
+                "cleanup": "cleanup"
+            }
+        else:
+            raise Exception(f"'{mode}': unrecognised mode")
 
     @property
     def drop_dir(self):
@@ -227,7 +246,14 @@ class JSEDrop(object):
             return job_status['job_number']
         # No status, check output files
         job_id = self.get_job_id(name)
-        output_files = glob.glob(os.path.join(self._drop_dir, f"{job_id}.o*"))
+        if self._mode == "slurm":
+            # Slurm-like mode
+            output_files = glob.glob(os.path.join(self._drop_dir,
+                                                  f"{job_id}.out"))
+        elif self._mode == "ge":
+            # Grid Engine-like mode
+            output_files = glob.glob(os.path.join(self._drop_dir,
+                                                  f"{job_id}.o*"))
         if len(output_files) == 1:
             return output_files[0].split('.')[-1][1:]
         # Unable to acquire the job number
@@ -269,7 +295,7 @@ class JSEDrop(object):
                 if job_state == "Eqw":
                     # Error state
                     return JSEDropStatus.ERROR
-                elif job_state == "r":
+                elif job_state in ("r", "RUNNING"):
                     # Running
                     return JSEDropStatus.RUNNING
             except KeyError:
@@ -303,23 +329,34 @@ class JSEDrop(object):
             return {}
         status = {}
         with open(status_file,'rt') as fp:
-            #<JB_job_number>204784</JB_job_number>
-            #<JAT_prio>50.25000</JAT_prio>
-            #<JB_name>drop-test  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP</JB_name>
-            #<JB_owner>simonh</JB_owner>
-            #<state>r</state>
-            #<JAT_start_time>2016-04-28T17:30:19</JAT_start_time>
-            #<queue_name>C6220-galaxy.q@node009.prv.hydra.cluster</queue_name>
-            #<slots>1</slots>
-            for line in fp:
-                m = re.match(r'<([^>]+)>([^<]+)</([^>]+)>',line.rstrip('\n'))
-                if m:
-                    key = m.group(1)
-                    value = m.group(2)
-                    if key == "JB_job_number":
-                        status["job_number"] = value
-                    elif key == "state":
-                        status["state"] = value
+            if self._mode == "slurm":
+                # Slurm-like mode
+                #JOBID|PRIORITY|NAME|USER|STATE|START_TIME|PARTITION|NODELIST|CPUS
+                for line in fp:
+                    data = line.rstrip("\n").split("|")
+                    status["job_number"] = data[0]
+                    status["state"] = data[4]
+                    break
+            elif self._mode == "ge":
+                # Grid Engine-like mode
+                #<JB_job_number>204784</JB_job_number>
+                #<JAT_prio>50.25000</JAT_prio>
+                #<JB_name>drop-test  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP</JB_name>
+                #<JB_owner>simonh</JB_owner>
+                #<state>r</state>
+                #<JAT_start_time>2016-04-28T17:30:19</JAT_start_time>
+                #<queue_name>C6220-galaxy.q@node009.prv.hydra.cluster</queue_name>
+                #<slots>1</slots>
+                for line in fp:
+                    m = re.match(r'<([^>]+)>([^<]+)</([^>]+)>',
+                                 line.rstrip('\n'))
+                    if m:
+                        key = m.group(1)
+                        value = m.group(2)
+                        if key == "JB_job_number":
+                            status["job_number"] = value
+                        elif key == "state":
+                            status["state"] = value
         return status
 
     def failure_info(self, name):
@@ -379,6 +416,13 @@ class JSEDrop(object):
         There is no guarantee that the named file exists.
 
         """
+        # Stdout file template
+        if self._mode == "slurm":
+            # Slurm-like mode
+            template = "{job_id}.out"
+        elif self._mode == "ge":
+            # GE-like mode
+            template = "{job_id}.o{job_number}"
         # Get the job name
         job_id = self.get_job_id(name)
         # Get the job number
@@ -386,8 +430,8 @@ class JSEDrop(object):
         if job_number is not None:
             # Construct stdout file name
             return os.path.join(self._drop_dir,
-                                '%s.o%s' % (job_id,
-                                            job_number))
+                                template.format(job_id=job_id,
+                                                job_number=job_number))
         else:
             # No data available
             return None
@@ -399,15 +443,22 @@ class JSEDrop(object):
         There is no guarantee that the named file exists.
 
         """
+        # Stderr file template
+        if self._mode == "slurm":
+            # No stderr file for Slurm-like mode
+            return None
+        elif self._mode == "ge":
+            # GE-like mode
+            template = "{job_id}.e{job_number}"
         # Get the job name
         job_id = self.get_job_id(name)
         # Get the job number
         job_number = self.get_job_number(name)
         if job_number is not None:
-            # Construct stdout file name
+            # Construct stderr file name
             return os.path.join(self._drop_dir,
-                                '%s.e%s' % (job_id,
-                                            job_number))
+                                template.format(job_id=job_id,
+                                                job_number=job_number))
         else:
             # No data available
             return None
