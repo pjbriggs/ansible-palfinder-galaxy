@@ -455,7 +455,8 @@ class JSEDrop(object):
         Arguments:
           name (str): name of the job
         """
-        extensions = [f".drop.{self._names[x]}" for x in self._names]
+        extensions = [f".drop.{self._names[x]}" for x in self._names
+                      if x != "cleanup"]
         timestamp = None
         for ext in extensions:
             try:
