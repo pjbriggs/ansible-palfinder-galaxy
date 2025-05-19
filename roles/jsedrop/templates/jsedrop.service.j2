@@ -5,7 +5,7 @@ Conflicts=getty@tty1.service
 
 [Service]
 Type=simple
-ExecStart={{ jsedrop_python3 }} {{ jsedrop_install_dir }}/jsedrop.py {{ jsedrop_drop_dir }} --log /var/log/jsedrop.log --run-as-user
+ExecStart={{ jsedrop_python3 }} {{ jsedrop_install_dir }}/jsedrop.py {{ jsedrop_drop_dir }} --interface {{ jsedrop_interface }} --log /var/log/jsedrop.log --run-as-user
 
 [Install]
 WantedBy=multi-user.target
