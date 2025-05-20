@@ -23,6 +23,7 @@ To configure Galaxy to use JSE-drop:
          <param id="galaxy_id">devel</param>
          <param id="drop_dir">/mnt/galaxy/database/jse-drop</param>
          <param id="virtual_env">/mnt/galaxy/.venv</param>
+         <param id="interface">slurm</param>
    </plugins>
 
 2. Create destinations that target this runner.
@@ -36,8 +37,8 @@ To configure Galaxy to use JSE-drop:
    A more advanced example:
 
    <destinations>
-      <destination id="jse_drop_8core" runner="jse_drop">
-         <param id="qsub_options">-pe smp.pe 8</param>
+      <destination id="jse_drop_8core_1hr" runner="jse_drop">
+         <param id="options">-p multicore_small -n 8 -t 0-1</param>
          <param id="galaxy_slots">8</param>
       </destination>
    </destinations>
@@ -56,13 +57,14 @@ The parameters available for the runner plugin are:
 
 The parameters available for the destinations are:
 
- * qsub_options: options to be passed to Grid Engine when
-   running jobs (optional)
+ * options: options to be passed to the batch job submission
+   system (e.g. Slurm, Grid Engine) when running jobs (optional)
  * galaxy_slots: the number of slots/processors available
    to Galaxy jobs (optional, but should match the number
    of cores available under Grid Engine when using the
    environment defined by 'qsub_options')
-
+ * qsub_options: options to be passed to Grid Engine when
+   running jobs (optional, deprecated - use "options" instead)
 """
 
 import logging
@@ -93,6 +95,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
     Job runner dropping job files into shared dir for execution by JSE
     """
     runner_name = "JSEDropJobRunner"
+    default_interface = "slurm"
 
     def __init__(self,app,nworkers,**kwargs):
         """
@@ -104,6 +107,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
             'galaxy_id': dict(map=str,default=None),
             'virtual_env': dict(map=str,default=None),
             'drop_dir': dict(map=str,default=None),
+            'interface': dict(map=str,default=None)
         }
         if 'runner_param_specs' not in kwargs:
             kwargs[ 'runner_param_specs' ] = dict()
@@ -147,11 +151,26 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         except KeyError:
             return None
 
+    def _get_interface(self):
+        """
+        Extract interface mode ("ge" or "slurm") from runner params
+        """
+        try:
+            return self.runner_params['interface']
+        except KeyError:
+            return self.default_interface
+
     def _get_qsub_options(self,job_destination):
         """
         Extract qsub options from job destination parameters
         """
         return job_destination.params.get('qsub_options',None)
+
+    def _get_submit_options(self,job_destination):
+        """
+        Extract batch submission options from job destination parameters
+        """
+        return job_destination.params.get('options',None)
 
     def _get_galaxy_slots(self,job_destination):
         """
@@ -203,15 +222,19 @@ class JSEDropJobRunner(AsynchronousJobRunner):
         # Get the parameters defined for this destination
         # i.e. location of the drop-off directory etc
         drop_off_dir = self._get_drop_dir()
+        interface = self._get_interface()
         virtual_env = self._get_virtual_env()
-        qsub_options = self._get_qsub_options(job_destination)
+        submit_options = self._get_submit_options(job_destination)
+        if not submit_options:
+            submit_options = self._get_qsub_options(job_destination)
         galaxy_slots = self._get_galaxy_slots(job_destination)
         galaxy_id = self._get_galaxy_id()
-        log.debug("queue_job: drop-off dir = %s" % drop_off_dir)
-        log.debug("queue_job: virtual_env  = %s" % virtual_env)
-        log.debug("queue_job: qsub options = %s" % qsub_options)
-        log.debug("queue_job: galaxy_slots = %s" % galaxy_slots)
-        log.debug("queue_job: galaxy_id    = %s" % galaxy_id)
+        log.debug("queue_job: drop-off dir  = %s" % drop_off_dir)
+        log.debug("queue_job: interface     = %s" % interface)
+        log.debug("queue_job: virtual_env   = %s" % virtual_env)
+        log.debug("queue_job: submit options= %s" % submit_options)
+        log.debug("queue_job: galaxy_slots  = %s" % galaxy_slots)
+        log.debug("queue_job: galaxy_id     = %s" % galaxy_id)
         if drop_off_dir is None:
             # Can't locate drop-off dir
             job_wrapper.fail("failure preparing job script (no JSE-drop "
@@ -221,7 +244,7 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                           (galaxy_id_tag,job_name))
             return
         # Initialise JSE-drop client interface
-        jse_drop = JSEDrop(drop_off_dir)
+        jse_drop = JSEDrop(drop_off_dir, mode=interface)
         # ID and name for job
         galaxy_id_tag = job_wrapper.get_id_tag()
         log.debug("ID tag: %s" % galaxy_id_tag)
@@ -253,15 +276,30 @@ class JSEDropJobRunner(AsynchronousJobRunner):
                                  script.split('\n')))
         script = '\n'.join(filter(lambda x: not x.startswith('#!'),
                                   script.split('\n')))
-        # Create header with embedded qsub flags
-        qsub_header = ["-V",
-                       "-wd %s" % job_wrapper.working_directory]
-        if qsub_options:
-            qsub_header.append(qsub_options)
-        qsub_header = '\n'.join(["#$ %s" % opt for opt in qsub_header])
-        log.debug("qsub_header: %s" % qsub_header)
+        # Batch system specific options
+        if interface == "slurm":
+            # Create header with embedded Slurm sbatch flags
+            slurm_header = [f"-J {job_name}",
+                            f"-D {job_wrapper.working_directory}"]
+            if submit_options:
+                slurm_header.append(submit_options)
+            slurm_header = "\n".join([f"#SBATCH {opt}"
+                                      for opt in slurm_header])
+            log.debug("slurm_header: %s" % slurm_header)
+            batch_header = slurm_header
+        elif interface == "ge":
+            # Create header with embedded qsub flags
+            qsub_header = ["-V",
+                           "-wd %s" % job_wrapper.working_directory]
+            if submit_options:
+                qsub_header.append(submit_options)
+            qsub_header = '\n'.join(["#$ %s" % opt for opt in qsub_header])
+            log.debug("qsub_header: %s" % qsub_header)
+            batch_header = qsub_header
+        else:
+            batch_header = ""
         # Reassemble the script components
-        script = "\n".join((shell,qsub_header,script))
+        script = "\n".join((shell, batch_header, script))
         # Create the drop file to submit the job
         try:
             with jse_drop.get_lock(timeout=60):
