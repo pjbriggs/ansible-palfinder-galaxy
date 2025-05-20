@@ -15,12 +15,12 @@ galaxy_version_tag: "release_{{ galaxy_version }}"
 
 # Galaxy installation directory
 galaxy_root_dir: "/mnt/rvmi/{{ galaxy_name }}/galaxy"
-galaxy_install_dir: "{{ galaxy_root_dir }}/shared/csf/galaxy/{{ galaxy_version }}"
+galaxy_install_dir: "{{ galaxy_root_dir }}/shared/csf-slurm/galaxy/{{ galaxy_version }}"
 
 # Python for Galaxy
 python_version: "3.6.11"
-python_install_dir: '{{ galaxy_root_dir }}/shared/csf/python/{{ python_version }}'
+python_install_dir: '{{ galaxy_root_dir }}/shared/csf-slurm/python/{{ python_version }}'
 
 # Exported tgz
-archive_name: "{{ galaxy_name }}-virtualenv-galaxy-{{ galaxy_version }}-python-{{ python_version }}"
+archive_name: "{{ galaxy_name }}-virtualenv-galaxy-{{ galaxy_version }}-python-{{ python_version }}-slurm"
 assets_dir: "assets/"

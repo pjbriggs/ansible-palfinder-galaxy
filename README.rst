@@ -290,7 +290,7 @@ The following servers are defined in the ``Vagrantfile``:
 An additional VM is used to build Galaxy virtual environment for
 deployment on the compute cluster:
 
- - ``csf``: CentOS 7.8 (http://192.168.60.8) - see below ("Building
+ - ``csf``: Rocky Linux 9 (http://192.168.60.8) - see below ("Building
    Galaxy virtualenvs for the cluster system")
 
 To create and log into a Vagrant VM instance for testing Palfinder do
@@ -330,7 +330,7 @@ different to that of the cluster.
 In these cases a workaround is to build a Galaxy virtualenv that is
 installed on the cluster and which is used by the jobs submitted to it;
 the ``export_galaxy_for_cluster.yml`` playbook can be used to build
-Galaxy virtualenvs on a CentOS 7 Vagrant box for this purpose.
+Galaxy virtualenvs on a Rocky Linux 9 Vagrant box for this purpose.
 
 The inventory files in ``inventories/csf/`` target specific production
 Galaxy instances; to generate a Galaxy virtualenv for the ``centaurus``

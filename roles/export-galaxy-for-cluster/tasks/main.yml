@@ -1,8 +1,6 @@
 # Install Galaxy
 ---
 
-- include: update_centos_base_repo.yml
-
 - include: dependencies.yml
 
 - include: galaxy_user.yml
