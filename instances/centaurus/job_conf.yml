@@ -6,32 +6,33 @@ galaxy_job_destinations:
   # Serial jobs
   - id: "jse_drop_serial"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n"
+    jse_drop_submit_options: "-p serial -t 7-0"
   # Multicore jobs
   - id: "jse_drop_smp_4"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 4"
+    jse_drop_submit_options: "-p multicore -n 4 -t 7-0"
     jse_drop_slots: "4"
   - id: "jse_drop_smp_6"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 6"
+    jse_drop_submit_options: "-p multicore -n 6 -t 7-0"
     jse_drop_slots: "6"
   - id: "jse_drop_smp_8"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 8"
+    jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
     jse_drop_slots: "8"
   - id: "jse_drop_smp_12"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 12"
+    jse_drop_submit_options: "-p multicore -n 12 -t 7-0"
     jse_drop_slots: "12"
   - id: "jse_drop_smp_16"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 16"
+    jse_drop_submit_options: "-p multicore -n 16 -t 7-0"
     jse_drop_slots: "16"
   # High memory runner
   - id: "jse_drop_smp_4_mem512"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 4 -l mem512"
+    # Minimum 32GB/core = 128GB
+    jse_drop_submit_options: "-p himem -n 4 -t 7-0"
     jse_drop_slots: "4"
     envs:
       - id: "GALAXY_MEMORY_MB"
@@ -39,11 +40,11 @@ galaxy_job_destinations:
   # Short serial queue runner for quick jobs (or testing)
   - id: "jse_drop_short"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-j n -l short"
+    jse_drop_submit_options: "-p serial -t 0-1"
   # Runner for Amplicon analysis pipeline
   - id: "jse_drop_amplicon_analysis"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 8"
+    jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
     jse_drop_slots: "8"
     envs:
       - id: "AMPLICON_ANALYSIS_REF_DATA_PATH"
@@ -51,19 +52,20 @@ galaxy_job_destinations:
   # Runner for NCBI Blast+
   - id: "jse_drop_ncbi_blast_plus"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 8 -l mem512"
+    # Minimum 32GB/core = 256GB
+    jse_drop_submit_options: "-p himem -n 8 -t 7-0"
     jse_drop_slots: "8"
   # Runner for Picard MarkDuplicates (needs Java options)
   - id: "jse_drop_picard_markduplicates"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -pe smp.pe 2"
+    jse_drop_submit_options: "-p multicore -n 2 -t 7-0"
     envs:
       - id: "_JAVA_OPTIONS"
         value: "-Xmx6G -Xms256m"
   # Runner for snp2hla
   - id: "jse_drop_snp2hla"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n"
+    jse_drop_submit_options: "-p serial -t 7-0"
     envs:
       - id: "ref_panel"
         value: "/mnt/rvmi/centaurus/galaxy/devel/local_tools/snp2hla/data/REF"
@@ -77,7 +79,7 @@ galaxy_job_destinations:
   # not available)
   - id: "jse_drop_trinity"
     runner: "jse_drop"
-    jse_drop_qsub_options: "-V -j n -l mem512 -pe smp.pe 12"
+    jse_drop_submit_options: "-p himem -n 12 -t 7-0"
     jse_drop_slots: "12"
     envs:
       - id: "GALAXY_MEMORY_MB"
