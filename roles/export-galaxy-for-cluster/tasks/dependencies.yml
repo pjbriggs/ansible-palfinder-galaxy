@@ -19,7 +19,6 @@
       - 'readline-devel'
       - 'sqlite-devel'
       - 'zlib-devel'
-      - 'tkinter'
       - 'python-setuptools'
       - 'libffi'
       - 'libffi-devel'
