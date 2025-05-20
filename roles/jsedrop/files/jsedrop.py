@@ -529,6 +529,20 @@ class JSEDrop(object):
         drop_file = self._jsedrop.drop_file(job)
         return pwd.getpwuid(os.stat(drop_file).st_uid).pw_name
 
+    def run_as_user(self, job):
+        """
+        Return user name associated with job
+
+        If 'run_as_user' then return the user name
+        associated with the specific job, otherwise
+        return None.
+        """
+        # Get user associated with run job as
+        if self._run_as_user:
+            return self._get_job_owner(job)
+        else:
+            return None
+
     def log(self,s):
         """
         Write to log file
@@ -546,11 +560,9 @@ class JSEDrop(object):
         Submit a job to the backend
         """
         # Get user to run job as
-        if self._run_as_user:
-            user = self._get_job_owner(job)
+        user = self.run_as_user(job)
+        if user:
             self.log("-- Submitting as user '%s'" % user)
-        else:
-            user = None
         # Get ID for job from interface
         job_id = self._jsedrop.make_job_id(job)
         self.log("-- Assigned job ID: %s" % job_id)
@@ -562,13 +574,13 @@ class JSEDrop(object):
                                  out_dir=self._drop_dir,
                                  user=user)
             # Write the "*submit" file to indicate job has started
-            self._jsedrop.write_submit_file(job, job_id)
+            self._jsedrop.write_submit_file(job, job_id, user=user)
         except Exception as ex:
             # Submission failed, write "*fail" file
             status = 1
             self.log("-- Submission failed for job '%s': %s" % (job,ex))
             try:
-                self._jsedrop.write_fail_file(job, status, ex)
+                self._jsedrop.write_fail_file(job, status, ex, user=user)
             except Exception as ex:
                 self.log("-- Error attempting to write 'fail' file "
                          "for job '%s': %s" % (job, ex))
@@ -592,7 +604,8 @@ class JSEDrop(object):
             stdout = ""
             stderr = "No submitted job matching '%s'" % job
         # Write *deleted file
-        self._jsedrop.write_deleted_file(job, status, stdout, stderr)
+        self._jsedrop.write_deleted_file(job, status, stdout, stderr,
+                                         user=self.run_as_user(job))
 
     def update(self, job):
         """
@@ -609,10 +622,12 @@ class JSEDrop(object):
                 return
             if status is None:
                 # Job still running, write "status" file
-                self._jsedrop.write_status_file(job, info)
+                self._jsedrop.write_status_file(job, info,
+                                                user=self.run_as_user(job))
             else:
                 # Job has completed, write "completion" file
-                self._jsedrop.write_completion_file(job, job_id)
+                self._jsedrop.write_completion_file(job, job_id,
+                                                    user=self.run_as_user(job))
                 self.log("-- Job '%s' has completed" % job)
         
     def process(self):
