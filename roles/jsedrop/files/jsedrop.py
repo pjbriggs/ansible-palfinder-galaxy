@@ -419,12 +419,14 @@ class JSEDrop(object):
     """
     Class implementing JSE-Drop protocol
     """
-    def __init__(self,drop_dir,interface=JSEDropInterfaces.GE,
+    def __init__(self,drop_dir,interface=JSEDropInterfaces.SLURM,
                  submission_engine=None,run_as_user=False,
                  log_file=None,pid_file=None):
         """
         Arguments:
           drop_dir: drop-off directory to monitor
+          interface: interface mode for JSEDrop (defaults
+            to JSEDropInterfaces.SLURM)
           submission_engine: backend instance (defaults
             to 'PopenBackend'
           run_as_user: if True then submission engine should
@@ -680,9 +682,10 @@ if __name__ == "__main__":
 
     # Available interfaces
     interfaces = {
-        "ge": JSEDropInterfaces.GE,
         "slurm": JSEDropInterfaces.SLURM,
+        "ge": JSEDropInterfaces.GE,
     }
+    default_interface = "slurm"
     
     # Process command line
     p = ArgumentParser(description="Python implementation of JSE-Drop")
@@ -695,10 +698,11 @@ if __name__ == "__main__":
                    "(default: %ss)" % DEFAULT_INTERVAL)
     p.add_argument("--interface",
                    dest="interface",metavar="JSEDROP_INTERFACE",
-                   choices=[x for x in interfaces],default="ge",
+                   choices=[x for x in interfaces],
+                   default=default_interface,
                    help="JSE-Drop interface to use (one of %s; default: "
                    "'%s')" % (",".join([f"'{x}'" for x in interfaces]),
-                            "ge"))
+                              default_interface))
     p.add_argument("--run-as-user",
                    dest="run_as_user",action="store_true",
                    help="run jobs as the user who owns the drop files")
