@@ -3,9 +3,11 @@
 
 # Job runners and destinations
 galaxy_job_destinations:
+  # Serial jobs
   - id: "jse_drop_serial"
     runner: "jse_drop"
     jse_drop_qsub_options: "-V -j n"
+  # Multicore jobs
   - id: "jse_drop_smp_4"
     runner: "jse_drop"
     jse_drop_qsub_options: "-V -j n -pe smp.pe 4"
@@ -85,6 +87,8 @@ galaxy_job_destinations:
 
 # Tool destinations
 galaxy_tool_destinations:
+  - id: "__DATA_FETCH__"
+    destination: "local"
   - id: "amplicon_analysis_pipeline"
     destination: "jse_drop_amplicon_analysis"
   - id: "bowtie_wrapper"
