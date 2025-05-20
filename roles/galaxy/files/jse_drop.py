@@ -113,14 +113,14 @@ class JSEDrop(object):
     (See the FileLock class for details of how the locking is
     implemented.)
     """
-    def __init__(self,drop_dir,mode="ge"):
+    def __init__(self,drop_dir,mode="slurm"):
         """
         Create new JSEDrop instance
 
         Arguments:
           drop_dir (str): path to JSE 'drop-off' directory
           mode (str): JSE-Drop mode (aka interface) (either
-            "ge" or "slurm")
+            "ge" or "slurm"; default: "slurm")
         """
         # Drop off directory
         self._drop_dir = os.path.abspath(drop_dir)
