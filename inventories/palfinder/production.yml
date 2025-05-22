@@ -15,22 +15,23 @@ palfinder:
     ##galaxy_reinstall_conda: yes
     ##galaxy_new_db_sql: "/mnt/rvmi/palfinder/galaxy/galaxy_palfinder.dump.2023-07-28.sql"
     # Job configuration
-    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-csf3"
+    galaxy_jse_drop_dir: "{{ galaxy_install_dir }}/palfinder/jse-drop-slurm"
     galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
     enable_local_jse_drop: no
     galaxy_default_runner: "jse_drop_default"
     galaxy_job_destinations:
       - id: "jse_drop_default"
         runner: "jse_drop"
+        jse_drop_submit_options: "-p serial -t 7-0"
       - id: "jse_drop_8_cores"
         runner: "jse_drop"
-        jse_drop_qsub_options: "-pe smp.pe 8"
+        jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
         jse_drop_slots: "8"
     galaxy_tool_destinations:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
     # Cluster needs to use its own virtual env
-    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf/galaxy/22.05/venv_py3.8"
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf-slurm/galaxy/22.05/venv_py3.8"
     # Postfix/email configuration
     enable_smtp: yes
     # SSL configuration
