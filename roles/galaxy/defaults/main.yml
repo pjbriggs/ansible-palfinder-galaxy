@@ -183,6 +183,7 @@ galaxy_default_runner: "local"
 galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
 galaxy_jse_drop_dir: "{{ galaxy_dir }}/jse-drop"
 galaxy_jse_drop_virtual_env: "{{ galaxy_root }}/.venv"
+galaxy_jse_interface: "slurm"
 # Grace period after which files from finished or deleted
 # jobs can be removed (seconds)
 galaxy_jse_drop_cleanup_grace_period: "60"
@@ -191,7 +192,8 @@ galaxy_jse_drop_cleanup_grace_period: "60"
 # Define entries as a dictionary with:
 # - id     (destination ID)
 # - runner (target runner)
-# - jse_drop_qsub_options (optional, JSE-drop 'qsub_options')
+# - jse_drop_submit_options (optional, JSE-drop 'options')
+# - jse_drop_qsub_options (optional, JSE-drop 'qsub_options', deprecated)
 # - jse_drop_slots (optional, JSE-drop 'galaxy_slots')
 # - envs (optional dictionary defining <env...> elements, see below)
 # - user_concurrent_jobs (optional; sets maximum number of concurrent

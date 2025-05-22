@@ -16,23 +16,24 @@ There is also a utility function:
 
 In normal operation the status codes indicate the following:
 
-- ``WAITING``: job has ``qsub`` file but not yet been
-  submitted by JSE-Drop (i.e. there is no ``qsubmit`` file)
-- ``RUNNING``: job is running (i.e. there is a ``qsubmit``
-  file indicating job started, but no ``qacct`` file to
-  indicate that it has finished)
-- ``FINISHED``: job has completed (i.e. there is a ``qacct``
+- ``WAITING``: job has ``drop`` file but not yet been
+  submitted by JSE-Drop (i.e. there is no ``*submit`` file)
+- ``RUNNING``: job is running (i.e. there is a ``*submit``
+  file indicating job started, but no ``*acct`` file to
+  indicate that it has finished, and job status from the
+  ``*stat`` file indicates it's running)
+- ``FINISHED``: job has completed (i.e. there is a ``*acct``
   file indicating the job has finished)
 - ``DELETING``: job is scheduled for deletion but may still
-  be active (i.e. there is a ``qdel`` file but no ``qdeleted``
+  be active (i.e. there is a ``*del`` file but no ``*deleted``
   file)
 - ``DELETED``: job has been deleted (i.e. there is a
-  ``qdeleted`` file)
+  ``*deleted`` file)
 
 The following status codes indicate a problem:
 
 - ``FAILED``: job failed on submission (i.e. there is a
-  ``qfail`` file)
+  ``*fail`` file)
 - ``ERROR``: job was submitted but is in an error state
   (e.g. ``Eqw`` state for Grid Engine backend)
 - ``MISSING``: job with that name is not found
@@ -74,7 +75,7 @@ class JSEDrop(object):
 
     Submit the contents of a script:
 
-    >>> jse.run('my_job','sleep 5\necho "Finished sleeping")
+    >>> jse.run('my_job','sleep 5\necho "Finished sleeping"')
 
     Get the id of the job as assigned by JSE-drop:
 
@@ -84,13 +85,9 @@ class JSEDrop(object):
 
     >>> jse.status('my_job')
 
-    Get the contents of qstat for the job (returns a dictionary):
+    Get the status information for the job (returns a dictionary):
 
-    >>> jse.qstat('my_job')
-
-    Get the contents of qacct for the job (returns a dictionary):
-
-    >>> jse.qcct('my_job')
+    >>> jse.job_status('my_job')
 
     Get the stdout and stderr files:
 
@@ -116,17 +113,47 @@ class JSEDrop(object):
     (See the FileLock class for details of how the locking is
     implemented.)
     """
-    def __init__(self,drop_dir):
+    def __init__(self,drop_dir,mode="slurm"):
         """
         Create new JSEDrop instance
 
         Arguments:
           drop_dir (str): path to JSE 'drop-off' directory
-
+          mode (str): JSE-Drop mode (aka interface) (either
+            "ge" or "slurm"; default: "slurm")
         """
+        # Drop off directory
         self._drop_dir = os.path.abspath(drop_dir)
         if not os.path.isdir(self._drop_dir):
             raise OSError("Missing drop dir: %s" % self._drop_dir)
+        # Mode
+        self._mode = str(mode).lower()
+        # Define names for control files
+        if self._mode == "ge":
+            # Grid Engine-style
+            self._names = {
+                "drop": "qsub",
+                "submit": "qsubmit",
+                "status": "qstat",
+                "delete": "qdel",
+                "completed": "qacct",
+                "deleted": "qdeleted",
+                "fail": "qfail",
+                "cleanup": "cleanup"
+            }
+        elif self._mode == "slurm":
+            self._names = {
+                "drop": "sbatch",
+                "submit": "ssubmit",
+                "status": "squeue",
+                "delete": "scancel",
+                "completed": "sacct",
+                "deleted": "sdeleted",
+                "fail": "sfail",
+                "cleanup": "cleanup"
+            }
+        else:
+            raise Exception(f"'{mode}': unrecognised mode")
 
     @property
     def drop_dir(self):
@@ -148,9 +175,10 @@ class JSEDrop(object):
         Return a list of job names found in the JSE-drop directory
 
         """
+        drop_file_ext = f".drop.{self._names['drop']}"
         jobs = []
-        for f in glob.glob(os.path.join(self._drop_dir,'*.drop.qsub')):
-            jobs.append(os.path.basename(f)[:-len('.drop.qsub')])
+        for f in glob.glob(os.path.join(self._drop_dir, f"*{drop_file_ext}")):
+            jobs.append(os.path.basename(f)[:-len(drop_file_ext)])
         jobs.sort()
         return jobs
 
@@ -165,7 +193,8 @@ class JSEDrop(object):
             to JSE-drop
 
         """
-        drop_file = os.path.join(self._drop_dir,"%s.drop.qsub" % name)
+        drop_file = os.path.join(self._drop_dir,
+                                 f"{name}.drop.{self._names['drop']}")
         if os.path.exists(drop_file):
             raise OSError("Job with name '%s' already exists" % name)
         fd,tmp_drop_file = tempfile.mkstemp()
@@ -182,12 +211,12 @@ class JSEDrop(object):
 
         Arguments:
           name (str): name of the job
-
         """
-        qsubmit_file = os.path.join(self._drop_dir,"%s.drop.qsubmit" % name)
-        if not os.path.exists(qsubmit_file):
+        submit_file = os.path.join(self._drop_dir,
+                                   f"{name}.drop.{self._names['submit']}")
+        if not os.path.exists(submit_file):
             return None
-        with open(qsubmit_file,'rt') as fp:
+        with open(submit_file,'rt') as fp:
             # //my_job--qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP//
             job_id = fp.read()
         try:
@@ -201,36 +230,30 @@ class JSEDrop(object):
         """
         Return the number assigned by the backend compute engine
 
-        Attempts to fetch the job number from the
-        .drop.qacct file; if no information can be read
-        from .drop.qacct (e.g. job hasn't finished yet) then
-        tries to acquire the data from the .drop.qstat file.
-
-        If neither of these files exists then tries to infer
-        the job number from the '.o' file on the file system.
+        Attempts to acquire the job number from the "status"
+        file; if this doesn't exist then tries to infer
+        the job number from the stdout file on the file system.
 
         If none of these methods yields a job number then
         returns None.
 
         Arguments:
           name (str): name of the job
-
         """
-        # Try qacct
-        qacct = self.qacct(name)
-        if qacct:
-            try:
-                return qacct['jobnumber']
-            except KeyError:
-                # Unable to extract job number
-                pass
-        # Fallback to qstat
-        qstat = self.qstat(name)
-        if qstat:
-            return qstat['JB_job_number']
-        # Finally: try checking the file system
-        output_files = glob.glob(os.path.join(self._drop_dir,
-                                              '%s--*--JSE-DROP.o*' % name))
+        # Check job status
+        job_status = self.job_status(name)
+        if job_status:
+            return job_status['job_number']
+        # No status, check output files
+        job_id = self.get_job_id(name)
+        if self._mode == "slurm":
+            # Slurm-like mode
+            output_files = glob.glob(os.path.join(self._drop_dir,
+                                                  f"{job_id}.out"))
+        elif self._mode == "ge":
+            # Grid Engine-like mode
+            output_files = glob.glob(os.path.join(self._drop_dir,
+                                                  f"{job_id}.o*"))
         if len(output_files) == 1:
             return output_files[0].split('.')[-1][1:]
         # Unable to acquire the job number
@@ -245,35 +268,34 @@ class JSEDrop(object):
 
         Returns:
           Integer: status code.
-
         """
         base_name = os.path.join(self._drop_dir,name)
-        if not os.path.exists("%s.drop.qsub" % base_name):
+        if not os.path.exists(f"{base_name}.drop.{self._names['drop']}"):
             # No submission script found
             return JSEDropStatus.MISSING
-        if os.path.exists("%s.drop.cleanup" % base_name):
+        if os.path.exists(f"{base_name}.drop.{self._names['cleanup']}"):
             # Job marked for clean up
             return JSEDropStatus.CLEANUP
-        if os.path.exists("%s.drop.qfail" % base_name):
+        if os.path.exists(f"{base_name}.drop.{self._names['fail']}"):
             # Submission failed
             return JSEDropStatus.FAILED
-        if os.path.exists("%s.drop.qdeleted" % base_name):
+        if os.path.exists(f"{base_name}.drop.{self._names['deleted']}"):
             # Job has been deleted
             return JSEDropStatus.DELETED
-        if os.path.exists("%s.drop.qdel" % base_name):
+        if os.path.exists(f"{base_name}.drop.{self._names['delete']}"):
             # Job is pending deletion
             return JSEDropStatus.DELETING
-        if not os.path.exists("%s.drop.qsubmit" % base_name):
+        if not os.path.exists(f"{base_name}.drop.{self._names['submit']}"):
             # Waiting for submission
             return JSEDropStatus.WAITING
-        if not os.path.exists("%s.drop.qacct" % base_name):
+        if not os.path.exists(f"{base_name}.drop.{self._names['completed']}"):
             # Check for job state
             try:
-                job_state = self.qstat(base_name)['state']
+                job_state = self.job_status(base_name)['state']
                 if job_state == "Eqw":
                     # Error state
                     return JSEDropStatus.ERROR
-                elif job_state == "r":
+                elif job_state in ("r", "RUNNING"):
                     # Running
                     return JSEDropStatus.RUNNING
             except KeyError:
@@ -283,105 +305,79 @@ class JSEDrop(object):
         # Finished
         return JSEDropStatus.FINISHED
 
-    def qstat(self,name):
+    def job_status(self,name):
         """
-        Return the qstat information for the job
+        Return the status information for the job
+
+        Job status will include the following keys:
+
+        - job_number
+        - state
 
         Arguments:
           name (str): name of the job
 
         Returns:
           Dictionary: dictionary where keys are items from
-            the .drop.qstat file; dictionary will be empty if no
-            .drop.qstat file was found (e.g. because the job hasn't
+            the status file; dictionary will be empty if no
+            status file was found (e.g. because the job hasn't
             started yet).
-
         """
-        qstat_file = os.path.join(self._drop_dir,"%s.drop.qstat" % name)
-        if not os.path.exists(qstat_file):
+        status_file = os.path.join(self._drop_dir,
+                                   f"{name}.drop.{self._names['status']}")
+        if not os.path.exists(status_file):
             return {}
-        qstat = {}
-        with open(qstat_file,'rt') as fp:
-            #<JB_job_number>204784</JB_job_number>
-            #<JAT_prio>50.25000</JAT_prio>
-            #<JB_name>drop-test  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP</JB_name>
-            #<JB_owner>simonh</JB_owner>
-            #<state>r</state>
-            #<JAT_start_time>2016-04-28T17:30:19</JAT_start_time>
-            #<queue_name>C6220-galaxy.q@node009.prv.hydra.cluster</queue_name>
-            #<slots>1</slots>
-            for line in fp:
-                m = re.match(r'<([^>]+)>([^<]+)</([^>]+)>',line.rstrip('\n'))
-                if m:
-                    qstat[m.group(1)] = m.group(2)
-        return qstat
+        status = {}
+        with open(status_file,'rt') as fp:
+            if self._mode == "slurm":
+                # Slurm-like mode
+                #JOBID|PRIORITY|NAME|USER|STATE|START_TIME|PARTITION|NODELIST|CPUS
+                for line in fp:
+                    data = line.rstrip("\n").split("|")
+                    status["job_number"] = data[0]
+                    status["state"] = data[4]
+                    break
+            elif self._mode == "ge":
+                # Grid Engine-like mode
+                #<JB_job_number>204784</JB_job_number>
+                #<JAT_prio>50.25000</JAT_prio>
+                #<JB_name>drop-test  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP</JB_name>
+                #<JB_owner>simonh</JB_owner>
+                #<state>r</state>
+                #<JAT_start_time>2016-04-28T17:30:19</JAT_start_time>
+                #<queue_name>C6220-galaxy.q@node009.prv.hydra.cluster</queue_name>
+                #<slots>1</slots>
+                for line in fp:
+                    m = re.match(r'<([^>]+)>([^<]+)</([^>]+)>',
+                                 line.rstrip('\n'))
+                    if m:
+                        key = m.group(1)
+                        value = m.group(2)
+                        if key == "JB_job_number":
+                            status["job_number"] = value
+                        elif key == "state":
+                            status["state"] = value
+        return status
 
-    def qacct(self,name):
+    def failure_info(self, name):
         """
-        Return the qacct information for the job
+        Return job submission failure information
 
         Arguments:
           name (str): name of the job
 
         Returns:
           Dictionary: dictionary where keys are items from
-            the .drop.qacct file; dictionary will be empty if no
-            .drop.qacct file was found (e.g. because the job hasn't
-            completed yet).
-
+            the "fail" file; dictionary will be empty if no
+            "fail" file was found (e.g. because the job
+            didn't fail on submission).
         """
-        qacct_file = os.path.join(self._drop_dir,"%s.drop.qacct" % name)
-        if not os.path.exists(qacct_file):
+        failure_file = os.path.join(self._drop_dir,
+                                    f"{name}.drop.{self._names['fail']}")
+        if not os.path.exists(failure_file):
             return {}
-        qacct = {}
-        with open(qacct_file,'rt') as fp:
-            #==============================================================
-            #qname        C6220-galaxy.q
-            #hostname     node009.prv.hydra.cluster
-            #group        simonh
-            #owner        simonh
-            #project      NONE
-            #department   defaultdepartment
-            #jobname      drop-test  qNmoihPDDImLgWtetEZKhTSjmLhUikwg--JSE-DROP
-            #jobnumber    204784
-            #taskid       undefined
-            #account      sge
-            #priority     0
-            #qsub_time    Thu Apr 28 17:30:19 2016
-            #start_time   Thu Apr 28 17:30:19 2016
-            #end_time     Thu Apr 28 17:32:19 2016
-            #granted_pe   NONE
-            #slots        1
-            #failed       0
-            #exit_status  0
-            #...
-            for line in fp:
-                try:
-                    key,value = [x.strip() for x in line.split(' ',1)]
-                    qacct[key] = value
-                except ValueError:
-                    pass
-        return qacct
-
-    def qfail(self,name):
-        """
-        Return the qfail information for the job
-
-        Arguments:
-          name (str): name of the job
-
-        Returns:
-          Dictionary: dictionary where keys are items from
-            the .drop.qfail file; dictionary will be empty if no
-            .drop.qfail file was found (e.g. because the job didn't
-            fail on submission).
-
-        """
-        qfail_file = os.path.join(self._drop_dir,"%s.drop.qfail" % name)
-        if not os.path.exists(qfail_file):
-            return {}
-        qfail = {}
-        with open(qfail_file,'rt') as fp:
+        failure_info = {}
+        with open(failure_file,'rt') as fp:
             #======================================
             #
             #Exit status: //2//
@@ -399,19 +395,19 @@ class JSEDrop(object):
                 if line == "======================================\n":
                     continue
                 if line.startswith('Exit status:'):
-                    qfail['exit_code'] = line[:-1].split()[-1].strip('/')
+                    failure_info['exit_code'] = line[:-1].split()[-1].strip('/')
                     continue
                 if line.startswith('STDOUT:'):
                     section = 'stdout'
-                    qfail['stdout'] = ''
+                    failure_info['stdout'] = ''
                     continue
                 elif line.startswith('STDERR:'):
                     section = 'stderr'
-                    qfail['stderr'] = ''
+                    failure_info['stderr'] = ''
                     continue
                 if section is not None:
-                    qfail[section] += line
-        return qfail
+                    failure_info[section] += line
+        return failure_info
 
     def stdout_file(self,name):
         """
@@ -420,6 +416,13 @@ class JSEDrop(object):
         There is no guarantee that the named file exists.
 
         """
+        # Stdout file template
+        if self._mode == "slurm":
+            # Slurm-like mode
+            template = "{job_id}.out"
+        elif self._mode == "ge":
+            # GE-like mode
+            template = "{job_id}.o{job_number}"
         # Get the job name
         job_id = self.get_job_id(name)
         # Get the job number
@@ -427,8 +430,8 @@ class JSEDrop(object):
         if job_number is not None:
             # Construct stdout file name
             return os.path.join(self._drop_dir,
-                                '%s.o%s' % (job_id,
-                                            job_number))
+                                template.format(job_id=job_id,
+                                                job_number=job_number))
         else:
             # No data available
             return None
@@ -440,15 +443,22 @@ class JSEDrop(object):
         There is no guarantee that the named file exists.
 
         """
+        # Stderr file template
+        if self._mode == "slurm":
+            # No stderr file for Slurm-like mode
+            return None
+        elif self._mode == "ge":
+            # GE-like mode
+            template = "{job_id}.e{job_number}"
         # Get the job name
         job_id = self.get_job_id(name)
         # Get the job number
         job_number = self.get_job_number(name)
         if job_number is not None:
-            # Construct stdout file name
+            # Construct stderr file name
             return os.path.join(self._drop_dir,
-                                '%s.e%s' % (job_id,
-                                            job_number))
+                                template.format(job_id=job_id,
+                                                job_number=job_number))
         else:
             # No data available
             return None
@@ -459,9 +469,9 @@ class JSEDrop(object):
 
         Arguments:
           name (str): name of the job
-
         """
-        kill_file = os.path.join(self._drop_dir,"%s.drop.qdel" % name)
+        kill_file = os.path.join(self._drop_dir,
+                                 f"{name}.drop.{self._names['delete']}")
         if os.path.exists(kill_file):
             # Kill file already exists, ignore
             return
@@ -479,7 +489,7 @@ class JSEDrop(object):
           name (str): name of the job
         """
         cleanup_file = os.path.join(self._drop_dir,
-                                    "%s.drop.cleanup" % name)
+                                    f"{name}.drop.{self._names['cleanup']}")
         if os.path.exists(cleanup_file):
             # Clean up file already exists, ignore
             return
@@ -495,15 +505,9 @@ class JSEDrop(object):
 
         Arguments:
           name (str): name of the job
-
         """
-        extensions = ('.drop.qsub',
-                      '.drop.qsubmit',
-                      '.drop.qfail',
-                      '.drop.qstat',
-                      '.drop.qdel',
-                      '.drop.qdeleted',
-                      '.drop.qacct',)
+        extensions = [f".drop.{self._names[x]}" for x in self._names
+                      if x != "cleanup"]
         timestamp = None
         for ext in extensions:
             try:
@@ -527,14 +531,6 @@ class JSEDrop(object):
           name (str): name of the job
 
         """
-        extensions = ('.drop.qsub',
-                      '.drop.qsubmit',
-                      '.drop.qfail',
-                      '.drop.qstat',
-                      '.drop.qdel',
-                      '.drop.qdeleted',
-                      '.drop.qacct',
-                      '.drop.cleanup',)
         # Remove stdout/stderr first
         for f in (self.stdout_file(name),self.stderr_file(name)):
             if f is None:
@@ -551,6 +547,7 @@ class JSEDrop(object):
             except (AttributeError,OSError):
                 pass
         # Remove remaining files
+        extensions = [f".drop.{self._names[x]}" for x in self._names]
         for ext in extensions:
             try:
                 os.remove(os.path.join(self._drop_dir,

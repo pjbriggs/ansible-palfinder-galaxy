@@ -17,6 +17,9 @@
 {%      if galaxy_jse_drop_galaxy_id is defined %}
 	  <param id="galaxy_id">{{ galaxy_jse_drop_galaxy_id }}</param>
 {%      endif %}
+{%      if galaxy_jse_interface is defined %}
+	  <param id="interface">{{ galaxy_jse_interface }}</param>
+{%      endif %}
         </plugin>
 {% endif %}
     </plugins>
@@ -31,7 +34,11 @@
 {% if galaxy_job_destinations %}
 {%   for dest in galaxy_job_destinations %}
         <destination id="{{ dest.id }}" runner="{{ dest.runner }}">
+{%      if dest.jse_drop_submit_options is defined %}
+          <param id="options">{{ dest.jse_drop_submit_options }}</param>
+{%      endif %}
 {%      if dest.jse_drop_qsub_options is defined %}
+          <!-- 'qsub_options' deprecated: use 'options' instead -->
           <param id="qsub_options">{{ dest.jse_drop_qsub_options }}</param>
 {%      endif %}
 {%      if dest.jse_drop_slots is defined %}

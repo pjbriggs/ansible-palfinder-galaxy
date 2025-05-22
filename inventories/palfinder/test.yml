@@ -17,23 +17,23 @@ palfinder:
     # Secrets
     palfinder_secrets: palfinder_passwds.yml
     # Job configuration
-    galaxy_jse_drop_dir: "/mnt/rvmi/palfinder/galaxy/palfinder/jse-drop-csf3"
+    galaxy_jse_drop_dir: "/mnt/rvmi/palfinder/galaxy/palfinder/jse-drop-slurm"
     galaxy_jse_drop_galaxy_id: "{{ galaxy_name }}"
     enable_local_jse_drop: no
     galaxy_default_runner: "jse_drop_default"
     galaxy_job_destinations:
       - id: "jse_drop_default"
         runner: "jse_drop"
-        jse_drop_qsub_options: "-l short"
+        jse_drop_submit_options: "-p serial -t 0-1"
       - id: "jse_drop_8_cores"
         runner: "jse_drop"
-        jse_drop_qsub_options: "-pe smp.pe 8"
+        jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
         jse_drop_slots: "8"
     galaxy_tool_destinations:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
     # Cluster needs to use its own virtual env
-    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf/galaxy/22.05/venv_py3.8"
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf-slurm/galaxy/22.05/venv_py3.8"
     # Postfix/email configuration
     enable_smtp: yes
     # SSL configuration
