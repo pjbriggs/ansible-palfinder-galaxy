@@ -26,7 +26,8 @@
 
 - name: "Build and install Python 3"
   block:
-    - include: "dependencies_ubuntu.yml"
+    - name: "Include Ubuntu dependency installation task list"
+      include_tasks: "dependencies_ubuntu.yml"
 
     - name: "Create installation directory"
       file:

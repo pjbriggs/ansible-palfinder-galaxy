@@ -1,10 +1,13 @@
 ---
 
-- include: halt_galaxy.yml
+- name: "Include tasks to stop running Galaxy"
+  include_tasks: halt_galaxy.yml
 
-- include: remove_legacy_artefacts.yml
+- name: "Include tasks to remove legacy artefacts"
+  include_tasks: remove_legacy_artefacts.yml
 
-- include: "dependencies_ubuntu.yml"
+- name: "Include tasks to install Ubuntu dependencies for Galaxy"
+  include_tasks: "dependencies_ubuntu.yml"
 
 - name: "Install Galaxy-specific Python"
   include_role:
@@ -15,31 +18,47 @@
     ansible_become: yes
     ansible_become_user: "{{ galaxy_user }}"
 
-- include: database.yml
-  become: yes
-  become_user: postgres
+- name: "Include tasks to set up Postgresql database"
+  include_tasks:
+    file: database.yml
+    apply:
+      become: yes
+      become_user: postgres
 
-- include: galaxy.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
+- name: "Include tasks to install Galaxy"
+  include_tasks:
+    file: galaxy.yml
+    apply:
+      become: yes
+      become_user: "{{ galaxy_user }}"
 
-- include: galaxy_service.yml
+- name: "Include tasks to set up Galaxy as a service"
+  include_tasks: galaxy_service.yml
 
-- include: jsedrop.yml
+- name: "Include tasks to enable JSE-Drop job runner"
+  include_tasks:
+    file: jsedrop.yml
+    apply:
+      become: yes
+      become_user: "{{ galaxy_user }}"
   when: enable_jse_drop
-  become: yes
-  become_user: "{{ galaxy_user }}"
 
-- include: cleanup.yml
+- name: "Include tasks to set up clean up jobs"
+  include_tasks: cleanup.yml
 
-- include: logrotate.yml
+- name: "Include tasks to enable log rotation"
+  include_tasks: logrotate.yml
 
-- include: nginxproxy.yml
+- name: "Include tasks to set up the Nginx proxy"
+  include_tasks: nginxproxy.yml
 
-- include: static.yml
+- name: "Include tasks to pull in the extra static web content"
+  include_tasks: static.yml
   when: galaxy_extra_static_content|default(None) != None
 
-- include: cronvars.yml
+- name: "Include tasks to set up the crontab variables"
+  include_tasks: cronvars.yml
   when: enable_smtp
 
-- include: start_galaxy.yml
+- name: "Include tasks to start up Galaxy"
+  include_tasks: start_galaxy.yml
