@@ -17,7 +17,7 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     # the hostname is too long
     # See e.g. https://github.com/hashicorp/vagrant/issues/9524
     #v.name = "galaxyvm"
-    v.memory = 4096
+    v.memory = 8192
     v.cpus = 4
     v.linked_clone = true
   end
