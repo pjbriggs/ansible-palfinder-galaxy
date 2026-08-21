@@ -26,3 +26,6 @@ palfinder:
     enable_smtp: no
     # SSL configuration
     enable_https: no
+    # Postgresql apt repo
+    # -- default version no longer works as Ubuntu 20.04 ("focal") is EOL
+    postgresql_apt_repo: "deb http://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main"
