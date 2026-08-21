@@ -3,3 +3,7 @@
 # See https://www.postgresql.org/support/versioning/
 # for supported versions
 postgresql_version: "14"
+
+# Default apt repository for PostgreSQL packages
+# May need to override for older Ubuntu versions which are EOL
+postgresql_apt_repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
