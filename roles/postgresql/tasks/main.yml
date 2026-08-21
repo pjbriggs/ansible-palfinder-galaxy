@@ -12,7 +12,7 @@
 
 - name: "Get PostgreSQL repository"
   apt_repository:
-    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+    repo: "{{ postgresql_apt_repo }}"
     update_cache: yes
 
 - name: "Install PostgreSQL server"
