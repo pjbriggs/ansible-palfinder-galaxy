@@ -1,7 +1,7 @@
 ---
 # Name for Galaxy instance
 galaxy_name: "palfinder"
-galaxy_version: 'release_24.2'
+galaxy_version: 'release_25.1'
 
 # User running Galaxy service
 galaxy_user: "galaxy"
