@@ -22,6 +22,7 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     v.linked_clone = true
   end
   # Centaurus production VM
+  # Adding swapfile: see https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04
   config.vm.define "centaurus" do |centaurus|
     centaurus.vm.box = "ubuntu/focal64"
     centaurus.vm.hostname = "centaurus"
@@ -31,6 +32,12 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
     mkdir -p /mnt/bmh01-rvmi/bcf-galaxy
     chmod ugo+rwX /mnt/rvmi/
     chmod ugo+rwX /mnt/bmh01-rvmi/bcf-galaxy/
+    fallocate -l 2G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    cp /etc/fstab /etc/fstab.bak
+    echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
   SHELL
   end
   # Centaurus development VM
