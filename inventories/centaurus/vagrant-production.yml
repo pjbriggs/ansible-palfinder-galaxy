@@ -26,3 +26,5 @@ centaurus:
     # Postgresql apt repo
     # -- default version no longer works as Ubuntu 20.04 ("focal") is EOL
     postgresql_apt_repo: "deb http://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main"
+    # Extra options when running common_startup.sh
+    galaxy_node_options: "--max-old-space-size=8192"
