@@ -338,6 +338,7 @@
     PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
     PIP_CACHE_DIR: '{{ pip_cache_dir.path }}'
     YARN_CACHE_FOLDER: '{{ yarn_cache_dir.path }}'
+    NODE_OPTIONS: '{{ galaxy_node_options }}'
 
 # Create or update Galaxy database
 - name: "Check if Galaxy database exists"
