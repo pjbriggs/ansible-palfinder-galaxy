@@ -273,3 +273,9 @@ expose_user_name: no
 
 # GDPR Compliance mode
 enable_beta_gdpr: no
+
+# Options related to building Galaxy
+#
+# Sets the NODE_OPTIONS envirnoment variable when
+# running 'common_startup.sh'
+galaxy_node_options:
