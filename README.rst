@@ -7,7 +7,7 @@ on virtual machines at the University of Manchester:
  * ``pal_finder``: a public instance for running Pal_finder
  * ``centaurus``: a local instance for researchers
 
-The roles are set up to target Galaxy version 24.0
+The roles are set up to target Galaxy version 24.2.
 .
 
 Roles
