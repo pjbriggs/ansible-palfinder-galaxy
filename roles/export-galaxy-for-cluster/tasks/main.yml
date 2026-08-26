@@ -1,19 +1,30 @@
 # Install Galaxy
 ---
 
-- include: dependencies.yml
+- name: "Include tasks for installing system dependencies"
+  include_tasks: dependencies.yml
 
-- include: galaxy_user.yml
+- name: "Include tasks for setting up system user for Galaxy"
+  include_tasks: galaxy_user.yml
 
-- include: python.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
+- name: "Include tasks for building Python for Galaxy"
+  include_tasks:
+    file: python.yml
+    apply:
+      become: yes
+      become_user: "{{ galaxy_user }}"
 
-- include: galaxy.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
+- name: "Include tasks for building Galaxy client virtualenv"
+  include_tasks:
+    file: galaxy.yml
+    apply:
+      become: yes
+      become_user: "{{ galaxy_user }}"
 
-- include: export.yml
-  become: yes
-  become_user: "{{ galaxy_user }}"
+- name: "Include tasks for exporting Galaxy client virtualenv"
+  include_tasks:
+    file: export.yml
+    apply:
+      become: yes
+      become_user: "{{ galaxy_user }}"
   
