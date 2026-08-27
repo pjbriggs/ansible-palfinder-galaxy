@@ -32,14 +32,16 @@
   file:
     path: '{{ galaxy_install_dir }}/{{ galaxy_venv }}'
     state: absent
+  #when: false
 
 - name: "Galaxy: make new virtualenv"
   command:
     chdir: '{{ galaxy_install_dir }}'
     cmd: "{{ python_install_dir }}/bin/virtualenv {{ galaxy_venv }} -p {{ python_exe }}"
     creates: '{{ galaxy_install_dir }}/{{ galaxy_venv }}'
+  #when: false
 
 - name: "Galaxy: run common_startup.sh --skip-venv to install into virtualenv"
   shell:
-    cmd: source {{ galaxy_install_dir }}/{{ galaxy_venv }}/bin/activate && ./scripts/common_startup.sh --skip-venv
+    cmd: NODE_OPTIONS={{ galaxy_node_options}} source {{ galaxy_install_dir }}/{{ galaxy_venv }}/bin/activate && ./scripts/common_startup.sh --skip-venv
     chdir: '{{ galaxy_install_dir }}/galaxy-src'
