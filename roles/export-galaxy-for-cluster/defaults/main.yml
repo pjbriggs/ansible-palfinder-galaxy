@@ -21,6 +21,12 @@ galaxy_install_dir: "{{ galaxy_root_dir }}/shared/csf-slurm/galaxy/{{ galaxy_ver
 python_version: "3.6.11"
 python_install_dir: '{{ galaxy_root_dir }}/shared/csf-slurm/python/{{ python_version }}'
 
+# Options related to building Galaxy
+#
+# Sets the NODE_OPTIONS envirnoment variable when
+# running 'common_startup.sh'
+galaxy_node_options:
+
 # Exported tgz
 archive_name: "{{ galaxy_name }}-virtualenv-galaxy-{{ galaxy_version }}-python-{{ python_version }}-slurm"
 assets_dir: "assets/"
