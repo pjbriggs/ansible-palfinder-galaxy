@@ -1,5 +1,9 @@
 ---
 - hosts: csf
 
+  vars:
+  # Extra options when running common_startup.sh
+  - galaxy_node_options: "--max-old-space-size=8192"
+
   roles:
   - export-galaxy-for-cluster
