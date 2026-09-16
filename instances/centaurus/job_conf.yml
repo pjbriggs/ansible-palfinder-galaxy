@@ -7,6 +7,11 @@ galaxy_job_destinations:
   - id: "jse_drop_serial"
     runner: "jse_drop"
     jse_drop_submit_options: "-p serial -t 7-0"
+  # "Pseudo-serial" jobs (where more cores are requested to get
+  # more memory for each job)
+  - id: "jse_drop_pseudo_serial_more_mem"
+    runner: "jse_drop"
+    jse_drop_submit_options: "-p multicore_small -n 2 -t 7-0"
   # Multicore jobs
   - id: "jse_drop_smp_4"
     runner: "jse_drop"
@@ -109,6 +114,10 @@ galaxy_tool_destinations:
     destination: "jse_drop_smp_8"
   - id: "cufflinks"
     destination: "jse_drop_smp_8"
+  - id: "deeptools_compute_matrix"
+    destination: "jse_drop_pseudo_serial_more_mem"
+  - id: "deeptools_plot_correlation"
+    destination: "jse_drop_pseudo_serial_more_mem"
   - id: "freebayes"
     destination: "jse_drop_smp_8"
   - id: "hisat2"
