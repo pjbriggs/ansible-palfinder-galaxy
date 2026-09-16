@@ -10,23 +10,23 @@ galaxy_job_destinations:
   # Multicore jobs
   - id: "jse_drop_smp_4"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 4 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 4 -t 7-0"
     jse_drop_slots: "4"
   - id: "jse_drop_smp_6"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 6 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 6 -t 7-0"
     jse_drop_slots: "6"
   - id: "jse_drop_smp_8"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 8 -t 7-0"
     jse_drop_slots: "8"
   - id: "jse_drop_smp_12"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 12 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 12 -t 7-0"
     jse_drop_slots: "12"
   - id: "jse_drop_smp_16"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 16 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 16 -t 7-0"
     jse_drop_slots: "16"
   # High memory runner
   - id: "jse_drop_smp_4_mem512"
@@ -44,7 +44,7 @@ galaxy_job_destinations:
   # Runner for Amplicon analysis pipeline
   - id: "jse_drop_amplicon_analysis"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 8 -t 7-0"
     jse_drop_slots: "8"
     envs:
       - id: "AMPLICON_ANALYSIS_REF_DATA_PATH"
@@ -58,7 +58,7 @@ galaxy_job_destinations:
   # Runner for Picard MarkDuplicates (needs Java options)
   - id: "jse_drop_picard_markduplicates"
     runner: "jse_drop"
-    jse_drop_submit_options: "-p multicore -n 2 -t 7-0"
+    jse_drop_submit_options: "-p multicore_small -n 2 -t 7-0"
     envs:
       - id: "_JAVA_OPTIONS"
         value: "-Xmx6G -Xms256m"

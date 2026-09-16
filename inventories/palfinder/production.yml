@@ -25,7 +25,7 @@ palfinder:
         jse_drop_submit_options: "-p serial -t 7-0"
       - id: "jse_drop_8_cores"
         runner: "jse_drop"
-        jse_drop_submit_options: "-p multicore -n 8 -t 7-0"
+        jse_drop_submit_options: "-p multicore_small -n 8 -t 7-0"
         jse_drop_slots: "8"
     galaxy_tool_destinations:
       - id: "trimmomatic"
