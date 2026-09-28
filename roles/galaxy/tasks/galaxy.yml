@@ -339,6 +339,17 @@
     PIP_CACHE_DIR: '{{ pip_cache_dir.path }}'
     YARN_CACHE_FOLDER: '{{ yarn_cache_dir.path }}'
 
+# Remove cache dirs
+- name: "Remove temporary pip cache directory"
+  file:
+    path: "{{ pip_cache_dir.path }}"
+    state: absent
+
+- name: "Remove temporary yarn cache directory"
+  file:
+    path: "{{ yarn_cache_dir.path }}"
+    state: absent
+
 # Create or update Galaxy database
 - name: "Check if Galaxy database exists"
   shell:
