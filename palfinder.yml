@@ -18,8 +18,8 @@
   - postfix_relay_host: "smtp.manchester.ac.uk"
 
   # Options when updating Python version
-   ##- galaxy_force_reinstall_python: yes
-   ##- galaxy_force_reinstall_venv: yes
+  ##- galaxy_force_reinstall_python: yes
+  ##- galaxy_force_reinstall_venv: yes
 
   # Options when updating Galaxy version
   - galaxy_remove_mako_templates: yes

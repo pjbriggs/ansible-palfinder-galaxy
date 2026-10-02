@@ -31,7 +31,7 @@ palfinder:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
     # Cluster needs to use its own virtual env
-    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf-slurm/galaxy/24.0/venv_py3.8"
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf-slurm/galaxy/24.2/venv_py3.8"
     # Postfix/email configuration
     enable_smtp: yes
     # SSL configuration
@@ -45,6 +45,8 @@ palfinder:
       - file: "{{ demo_data_dir }}/miseq_R2.fq"
         type: "fastqsanger"
         library: "Example data/Fastqs"
+    # Temporary dir for Galaxy install
+    galaxy_installation_tmp_dir: "/home/{{ galaxy_user }}/tmp"
     # Postgresql apt repo
     # -- default version no longer works as Ubuntu 20.04 ("focal") is EOL
     postgresql_apt_repo: "deb http://apt-archive.postgresql.org/pub/repos/apt focal-pgdg main"
