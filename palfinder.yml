@@ -16,6 +16,14 @@
   # Postfix settings
   - postfix_host_name: "palfinder.ls.manchester.ac.uk"
   - postfix_relay_host: "smtp.manchester.ac.uk"
+
+  # Options when updating Python version
+   ##- galaxy_force_reinstall_python: yes
+   ##- galaxy_force_reinstall_venv: yes
+
+  # Options when updating Galaxy version
+  - galaxy_remove_mako_templates: yes
+
   # Base installation directory set in inventory file
   vars_files:
   - instances/palfinder/galaxy_config.yml
