@@ -45,3 +45,8 @@
   shell:
     cmd: NODE_OPTIONS={{ galaxy_node_options}} source {{ galaxy_install_dir }}/{{ galaxy_venv }}/bin/activate && ./scripts/common_startup.sh --skip-venv
     chdir: '{{ galaxy_install_dir }}/galaxy-src'
+  environment:
+    # Extra options for Galaxy 25.1 to try and stop prompting
+    # for user confirmation when running common_startup.sh
+    YARN_INSTALL_OPTS: '--non-interactive'
+    COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
