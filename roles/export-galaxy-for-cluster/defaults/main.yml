@@ -19,6 +19,7 @@ galaxy_install_dir: "{{ galaxy_root_dir }}/shared/csf-slurm/galaxy/{{ galaxy_ver
 
 # Python for Galaxy
 python_version: "3.6.11"
+sqlite3_version: "3.34.1"
 python_install_dir: '{{ galaxy_root_dir }}/shared/csf-slurm/python/{{ python_version }}'
 
 # Options related to building Galaxy
