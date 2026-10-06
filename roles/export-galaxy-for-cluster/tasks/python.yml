@@ -24,6 +24,36 @@
   debug:
     msg: "Install directory {{ python_install_dir }}"
 
+- name: "Python: determine the build directory for SQLite3"
+  set_fact:
+    build_dir: "{{ user_home.stdout }}/build-sqlite3"
+
+- name: "Python: create build directory"
+  file:
+    path: '{{ build_dir }}'
+    state: 'directory'
+
+- name: "Python: download SQLite3 source code"
+  get_url:
+    url: 'https://github.com/sqlite/sqlite/archive/refs/tags/version-{{ sqlite3_version }}.tar.gz'
+    dest: '{{ build_dir }}/sqlite-version-{{ sqlite3_version }}.tar.gz'
+
+- name: "Python: unpack SQLite3 source code"
+  unarchive:
+    src: '{{ build_dir }}/sqlite-version-{{ sqlite3_version }}.tar.gz'
+    dest: '{{ build_dir }}'
+    copy: no
+    creates: '{{ build_dir }}/sqlite-version-{{ sqlite3_version }}'
+
+- name: "Python: build and install SQLite3"
+  command:
+    cmd: '{{item}}'
+    chdir: '{{ build_dir }}/sqlite-version-{{ sqlite3_version }}'
+    creates: '{{ python_install_dir }}/bin/sqlite'
+  with_items:
+    - './configure --prefix={{ python_install_dir }}'
+    - 'make install'
+
 - name: "Python: report build directory path"
   debug:
     msg: "Build directory {{ build_dir }}"
@@ -53,6 +83,9 @@
   with_items:
     - './configure --prefix={{ python_install_dir }}'
     - 'make install'
+  environment:
+    LD_LIBRARY_PATH: "{{ python_install_dir }}/lib"
+    PKG_CONFIG_PATH: "{{ python_install_dir }}/lib/pkgconfig"
 
 - name: "Python: install Pip"
   command:
