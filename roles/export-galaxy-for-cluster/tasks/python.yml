@@ -14,7 +14,7 @@
 
 - name: "Python: determine the build directory"
   set_fact:
-    build_dir: "{{ user_home.stdout }}/build"
+    build_dir: "{{ user_home.stdout }}/build-py{{ python_version }}"
 
 - name: "Python: report version"
   debug:
