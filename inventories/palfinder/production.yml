@@ -31,7 +31,7 @@ palfinder:
       - id: "trimmomatic"
         destination: "jse_drop_8_cores"
     # Cluster needs to use its own virtual env
-    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf-slurm/galaxy/25.1/venv_py3.12"
+    galaxy_jse_drop_virtual_env: "/mnt/rvmi/palfinder/galaxy/shared/csf-slurm/galaxy/26.0/venv_py3.12"
     # Postfix/email configuration
     enable_smtp: yes
     # SSL configuration
