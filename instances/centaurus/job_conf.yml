@@ -118,6 +118,8 @@ galaxy_tool_destinations:
     destination: "jse_drop_pseudo_serial_more_mem"
   - id: "deeptools_plot_correlation"
     destination: "jse_drop_pseudo_serial_more_mem"
+  - id: "deseq2"
+    destination: "jse_drop_smp_4"
   - id: "freebayes"
     destination: "jse_drop_smp_8"
   - id: "hisat2"
